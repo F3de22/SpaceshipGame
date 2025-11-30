@@ -1,13 +1,54 @@
-class Camera
+#pragma once 
+
+#include "transform.h"
+
+namespace SpaceEngine
 {
+    class BaseCamera
+    {
+        public:
+            BaseCamera();
+            BaseCamera(float nearPlane, float farPlane);
+            ~BaseCamera() = default;
+            Matrix4 getViewMatrix();
+            Transform transf;
+        protected:
+            Matrix4 projection;
+            float nearPlane;
+            float farPlane;
+    };
 
-};
+    class PerspectiveCamera: public BaseCamera
+    {
+        public:
+            PerspectiveCamera();
+            PerspectiveCamera(float nearPlane, float farPlane);
+            PerspectiveCamera(float fov, float nearPlane, float farPlane);
+            PerspectiveCamera(float fov, float aspectRatio, float nearPlane, float farPlane);
+            ~PerspectiveCamera() = default;
+            
+            void setNearFarPlane(float nearPlane, float farPlane);
+            void setFov(float fov);
+            void setAspectRatio(float aspectRatio);
 
-class Prospective:Camera
-{
+        private:
+            //degree
+            float fov;
+            float aspectRatio;
+        
+        
+    };
+    class OrthoCamera : public BaseCamera
+    {
+        public:
+            OrthoCamera(float width, float height, float nearPlane, float farPlane);
+            OrthoCamera(float nearPlane, float farPlane);
+            ~OrthoCamera() = default;
 
-};
-class hortographic:Camera
-{
-
-};
+            void setNearFarPlane(float nearPlane, float farPlane);
+            void setWidthHeight(float width, float height);
+        private: 
+            float width;
+            float height;
+    };
+}

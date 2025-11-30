@@ -49,6 +49,16 @@ namespace SpaceEngine
         pTex->setBindlessHandle(texs.size());
     }
 
+    void BaseMaterial::bindingPropsToShader(ShaderProgram* pShaderProg)
+    {
+        if(!pShaderProg)
+        {
+            SPACE_ENGINE_ERROR("Error shader is nullptr");
+        }
+        
+        bindingPropsToShader();
+    }
+
     void BaseMaterial::bindingPropsToShader()
     {
         if(!pShader)

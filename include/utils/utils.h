@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <assimp/matrix4x4.h>
 #include <string>
 #include <assimp/scene.h>
@@ -14,7 +15,9 @@ namespace SpaceEngine
     using Vector2 = glm::vec2;
     using Vector3 = glm::vec3;
     using Vector4 = glm::vec4;
+    using Quat = glm::quat;
     
+
     namespace Math
     {
         inline Matrix4 aiMat4_2_Mat4(const aiMatrix4x4& m)
@@ -27,6 +30,26 @@ namespace SpaceEngine
         inline Matrix4 inverse(Matrix4 m)
         {
             return glm::inverse(m);
+        }
+
+        inline Matrix4 identityMatrix4()
+        {
+            return Matrix4(1.0f);
+        }
+
+        inline Matrix4 perspectiveMatrix4(float degree, float aspectRatio, float nearPlane, float farPlane)
+        {
+            return glm::perspective(glm::radians(degree), aspectRatio, nearPlane, farPlane);
+        }
+
+        inline Matrix4 orthoMatrix4(float width, float height, float nearPlane, float farPlane)
+        {
+            return glm::ortho(-width, height, nearPlane, farPlane);
+        }
+
+        inline float radians(float degree)
+        {
+            return glm::radians(degree);
         }
     }
 

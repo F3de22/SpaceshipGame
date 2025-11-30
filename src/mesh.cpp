@@ -94,6 +94,7 @@ namespace SpaceEngine
                 exit(-1);
             }
         }
+
         pTMPMesh = nullptr;
         return pMesh;
     }
@@ -117,7 +118,7 @@ namespace SpaceEngine
             return false;
         }
 
-        //populateBuffers();
+        pTMPMesh->populateBuffers();
 
         return glGetError() == GL_NO_ERROR;
     }
@@ -202,6 +203,7 @@ namespace SpaceEngine
             pTMPMesh->materials.push_back(std::move(pbrMat));
             loadTextures(dir, pMaterial, pScene, i);
             loadColors(pMaterial, i);
+            pTMPMesh->materials[i].get()->bindingPropsToShader(ShaderManager::findShaderProgram("pbr"));
         }
 
         return true;

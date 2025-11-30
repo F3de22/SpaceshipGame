@@ -60,6 +60,7 @@ namespace SpaceEngine
             {}
             void addTexture(std::string name, Texture* pTex);
             void bindingPropsToShader();
+            void bindingPropsToShader(ShaderProgram* pShaderProg);
             std::string name;
             std::unordered_map<std::string, PropertyValue> props;
             ShaderProgram* pShader = nullptr;
