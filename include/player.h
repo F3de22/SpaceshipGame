@@ -4,7 +4,7 @@
 
 namespace SpaceEngine
 {
-    class Player : GameObject
+    class Player : public GameObject
     { 
         Player(std::string filePathModel);
     };

@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace SpaceEngine::Managers
+namespace SpaceEngine
 {
     void LogManager::Initialize()
     {

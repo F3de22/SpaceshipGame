@@ -1,5 +1,7 @@
 #include "app.h"
 #include "log.h"
+#include "camera.h"
+#include <vector>
 
 namespace SpaceEngine{
     //static functions
@@ -11,8 +13,8 @@ namespace SpaceEngine{
         logManager.Initialize();
         windowManager.Initialize();
         inputManager.Initialize();
+        shaderManager.Inizialize();
         //Objects
-        scene = new Scene();
         renderer = new Renderer();
         SPACE_ENGINE_INFO("Initilization app done");
     }
@@ -26,16 +28,33 @@ namespace SpaceEngine{
         delete scene;
         delete renderer;
     }
+    
+    void App::Start()
+    {
+        //initialize main scene
 
+        scene = new Scene();
+        //TODO: initialize correctly the camera please 
+        PerspectiveCamera* pCamera = new PerspectiveCamera();
+        scene->addSceneComponet<PerspectiveCamera>(pCamera);
+    }
     void App::Run()
     {
         SPACE_ENGINE_DEBUG("App - GameLoop");
         //token debug stuff
         bool token = false; 
+        float currentTime = static_cast<float>(glfwGetTime());
+        //Gathers
+        std::vector<RenderObject> worldRenderables;
+        std::vector<UIRenderObject> uiRenderables;
+        
         while(!windowManager.WindowShouldClose())
         {
             
+            float dt = static_cast<float>(glfwGetTime()) - currentTime;
+            //refresh the input 
             inputManager.Update();
+
             //mouse debug
             #if 0
             if(Mouse::buttonDown(SPACE_ENGINE_MOUSE_BUTTON_LEFT))
@@ -52,12 +71,12 @@ namespace SpaceEngine{
             Joystick::axis(SPACE_ENGINE_JK_AXIS_LEFT_Y));
             #endif
             //fast debug for windowed and fullwindow feature
-            if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && Managers::Window::fullScreenState)
+            if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && WindowManager::fullScreenState)
             {
                 token = true;
                 windowManager.Windowed();
             }
-            else if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && !Managers::Window::fullScreenState)
+            else if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && !WindowManager::fullScreenState)
             {
                 windowManager.SetWindowShouldClose();
             }
@@ -65,6 +84,13 @@ namespace SpaceEngine{
             {
                 token = false;
             }
+
+            //update game objects in the scene
+            scene->Update(dt);
+            //collects the renderizable objects in the scene
+            scene->gatherRenderables(worldRenderables, uiRenderables);
+            renderer->render(worldRenderables, *(scene->getActiveCamera()));
+            
             glClearColor(0.f, 0.f, 0.f, 1.f);
             //before rendering
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -11,6 +11,7 @@ namespace SpaceEngine
             BaseCamera(float nearPlane, float farPlane);
             ~BaseCamera() = default;
             Matrix4 getViewMatrix();
+            Matrix4 getProjectionMatrix(){ return projection;};
             Transform transf;
         protected:
             Matrix4 projection;
@@ -30,7 +31,6 @@ namespace SpaceEngine
             void setNearFarPlane(float nearPlane, float farPlane);
             void setFov(float fov);
             void setAspectRatio(float aspectRatio);
-
         private:
             //degree
             float fov;

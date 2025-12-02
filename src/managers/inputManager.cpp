@@ -56,13 +56,13 @@ namespace SpaceEngine
 
     void Mouse::hideCursor()
     {
-        glfwSetInputMode(Managers::Window::window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode(WindowManager::window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         cursorHideState = true;
     }
 
     void Mouse::showCursor()
     {
-        glfwSetInputMode(Managers::Window::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        glfwSetInputMode(WindowManager::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         cursorHideState = false;
     }
 
@@ -121,7 +121,7 @@ namespace SpaceEngine
     }
 
     //managers::Input
-    void Managers::Input::Initialize()
+    void InputManager::Initialize()
     {
         Mouse::init();
         Keyboard::init();
@@ -138,19 +138,19 @@ namespace SpaceEngine
         
         //callbacks for handling the input
         glfwSetJoystickCallback(joystick_callback);
-        glfwSetMouseButtonCallback(Managers::Window::window, mouse_button_callback);
-        glfwSetCursorPosCallback(Managers::Window::window, cursor_position_callback);
-        glfwSetKeyCallback(Managers::Window::window, keyboard_button_callback);
+        glfwSetMouseButtonCallback(WindowManager::window, mouse_button_callback);
+        glfwSetCursorPosCallback(WindowManager::window, cursor_position_callback);
+        glfwSetKeyCallback(WindowManager::window, keyboard_button_callback);
     }
 
     
-    void Managers::Input::Update()
+    void InputManager::Update()
     {
         Joystick::update();
     }
 
     
-    void Managers::Input::Shutdown()
+    void InputManager::Shutdown()
     {
         Joystick::destroy();
     }

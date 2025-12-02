@@ -7,13 +7,13 @@
 #define SPACE_ENGINE_MAX_RES_H 1080
 
 
-namespace SpaceEngine::Managers
+namespace SpaceEngine
 {
-    class Window
+    class WindowManager
     {
         public:
-            Window() = default;
-            ~Window() = default;
+            WindowManager() = default;
+            ~WindowManager() = default;
 
             void Initialize();
             int WindowShouldClose();

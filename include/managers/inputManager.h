@@ -87,11 +87,11 @@ enum
     SPACE_ENGINE_JK_AXIS_LAST=SPACE_ENGINE_JK_AXIS_RIGHT_TRIGGER
 };
 
-namespace SpaceEngine::Managers
+namespace SpaceEngine
 {
     
     class GameObject;
-    class Input
+    class InputManager
     {
         public:
             void Initialize();

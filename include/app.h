@@ -4,6 +4,10 @@
 #include "managers/logManager.h"
 #include "managers/inputManager.h"
 #include "managers/windowManager.h"
+#include "mesh.h"
+#include "material.h"
+#include "shader.h"
+
 #include <glad/gl.h>
 
 namespace SpaceEngine
@@ -13,14 +17,18 @@ namespace SpaceEngine
         public:
             App();
             ~App();
+            void Start();
             void Run();
         private:
             //managers
-            Managers::LogManager logManager;
-            Managers::Input inputManager;
+            LogManager logManager;
+            InputManager inputManager;
+            MaterialManager materialManager;
+            ShaderManager shaderManager;
             //Objects
             Scene* scene;
             Renderer* renderer;
-            Managers::Window windowManager;
+            UIRenderer* uiRenderer;
+            WindowManager windowManager;
     };
 };

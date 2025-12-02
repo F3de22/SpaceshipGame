@@ -1,6 +1,9 @@
 #include "PlayerShip.h"
 #include "inputManager.h"
-
+#include <glad/gl.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include "utils/stb_image.h"
 
 namespace SpaceEngine {
 

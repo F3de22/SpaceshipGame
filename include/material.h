@@ -6,7 +6,12 @@
 
 namespace SpaceEngine
 {
-  
+    enum MATERIAL_TYPE
+    {
+        BASE_MAT,
+        PBR_MAT
+    };
+
     enum TEXTURE_TYPE 
     {
         TEXTURE_TYPE_FIRST = 0,
@@ -53,24 +58,30 @@ namespace SpaceEngine
                 glm::mat3,
                 glm::mat4>;
     
-            BaseMaterial() = default;
-            BaseMaterial(std::string);
-            BaseMaterial(std::unordered_map<std::string, PropertyValue> initProps)
-                : props(std::move(initProps))
-            {}
-            void addTexture(std::string name, Texture* pTex);
+            
+
             void bindingPropsToShader();
             void bindingPropsToShader(ShaderProgram* pShaderProg);
+            ShaderProgram* getShader();
+            int addTexture(const std::string& nameTex, Texture* pTex);
+            int addProperty(const std::string& nameProp, PropertyValue val);
+            int removeProperty(const std::string& nameProp);
+            int removeTexture(const std::string& nameTex);
             std::string name;
             std::unordered_map<std::string, PropertyValue> props;
             ShaderProgram* pShader = nullptr;
             protected:
+                BaseMaterial() = default;
+                BaseMaterial(std::string name);
+                BaseMaterial(std::unordered_map<std::string, PropertyValue> initProps)
+                    : props(std::move(initProps))
+                {}
                 std::unordered_map<std::string, Texture*> texs;
     };
 
     class PBRMaterial : public BaseMaterial
     {
-        public:
+        private:
             PBRMaterial()
             {
                 texs = 
@@ -96,5 +107,38 @@ namespace SpaceEngine
                     {"emissive_color_val", Vector3{0.f, 0.f, 0.f}}
                 };
             }
+    };
+
+    class UIMaterial : public BaseMaterial
+    {
+        private:
+            UIMaterial()
+            {
+                texs = 
+                {
+                    {"ui_tex", nullptr},
+                };
+
+                props = 
+                {
+                    
+                    {"tint_color_val", Vector4{1.f, 1.f, 1.f, 1.f}},
+                    {"roughness_val", float{1.f}},
+                };
+            }
+    };
+
+    class MaterialManager
+    {
+        public:
+            MaterialManager() = default;
+            ~MaterialManager() = default;
+            void Inizialize();
+            template <typename T>
+            static BaseMaterial* createMaterial(const std::string name);
+            static BaseMaterial* findMaterial(const std::string nameMaterial);
+            void Shutdown();
+        private:
+            static std::unordered_map<std::string, BaseMaterial*> materialsMap;
     };
 }

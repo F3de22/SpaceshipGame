@@ -581,6 +581,10 @@ namespace SpaceEngine
 
     void ShaderManager::Inizialize()
     {
+        createShaderProgram("simple");
+        createShaderProgram("ui");
+        createShaderProgram("simpleTex");
+        createShaderProgram("pbr");
 
     }
 

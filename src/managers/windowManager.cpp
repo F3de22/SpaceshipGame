@@ -1,44 +1,44 @@
 #include "windowManager.h"
 #include "log.h"
 
-namespace SpaceEngine::Managers
+namespace SpaceEngine
 {
     void window_maximize_callback(GLFWwindow* window, int maximized);
 
-    int Window::height = SPACE_ENGINE_MIN_RES_H, Window::width = SPACE_ENGINE_MIN_RES_W;
-    int Window::xpos = 0, Window::ypos = 0;
-    GLFWwindow* Window::window = nullptr;
-    bool Window::fullScreenState = false;
-    GLFWmonitor* Window::monitor = nullptr;
+    int WindowManager::height = SPACE_ENGINE_MIN_RES_H, WindowManager::width = SPACE_ENGINE_MIN_RES_W;
+    int WindowManager::xpos = 0, WindowManager::ypos = 0;
+    GLFWwindow* WindowManager::window = nullptr;
+    bool WindowManager::fullScreenState = false;
+    GLFWmonitor* WindowManager::monitor = nullptr;
 
-    void Window::Initialize()
+    void WindowManager::Initialize()
     {
         setUpGLFW();
     }
 
-    int Window::WindowShouldClose()
+    int WindowManager::WindowShouldClose()
     {
         return glfwWindowShouldClose(window);
     }
 
-    void Window::SetWindowShouldClose()
+    void WindowManager::SetWindowShouldClose()
     {
         glfwSetWindowShouldClose(window, true);
     }
     
-    void Window::PollEvents()
+    void WindowManager::PollEvents()
     {
         glfwPollEvents();
     }
-    void Window::Windowed()
+    void WindowManager::Windowed()
     {
         if(fullScreenState)
         {
             fullScreenState = false;
-            glfwSetWindowMonitor(Window::window,
+            glfwSetWindowMonitor(WindowManager::window,
 		                        nullptr,
-		                        Window::xpos,
-		                        Window::ypos,
+		                        WindowManager::xpos,
+		                        WindowManager::ypos,
 		                        SPACE_ENGINE_MIN_RES_W,
                                 SPACE_ENGINE_MIN_RES_H,
 		                        0);
@@ -46,11 +46,11 @@ namespace SpaceEngine::Managers
         }
     }
 
-    void Window::SwapBuffers()
+    void WindowManager::SwapBuffers()
     {
         glfwSwapBuffers(window);
     }
-    bool Window::setUpGLFW()
+    bool WindowManager::setUpGLFW()
     {
         SPACE_ENGINE_TRACE("App - set up GLFW");
         glfwInit();
@@ -96,7 +96,7 @@ namespace SpaceEngine::Managers
         return true;
     }
 
-    void Window::Shutdown()
+    void WindowManager::Shutdown()
     {
         glfwTerminate();
     }
@@ -140,10 +140,10 @@ namespace SpaceEngine::Managers
         if (maximized)
         {
             // The window was maximized
-            Window::fullScreenState = true;
-            Window::monitor = get_window_monitor(window);
-            const GLFWvidmode* mode = glfwGetVideoMode(Window::monitor);
-            glfwSetWindowMonitor(window, Window::monitor, 0, 0, SPACE_ENGINE_MAX_RES_W, SPACE_ENGINE_MAX_RES_H, mode->refreshRate);
+            WindowManager::fullScreenState = true;
+            WindowManager::monitor = get_window_monitor(window);
+            const GLFWvidmode* mode = glfwGetVideoMode(WindowManager::monitor);
+            glfwSetWindowMonitor(window, WindowManager::monitor, 0, 0, SPACE_ENGINE_MAX_RES_W, SPACE_ENGINE_MAX_RES_H, mode->refreshRate);
             glViewport(0, 0, SPACE_ENGINE_MAX_RES_W, SPACE_ENGINE_MAX_RES_H);
         }
         else

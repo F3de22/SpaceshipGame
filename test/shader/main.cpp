@@ -6,8 +6,8 @@
 
 int main()
 {
-    SpaceEngine::Managers::LogManager logManager{};
-    SpaceEngine::Managers::Window winManager{};
+    SpaceEngine::LogManager logManager{};
+    SpaceEngine::WindowManager winManager{};
     SpaceEngine::ShaderManager shManager{};
     logManager.Initialize();
     winManager.Initialize();

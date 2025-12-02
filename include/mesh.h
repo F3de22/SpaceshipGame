@@ -1,3 +1,4 @@
+#pragma once
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <glad/gl.h>
@@ -15,21 +16,19 @@ namespace SpaceEngine
         public:
             Mesh() = default;
             ~Mesh();
-            //static bool loadMesh(const std::string& fileName);
-            //create box 
-            //create square
-            //create a sphere
+            void bindVAO();
+            int getNumSubMesh();
+            int bindMaterialToSubMeshIndex(int index, BaseMaterial* pMat);
+            BaseMaterial* getMaterialBySubMeshIndex(int index);
+            void drawSubMesh(unsigned int idSubMesh);
             //void render();
             //void render(unsigned int drawIndex, unsigned int primID);
             //void render(unsigned int numInstannes, const Matrix4* WVPMats, const Matrix4* worldMats);
         private:
             void clear();
-
             void populateBuffers();
             //void setupRenderMaterialsPBR();
-            const BaseMaterial& getMaterial();
             //void getLeadingVertex(uint32_t drawIndex, uint32_t primID, Vector3& vertex);
-
 
             struct Vertex 
             {
@@ -65,10 +64,8 @@ namespace SpaceEngine
 
             GLuint VAO = 0;
             GLuint buffers[NUM_BUFFER] = {0};
-            //transform
-            //Matrix4 globalInverseTransform;
-            std::vector<std::unique_ptr<BaseMaterial>> materials;
-            std::vector<MeshEntry> meshes;
+            std::vector<BaseMaterial*> materials;
+            std::vector<MeshEntry> subMeshes;
             std::vector<uint32_t> indices;
             std::vector<Vertex> vertices;
             bool isPBR = false;
@@ -82,8 +79,11 @@ namespace SpaceEngine
         MeshManager() = default;
         ~MeshManager() = default;
         void Initialize();
-        void Shutdown();
         static Mesh* loadMesh(const std::string& fileName);
+        //create box 
+        //create square
+        //create a sphere
+        void Shutdown();
         private:
             static bool initFromScene(const aiScene* pScene, const std::string& fileName);
             static void countVerticesAndIndices(const aiScene* pScene, unsigned int& numVertices, unsigned int& numIndices);
@@ -102,5 +102,5 @@ namespace SpaceEngine
             static Mesh* pTMPMesh;
     };
     
-
+    class UIMesh;
 };

@@ -42,20 +42,14 @@ namespace SpaceEngine
         this->name = name;
     }
 
-    void BaseMaterial::addTexture(std::string name, Texture* pTex)
-    {
-
-        texs[name] = pTex;
-        pTex->setBindlessHandle(texs.size());
-    }
-
     void BaseMaterial::bindingPropsToShader(ShaderProgram* pShaderProg)
     {
         if(!pShaderProg)
         {
             SPACE_ENGINE_ERROR("Error shader is nullptr");
         }
-        
+
+        pShader = pShaderProg; 
         bindingPropsToShader();
     }
 
@@ -87,6 +81,112 @@ namespace SpaceEngine
                 pShader->setUniform(name.c_str(), texs[name]->getBindlessHandle());
             }
         }
+    }
+
+    ShaderProgram* BaseMaterial::getShader()
+    {
+        return pShader;
+    }
+
+    int BaseMaterial::addTexture(const std::string& nameTex, Texture* pTex)
+    {
+        if(texs.find(nameTex) == texs.end())
+        {
+            SPACE_ENGINE_INFO("Material: {}, added Texture: {}", name, nameTex);
+            pTex->setBindlessHandle(static_cast<unsigned int>(texs.size()));
+            texs[nameTex] = pTex;
+
+        }
+        else 
+        {
+            SPACE_ENGINE_WARN("Material: {}, overwrite Texture: {}", name, nameTex);
+            pTex->setBindlessHandle(static_cast<unsigned int>(texs.size()));
+            texs[nameTex] = pTex;
+            return 2;
+        }
+        return 1;
+    }
+
+    int BaseMaterial::addProperty(const std::string& nameProp, PropertyValue val)
+    {
+        if(props.find(nameProp) == props.end())
+        {
+            SPACE_ENGINE_INFO("Material: {}, added Property: {}", name, nameProp);
+            props[nameProp] = val;
+        }
+        else 
+        {
+            SPACE_ENGINE_WARN("Material: {}, overwrite Property: {}", name, nameProp);
+            props[nameProp] = val;
+            return 2;
+        }
+        return 1;
+    }
+
+    int BaseMaterial::removeProperty(const std::string& nameProp)
+    {
+        if(props.find(nameProp) != props.end())
+        {
+            props.erase(nameProp);
+            SPACE_ENGINE_INFO("Property: {} is removed", nameProp);
+            return 1;
+        }
+        SPACE_ENGINE_ERROR("Property: {} not found",  nameProp);
+        return 0;
+    }
+
+    int BaseMaterial::removeTexture(const std::string& nameTex)
+    {
+        if(texs.find(nameTex) != texs.end())
+        {
+            props.erase(nameTex);
+            SPACE_ENGINE_INFO("Texture: {} is removed", nameTex);
+            return 1;
+        }
+        SPACE_ENGINE_ERROR("Texture: {} not found",  nameTex);
+        return 0;
+    }
+
+    //MaterialManager
+    static std::unordered_map<std::string, BaseMaterial*> materialsMap;
+    
+    void MaterialManager::Inizialize()
+    {
+
+    }
+
+    template <typename T>
+    BaseMaterial* MaterialManager::createMaterial(const std::string name)
+    {
+        static_assert(std::is_base_of_v<BaseMaterial, T>);
+
+        if(materialsMap.find(name) == materialsMap.end())
+        {
+            T* pMat = new T();
+            materialsMap[name] = pMat;
+            return pMat;   
+        }
+        return nullptr;
+    }
+
+    BaseMaterial* MaterialManager::findMaterial(const std::string nameMaterial)
+    {
+        auto pos = materialsMap.find(nameMaterial);
+
+        if(pos == materialsMap.end())
+        {
+            SPACE_ENGINE_ERROR("Material not found, name: {}", nameMaterial);
+            return nullptr;
+        }
+
+        return pos->second;
+    }
+
+    void MaterialManager::Shutdown()
+    {
+        for (auto& [name, pMat] : materialsMap)
+            delete pMat;
+        materialsMap.clear();
     }
 
 }

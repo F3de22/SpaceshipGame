@@ -5,14 +5,9 @@
 namespace SpaceEngine
 {
     //camera
-    BaseCamera::BaseCamera() : nearPlane(0.1f), farPlane(100.f)
-    {
-
-    }
-    BaseCamera::BaseCamera(float nearPlane, float farPlane) : nearPlane(nearPlane), farPlane(farPlane)
-    {
-
-    }
+    BaseCamera::BaseCamera() : nearPlane(0.1f), farPlane(100.f){}
+    
+    BaseCamera::BaseCamera(float nearPlane, float farPlane) : nearPlane(nearPlane), farPlane(farPlane){}
 
     Matrix4 BaseCamera::getViewMatrix()
     {
@@ -20,12 +15,12 @@ namespace SpaceEngine
     }
 
     //PerspectiveCamera
-    PerspectiveCamera::PerspectiveCamera() : fov(45), aspectRatio(Managers::Window::aspectRatio)
+    PerspectiveCamera::PerspectiveCamera() : fov(45), aspectRatio(WindowManager::aspectRatio)
     {
         projection = Math::perspectiveMatrix4(fov, aspectRatio, nearPlane, farPlane);
     }
 
-    PerspectiveCamera::PerspectiveCamera(float fov, float nearPlane, float farPlane) : BaseCamera(nearPlane, farPlane), fov(fov), aspectRatio(Managers::Window::aspectRatio)
+    PerspectiveCamera::PerspectiveCamera(float fov, float nearPlane, float farPlane) : BaseCamera(nearPlane, farPlane), fov(fov), aspectRatio(WindowManager::aspectRatio)
     {
         projection = Math::perspectiveMatrix4(fov, aspectRatio, nearPlane, farPlane);
     }
@@ -62,7 +57,7 @@ namespace SpaceEngine
 
     OrthoCamera::OrthoCamera(float nearPlane, float farPlane): BaseCamera(nearPlane, farPlane)
     {
-        width = Managers::Window::aspectRatio;
+        width = WindowManager::aspectRatio;
         height = 1.f;
         projection = Math::orthoMatrix4(width, height, nearPlane, farPlane);
     }

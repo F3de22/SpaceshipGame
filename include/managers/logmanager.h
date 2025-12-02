@@ -1,6 +1,6 @@
 #pragma once
 
-namespace SpaceEngine::Managers
+namespace SpaceEngine
 {
     class LogManager
     {
