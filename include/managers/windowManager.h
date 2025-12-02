@@ -28,7 +28,7 @@ namespace SpaceEngine
             static GLFWwindow* window;
             static GLFWmonitor* monitor;
             static bool fullScreenState;
-            constexpr static const float aspectRatio = 16/9;  
+            constexpr static const float aspectRatio = 16.f/9.f;  
         private:
             bool setUpGLFW();
     };

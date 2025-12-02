@@ -148,6 +148,7 @@ namespace SpaceEngine
                 if(materialsMap.find(name) == materialsMap.end())
                 {
                     T* pMat = new T();
+                    pMat->name = name;
                     materialsMap[name] = pMat;
                     return pMat;   
                 }

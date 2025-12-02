@@ -61,6 +61,8 @@ namespace SpaceEngine
             static bool fileExists(const std::string &fileName); 
             static std::string getFileNameFormPath(const std::string& path);
             static std::string getExtension(const char *name); 
+            static std::string getFileNameNoExt(const std::string& filePath);
+            std::string joinPaths(const std::string& a, const std::string& b);
     };
 
 }

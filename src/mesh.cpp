@@ -92,8 +92,9 @@ namespace SpaceEngine
         bool ret = false;
         
         Assimp::Importer importer;
-        const aiScene* pScene = importer.ReadFile(fileName.c_str(), ASSIMP_LOAD_FLAGS);
-
+        std::string fullPath(MESHES_PATH + fileName);
+        const aiScene* pScene = importer.ReadFile(fullPath.c_str(), ASSIMP_LOAD_FLAGS);
+        pTMPMesh->name = Utils::getFileNameNoExt(fileName);
         if(pScene)
         {
             /*capiamo*/
@@ -209,14 +210,14 @@ namespace SpaceEngine
         // Initialize the materials
         for (unsigned int i = 0 ; i < pScene->mNumMaterials ; i++) {
             const aiMaterial* pMaterial = pScene->mMaterials[i];
-            BaseMaterial* pbrMat = MaterialManager::createMaterial<PBRMaterial>("");
+            BaseMaterial* pbrMat = MaterialManager::createMaterial<PBRMaterial>(pTMPMesh->name+std::to_string(i));
             pbrMat->pShader = ShaderManager::findShaderProgram("pbr");//TODO: make the biding 
             if(!pbrMat->pShader)
             {
                 SPACE_ENGINE_FATAL("Shader pbr not compiled")
                 exit(-1);
             }
-            pTMPMesh->materials.push_back(std::move(pbrMat));
+            pTMPMesh->materials[i]= std::move(pbrMat);
             loadTextures(dir, pMaterial, pScene, i);
             loadColors(pMaterial, i);
             pTMPMesh->materials[i]->bindingPropsToShader(ShaderManager::findShaderProgram("pbr"));

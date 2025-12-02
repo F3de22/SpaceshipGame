@@ -68,6 +68,7 @@ namespace SpaceEngine
             std::vector<MeshEntry> subMeshes;
             std::vector<uint32_t> indices;
             std::vector<Vertex> vertices;
+            std::string name;
             bool isPBR = false;
             
         friend class MeshManager;

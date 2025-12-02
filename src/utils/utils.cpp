@@ -137,4 +137,15 @@ namespace SpaceEngine
         return p.filename().string();
     }
 
+    std::string Utils::getFileNameNoExt(const std::string& filePath)
+    {
+        std::filesystem::path p(filePath);
+        return p.stem().string();   // stem() = filename without extension
+    }
+    
+    std::string Utils::joinPaths(const std::string& a, const std::string& b)
+    {
+        std::filesystem::path p = std::filesystem::path(a) / std::filesystem::path(b);  // Correct handling of slashes and OS differences
+        return p.string();
+    }
 }

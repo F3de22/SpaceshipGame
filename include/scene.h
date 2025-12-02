@@ -28,18 +28,22 @@ namespace SpaceEngine
             template<typename T>
             void addSceneComponent(T sceneComponent)
             {
+                using PureT = std::remove_pointer_t<T>;
+
                 if(sceneComponent == nullptr)
                 {
                     SPACE_ENGINE_ERROR("The passed component is null");
                     return;
                 }
-                if constexpr (std::is_same_v<T, GameObject*>)
+                if constexpr (std::is_base_of<GameObject, PureT>::value)
                 {
                     gameObjects.push_back(sceneComponent);
+                    return;
                 }
-                else if constexpr (std::is_same_v<T, BaseCamera*>)
+                else if constexpr (std::is_base_of<BaseCamera, PureT>::value)
                 {
                     cameras.push_back(sceneComponent);
+                    return;
                 }
             
                 SPACE_ENGINE_ERROR("Component not valid!");
