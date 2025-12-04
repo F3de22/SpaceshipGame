@@ -227,7 +227,6 @@ namespace SpaceEngine
             pTMPMesh->materials[i]= std::move(pbrMat);
             loadTextures(dir, pMaterial, pScene, i);
             loadColors(pMaterial, i);
-            pTMPMesh->materials[i]->bindingPropsToShader(ShaderManager::findShaderProgram("pbr"));
         }
 
         return true;
@@ -266,7 +265,7 @@ namespace SpaceEngine
                     std::string fullPath = Utils::getFullPath(dir, path);
                     bool IsSRGB = true;
                     pTMPMesh->materials[materialIndex]->addTexture("diffuse_tex", TextureManager::load(fullPath, IsSRGB));
-                    SPACE_ENGINE_INFO("Loaded diffuse texture '{}' at index {}", fullPath.c_str(), materialIndex);
+                    SPACE_ENGINE_INFO("Loaded diffuse texture '{}' at indexMaterial {}", fullPath.c_str(), materialIndex);
                 }
             }
                         

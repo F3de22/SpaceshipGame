@@ -78,7 +78,11 @@ namespace SpaceEngine
             }
             else if(texs.find(name) != texs.end())
             {
-                pShader->setUniform(name.c_str(), texs[name]->getBindlessHandle());
+                if(texs[name])
+                {
+                    pShader->setUniform(name.c_str(), texs[name]->getBindlessHandle());
+                }
+                else {SPACE_ENGINE_WARN("Material: {}, Name uniform texture:{} no texture", this->name, name);}
             }
         }
     }

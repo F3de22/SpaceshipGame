@@ -47,13 +47,12 @@ namespace SpaceEngine{
         scene->addSceneComponent<Player*>(pPlayer);
         //TODO: initialize correctly the camera please 
         PerspectiveCamera* pCamera = new PerspectiveCamera();
-        pCamera->transf.translateGlobal(Vector3(0.f, 3.f, 5.f));
+        pCamera->transf.translateGlobal(Vector3(0.f, 3.f, 3.f));
         
         pCamera->transf.lookAt(pPlayer->getComponent<Transform>()->getWorldPosition());
         scene->addSceneComponent<PerspectiveCamera*>(pCamera);
-
-
     }
+
     void App::Run()
     {
         SPACE_ENGINE_DEBUG("App - GameLoop");

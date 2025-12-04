@@ -34,7 +34,7 @@ namespace SpaceEngine
                     return m_vecTransform[0];
                 }
             
-                SPACE_ENGINE_ERROR("Component not found");
+                SPACE_ENGINE_WARN("Component not found");
                 return nullptr;
             }
 
