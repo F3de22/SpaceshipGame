@@ -67,12 +67,19 @@ namespace SpaceEngine
 
     BaseMaterial* Mesh::getMaterialBySubMeshIndex(int index)
     {
-        if(index >= materials.size())
+        if(index >= subMeshes.size())
         {
-            SPACE_ENGINE_ERROR("Index out of rangeis nullptr")
+            SPACE_ENGINE_ERROR("Index out of rangeis of number of meshes");
             return nullptr;
         }
-    
+        
+        int indexMat = subMeshes[index].materialIndex;
+
+        if(indexMat >= materials.size())
+        {
+            SPACE_ENGINE_ERROR("Index out of rangeis of number of materials");
+            return nullptr;
+        }
         return materials[subMeshes[index].materialIndex];
     }
 
