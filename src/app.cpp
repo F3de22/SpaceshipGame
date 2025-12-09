@@ -13,6 +13,7 @@ namespace SpaceEngine{
         //initialize Managers
         logManager.Initialize();
         windowManager.Initialize();
+        physicsManager.Initialization();
         inputManager.Initialize();
         shaderManager.Initialize();
         materialManager.Initialize();
@@ -33,6 +34,7 @@ namespace SpaceEngine{
         materialManager.Shutdown();
         shaderManager.Shutdown();
         inputManager.Shutdown();
+        physicsManager.Shutdown();
         windowManager.Shutdown();
         logManager.Shutdown();
         delete scene;

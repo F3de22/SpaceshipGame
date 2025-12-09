@@ -46,6 +46,7 @@ namespace SpaceEngine{
 
         while(!destroyQ.empty())
         {
+            pPhyManager->RemoveCollider(destroyQ.front()->getComponent<Collider>());
             toDestroy.insert(destroyQ.front());
             destroyQ.pop();
         }
@@ -99,6 +100,8 @@ namespace SpaceEngine{
             {
                 if(sr.overrideWorldPos)
                     pCopy->getComponent<Transform>()->setWorldPosition(sr.wPos);
+                if(Collider* pCol = pCopy->getComponent<Collider>(); pCol != nullptr)
+                    pPhyManager->AddCollider(pCol);
             }
             else
             {

@@ -2,7 +2,35 @@
 
 namespace SpaceEngine
 {
-    
+    void PhysicsManager::Initialization()
+    {
+
+    }
+
+    void PhysicsManager::Shutdown()
+    {
+
+    }
+
+    void PhysicsManager::AddCollider(Collider* col)
+    {
+        if(col)
+        {
+            lColliders.push_back(col);
+            grid.AddColliderToHGrid(col);
+        }
+        else SPACE_ENGINE_FATAL("AddCollider: col nullptr");
+    }
+
+    void PhysicsManager::RemoveCollider(Collider* col)
+    {
+        if(col)
+        {
+            lColliders.remove(col);
+            grid.RemoveObjectFromGrid(col);
+        }
+        else SPACE_ENGINE_FATAL("RemoveCollider: col nullptr");
+    }
     
     void PhysicsManager::AddColliders(const std::list<Collider*>& lCols)
     {

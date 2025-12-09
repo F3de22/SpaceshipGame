@@ -3,6 +3,7 @@
 #include "renderer.h"
 #include "camera.h"
 #include "gameObject.h"
+#include "collisionDetection.h"
 #include "log.h"
 #include <vector>
 #include <string>
@@ -37,6 +38,13 @@ namespace SpaceEngine
                 if constexpr (std::is_base_of<GameObject, PureT>::value)
                 {
                     gameObjects.push_back(sceneComponent);
+                    Collider * pCol = sceneComponent->getComponent<Collider>();
+                    
+                    if(pCol != nullptr) 
+                    {
+                        pPhyManager->AddCollider(pCol); 
+                    }
+                    
                     return;
                 }
                 else if constexpr (std::is_base_of<BaseCamera, PureT>::value)
@@ -58,6 +66,7 @@ namespace SpaceEngine
             BaseCamera* getActiveCamera();
             void Update(float dt);
         private:
+            PhysicsManager* pPhyManager = nullptr;
             void processDestroyQ();
             void processInstantiateQ(float dt);
             struct SpawnRequest

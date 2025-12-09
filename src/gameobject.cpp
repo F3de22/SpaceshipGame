@@ -19,8 +19,11 @@ namespace SpaceEngine
     }
     void GameObject::destroy()
     {
-        pendingDestroy = true;
-        scene->requestDestroy(this);
+        if(!pendingDestroy)
+        {
+            pendingDestroy = true;
+            scene->requestDestroy(this);
+        }
     }
 
     void GameObject::update(float dt)

@@ -239,12 +239,13 @@ namespace SpaceEngine
             void Initialization();
             void Initialization(const std::list<Collider*>& lCols);
             void AddColliders(const std::list<Collider*>& lCols);
+            void AddCollider(Collider* col);
             void RemoveColliders(const std::list<Collider*>& lCols);
-
+            void RemoveCollider(Collider* col);
             void Shutdown();
         
         private:
-        std::list<Collider*> lColliders;
-        HGrid grid;
+            std::list<Collider*> lColliders;
+            HGrid grid;
     };
 }
