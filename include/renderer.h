@@ -12,8 +12,9 @@ namespace SpaceEngine
 
     struct RenderObject
     {
-        std::vector<Matrix4>modelMatrix;
-        int instances = 0;
+        Matrix4 modelMatrix;
+        //std::vector<Matrix4>modelMatrix;
+        //int instances = 0;
         Mesh* mesh = nullptr;
     };
 

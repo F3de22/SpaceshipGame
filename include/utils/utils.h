@@ -51,6 +51,11 @@ namespace SpaceEngine
         {
             return glm::radians(degree);
         }
+
+        inline float sqr(float a)
+        {
+            return a*a;
+        }
     }
 
     class Utils

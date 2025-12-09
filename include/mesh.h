@@ -70,6 +70,10 @@ namespace SpaceEngine
             std::vector<Vertex> vertices;
             std::string name;
             bool isPBR = false;
+
+        public:
+            Vector3 maxPos;
+            Vector3 minPos;
             
         friend class MeshManager;
     };

@@ -10,8 +10,25 @@ namespace SpaceEngine
             Transform() = default;
             ~Transform() = default;
 
-            Transform(const Transform&) = delete;
-            Transform& operator=(const Transform&) = delete;
+            Transform(const Transform& other)
+            {
+                localPos = other.localPos;
+                localRot = other.localRot;
+                localScale = other.localScale;
+                parent = other.parent;
+                //no copy the children
+                dirty = other.dirty;
+            };
+
+            Transform& operator=(const Transform& other) 
+            {
+                localPos = other.localPos;
+                localRot = other.localRot;
+                localScale = other.localScale;
+                parent = other.parent;
+                //no copy the children
+                dirty = other.dirty;
+            };
 
             Transform(Transform&& other) noexcept { moveFrom(std::move(other)); }
             Transform& operator=(Transform&& other) noexcept { moveFrom(std::move(other)); return *this; }

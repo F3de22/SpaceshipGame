@@ -21,20 +21,19 @@ namespace SpaceEngine
                 //set matrices
                 if(shader)
                 {
-                    for(int i = 0; i < renderObj.instances; i++)
-                    {
-                        shader->setUniform("model", renderObj.modelMatrix[i]);
+                    //for(int i = 0; i < renderObj.instances; i++)
+                    //{
+                    //    shader->setUniform("model", renderObj.modelMatrix[i]);
+                    //    shader->setUniform("view", cam.getViewMatrix());
+                    //    shader->setUniform("projection", cam.getProjectionMatrix());
+                    //    //call the draw for the mesh
+                    //    renderObj.mesh->drawSubMesh(idSubMesh);
+                    //}
+                        shader->setUniform("model", renderObj.modelMatrix);
                         shader->setUniform("view", cam.getViewMatrix());
-                        //shader->setUniform("view",glm::lookAt(
-                        //glm::vec3(3.0f, 3.0f, 3.0f),  // camera position
-                        //glm::vec3(0.0f, 0.0f, 0.0f),  // target (center of cube)
-                        //glm::vec3(0.0f, 1.0f, 0.0f)));   // world up 
                         shader->setUniform("projection", cam.getProjectionMatrix());
-                            
-
                         //call the draw for the mesh
                         renderObj.mesh->drawSubMesh(idSubMesh);
-                    }
                 }
 
             }

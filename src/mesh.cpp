@@ -1,6 +1,7 @@
 #include "mesh.h"
 #include "log.h"
 
+#include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -184,6 +185,13 @@ namespace SpaceEngine
             const aiVector3D& pPos = paiMesh->mVertices[i];
 
             v.position = Vector3(pPos.x, pPos.y, pPos.z);
+            
+            pTMPMesh->maxPos.x = std::max(pTMPMesh->maxPos.x, v.position.x);
+            pTMPMesh->maxPos.y = std::max(pTMPMesh->maxPos.y, v.position.y);
+            pTMPMesh->maxPos.z = std::max(pTMPMesh->maxPos.z, v.position.z);
+            pTMPMesh->minPos.x = std::min(pTMPMesh->minPos.x, v.position.x);
+            pTMPMesh->minPos.y = std::min(pTMPMesh->minPos.y, v.position.y);
+            pTMPMesh->minPos.z = std::min(pTMPMesh->minPos.z, v.position.z);
 
             if (paiMesh->mNormals) {
                 const aiVector3D& pNormal = paiMesh->mNormals[i];

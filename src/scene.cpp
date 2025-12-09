@@ -15,8 +15,24 @@ namespace SpaceEngine{
             obj->update(dt);
 
         // cleanup gameobjects phase
+        processInstantiateQ(dt);
         processDestroyQ();
         
+    }
+
+    void Scene::processInstantiateQ(float dt)
+    {
+        for(auto it = spawnQ.begin(); it != spawnQ.end();)
+        {
+            it->timeRemaining -= dt;
+
+            if(it->timeRemaining <= 0.f)
+            {
+                gameObjects.push_back(instatiate(*it));
+                it = spawnQ.erase(it);
+            }
+            else ++it;
+        }
     }
 
     void Scene::requestDestroy(GameObject* pGameObj)
@@ -42,6 +58,58 @@ namespace SpaceEngine{
             );
     }
 
+    void Scene::requestInstatiate(GameObject* pGameObj)
+    {
+        SpawnRequest sr;
+        sr.prefab = pGameObj;
+        spawnQ.push_back(sr);
+    }
+
+    void Scene::requestInstatiate(GameObject* pGameObj, float time)
+    {
+        SpawnRequest sr;
+        sr.prefab = pGameObj;
+        sr.timeRemaining = time;
+        spawnQ.push_back(sr);
+    }
+
+    void Scene::requestInstatiate(GameObject* pGameObj, Vector3 wPos)
+    {
+        SpawnRequest sr;
+        sr.prefab = pGameObj;
+        sr.overrideWorldPos = true;
+        sr.wPos = wPos;
+        spawnQ.push_back(sr);
+    }
+    
+    void Scene::requestInstatiate(GameObject* pGameObj, float time, Vector3 wPos)
+    {
+        SpawnRequest sr;
+        sr.prefab = pGameObj;
+        sr.overrideWorldPos = true;
+        sr.wPos = wPos;
+        sr.timeRemaining = time;
+        spawnQ.push_back(sr);
+    }
+
+        GameObject* Scene::instatiate(const SpawnRequest& sr)
+        {
+            GameObject* pCopy =  new GameObject(*sr.prefab);
+            if(pCopy)
+            {
+                if(sr.overrideWorldPos)
+                    pCopy->getComponent<Transform>()->setWorldPosition(sr.wPos);
+            }
+            else
+            {
+                SPACE_ENGINE_FATAL("Inable to copy and instatiate the GameObject");
+            }
+
+            return pCopy;
+
+        }
+
+
     void Scene::gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables)
     {
         worldRenderables.clear();
@@ -58,10 +126,13 @@ namespace SpaceEngine{
                 {
                     RenderObject renderObj;
                     renderObj.mesh = mesh;
-                    renderObj.instances = gameObj->getNumInstances();
-                    std::vector<Transform*>* vecTrasf = gameObj->getComponent<std::vector<Transform*>>();
-                    for(int j = 0; j < renderObj.instances; j++)
-                        renderObj.modelMatrix.push_back((*vecTrasf)[j]->getWorldMatrix());
+                    //renderObj.instances = gameObj->getNumInstances();
+                    //std::vector<Transform*>* vecTrasf = gameObj->getComponent<std::vector<Transform*>>();
+                    Transform* trasf = gameObj->getComponent<Transform>();
+                    //for(int j = 0; j < renderObj.instances; j++)
+                    //  renderObj.modelMatrix.push_back((*vecTrasf)[j]->getWorldMatrix());
+                    //renderObj.modelMatrix.push_back(trasf->getWorldMatrix());
+                    renderObj.modelMatrix = trasf->getWorldMatrix();
                     worldRenderables.push_back(renderObj);
                 }
             }

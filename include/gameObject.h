@@ -8,15 +8,30 @@
 
 namespace SpaceEngine
 {
+
+    enum class Layers
+    {
+        DEFAULT_LAYER,
+        PLAYER_LAYER,
+        ENEMY_LAYER,
+        BULLET_LAYER
+    };
+
     class Scene;
+    class Collider;
     class GameObject 
     {
         public:
-            GameObject(){m_numInstances = 1; };
+            GameObject(){};
+            GameObject(const GameObject& other);
             virtual ~GameObject() = default;
             int getNumInstances();
+            Layers getLayer();
             void destroy(); 
-            virtual void update(float dt) = 0;
+            virtual void update(float dt);
+            virtual void fixedUpdate(float fixed_dt);
+            virtual void onCollisionEnter(Collider* col);
+
             
             template<typename T>
             T* getComponent()
@@ -27,11 +42,15 @@ namespace SpaceEngine
                 }
                 else if constexpr (std::is_same_v<T, std::vector<Transform*>>)
                 {
-                    return &m_vecTransform;
+                    return &m_pTransform;
                 }
                 else if constexpr (std::is_same_v<T, Transform>)
                 {
-                    return m_vecTransform[0];
+                    return m_pTransform;
+                }
+                else if constexpr (std::is_same_v<T, Collider>)
+                {
+                    return m_pCollider;
                 }
             
                 SPACE_ENGINE_WARN("Component not found");
@@ -52,18 +71,24 @@ namespace SpaceEngine
                 }
                 else if constexpr (std::is_same_v<T, Transform*>)
                 {
-                    m_vecTransform.push_back(component);
+                    m_pTransform.push_back(component);
+                }
+                else if constexpr (std::is_same_v<T, Collider*>)
+                {
+                    m_pCollider.push_back(component);
                 }
             }
-
+            bool pendingDestroy = false;
         private:
             //Attention
             Scene* scene = nullptr;
         protected:
             GameObject(const std::string& filePathModel);
-            int m_numInstances = 0;
-            std::vector<Transform*> m_vecTransform;
+            Transform* m_pTransform;
             Mesh* m_pMesh = nullptr;
+            Collider* m_pCollider = nullptr;
+            Layers m_layer = Layers::DEFAULT_LAYER;
+
             //TODO: add componet for the physics 
     };
 }
