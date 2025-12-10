@@ -4,7 +4,12 @@
 
 namespace SpaceEngine {
 
-    Asteroid::Asteroid(Scene* scene) {
+    Asteroid::Asteroid(std::string filePathModel) {
+        m_pMesh = MeshManager::loadMesh(filePathModel);
+        BaseMaterial* pMat = m_pMesh->getMaterialBySubMeshIndex(0);
+        pMat->pShader = ShaderManager::findShaderProgram("simpleTex");
+        m_pCollider = new Collider(this);
+
         m_rotationSpeed = 0.0f;
         m_velocity = 0.0f;
         m_spawnZ = -100.0f;
@@ -12,10 +17,6 @@ namespace SpaceEngine {
 
         m_spawnRangeX = 50.0f;  // Range orizzontale di spawn
         m_spawnRangeY = 30.0f;  // Range verticale di spawn
-
-        m_textureID = 0;
-        m_VAO = 0;
-        m_VBO = 0;
 
         // Assegna un asse di rotazione casuale
         srand(static_cast<unsigned int>(time(0)));
@@ -26,14 +27,10 @@ namespace SpaceEngine {
     }
 
     Asteroid::~Asteroid() {
-        glDeleteVertexArrays(1, &m_VAO);
-        glDeleteBuffers(1, &m_VBO);
+        if(m_pMesh) delete m_pMesh;
     }
 
-    void Asteroid::Init(unsigned int textureID) {
-        m_textureID = textureID;
-        InitMesh();
-
+    void Asteroid::Init() {
         if (m_pTransform) {
             m_pTransform->setLocalScale(glm::vec3(2.0f)); // Dimensione di base
         }
@@ -79,7 +76,7 @@ namespace SpaceEngine {
         }
     }
 
-    void Asteroid::InitMesh() {
+    /*void Asteroid::InitMesh() {
         float vertices[] = {
             // Back face
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -158,5 +155,24 @@ namespace SpaceEngine {
         // Disegna 36 vertici per un cubo (6 facce * 2 triangoli * 3 vertici)
         glDrawArrays(GL_TRIANGLES, 0, 36); 
         glBindVertexArray(0);
+    }*/
+
+    RenderObject Asteroid::getRenderObject() {
+        RenderObject renderObj;
+        renderObj.mesh = m_pMesh;
+        glm::mat4 model = glm::mat4(1.0f);
+
+        if (m_pTransform) {
+            model = glm::translate(model, m_pTransform->getLocalPosition());
+
+            glm::mat4 rot_mat = glm::mat4_cast(m_pTransform->getLocalRotation());
+            
+            model = model * rot_mat;
+            
+            model = glm::scale(model, m_pTransform->getLocalScale());
+        }
+
+        renderObj.modelMatrix = model;
+        return renderObj;
     }
 }

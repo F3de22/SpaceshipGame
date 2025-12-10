@@ -7,7 +7,7 @@
 
 namespace SpaceEngine {
 
-    static unsigned int loadTextureFromFile(const char* path) {
+    /*static unsigned int loadTextureFromFile(const char* path) {
         int width, height, channels;
         stbi_set_flip_vertically_on_load(true); 
         unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
@@ -33,22 +33,24 @@ namespace SpaceEngine {
 
         stbi_image_free(data);
         return tex;
-    }
+    }*/
 
-    PlayerShip::PlayerShip(Scene* scene){
+    PlayerShip::PlayerShip(std::string filePathModel){
+        m_pMesh = MeshManager::loadMesh(filePathModel);
+        BaseMaterial* pMat = m_pMesh->getMaterialBySubMeshIndex(0);
+        pMat->pShader = ShaderManager::findShaderProgram("simpleTex");
+        m_pCollider = new Collider(this);
+
         m_speed = 15.0f;               
         m_limitX = 14.0f;              
         m_limitY = 9.0f;               
         m_shootCooldown = 0.0f;        
-        m_textureID = 0;
-        m_VAO = 0; m_VBO = 0; m_EBO = 0;
+        //m_textureID = 0;
     }
 
     PlayerShip::~PlayerShip() {
-        if (m_VAO) glDeleteVertexArrays(1, &m_VAO);
-        if (m_VBO) glDeleteBuffers(1, &m_VBO);
-        if (m_EBO) glDeleteBuffers(1, &m_EBO);
-        if (m_textureID) glDeleteTextures(1, &m_textureID);
+        if(m_pMesh) delete m_pMesh;
+        //if (m_textureID) glDeleteTextures(1, &m_textureID);
     }
 
     void PlayerShip::Init() {
@@ -57,13 +59,26 @@ namespace SpaceEngine {
             m_pTransform->setLocalScale(glm::vec3(1.0f));
         }
         // Carica Texture
-        m_textureID = loadTextureFromFile("assets/textures/spaceship.png");
-        
-        //Crea la mesh della nave
-        InitMesh();
+        //m_textureID = loadTextureFromFile("assets/textures/spaceship.png");
     }
 
-    void PlayerShip::InitMesh() {
+    RenderObject PlayerShip::getRenderObject() {
+        RenderObject obj;
+
+        obj.mesh = m_pMesh;
+
+        // calcola la Model Matrix
+        glm::mat4 model = glm::mat4(1.0f);
+        
+        // Sposta la mesh alla posizione del GameObject 
+        model = glm::translate(model, m_pTransform->getLocalPosition());
+
+        obj.modelMatrix = model; 
+        
+        return obj;
+    }
+
+    /*void PlayerShip::InitMesh() {
         //posizione x,y,z dei vertici + coordinate texture u,v
         float vertices[] = {
              // Posizioni        // Texture Coords
@@ -100,7 +115,7 @@ namespace SpaceEngine {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0); 
         glBindVertexArray(0); 
-    }
+    }*/
 
     void PlayerShip::update(float dt) {
         HandleInput(dt);
@@ -130,7 +145,7 @@ namespace SpaceEngine {
         m_pTransform->setLocalPosition(m_position);
     }
 
-    void PlayerShip::Render(unsigned int shaderProgramID) {
+    /*void PlayerShip::Render(unsigned int shaderProgramID) {
         glUseProgram(shaderProgramID);
         
         glActiveTexture(GL_TEXTURE0);
@@ -154,5 +169,9 @@ namespace SpaceEngine {
         glBindVertexArray(m_VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+    }*/
+
+    void PlayerShip::onCollisionEnter(Collider* col) {
+        SPACE_ENGINE_INFO("PlayerShip Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
     }
 }

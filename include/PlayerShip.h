@@ -1,23 +1,24 @@
 #pragma once
 #include "gameObject.h"
 #include "utils/utils.h"
+#include "collisionDetection.h"
+#include "renderer.h"
 
 namespace SpaceEngine {
 
     class PlayerShip : public GameObject {
     public:
-        PlayerShip(Scene *scene);
+        PlayerShip(std::string filePathModel);
         virtual ~PlayerShip();
 
-        // Inizializza buffers (VAO/VBO), texture e collider
         void Init();
 
         // Gestisce l'input e aggiorna la posizione
         virtual void update(float dt) override;
 
-        void Render(unsigned int shaderProgramID);
-
         virtual void onCollisionEnter(Collider* col) override;
+
+        RenderObject getRenderObject();
 
     private:
         float m_speed;
@@ -26,12 +27,12 @@ namespace SpaceEngine {
         float m_limitX;
         float m_limitY;
 
-        unsigned int m_textureID;
-        unsigned int m_VAO, m_VBO, m_EBO;
+        //unsigned int m_textureID;
 
         float m_shootCooldown;
 
+        Mesh* m_pMesh;
+
         void HandleInput(float dt);
-        void InitMesh(); // Funzione interna per creare il rettangolo
     };
 }

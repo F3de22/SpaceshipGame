@@ -5,20 +5,22 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <random>
 #include "gameObject.h"
+#include "collisionDetection.h"
+#include "renderer.h"
 
 namespace SpaceEngine {
 
     class Asteroid : public GameObject {
     public:
-        Asteroid(Scene *scene);
+        Asteroid(std::string filePathModel);
         virtual ~Asteroid();
 
-        void Init(unsigned int textureID);
+        void Init();
         
-        virtual void update(float dt);
+        virtual void update(float dt) override;
         virtual void onCollisionEnter(Collider* col) override;
 
-        void Render(unsigned int shaderProgramID);
+        RenderObject getRenderObject();
 
         void SetSpawnArea(float width, float height) {
             m_spawnRangeX = width / 2.0f;
@@ -35,11 +37,9 @@ namespace SpaceEngine {
         
         float m_spawnZ, m_despawnZ;
 
-        unsigned int m_textureID;
-        unsigned int m_VAO, m_VBO, m_EBO;
+        Mesh* m_pMesh;
 
-        void InitMesh();
         void Spawn();
     };
 
-} // namespace SpaceEngine
+}
