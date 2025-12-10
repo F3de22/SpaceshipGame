@@ -145,8 +145,6 @@ namespace SpaceEngine {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_textureID);
 
-        glm::mat4 model = glm::mat4(1.0f);
-        
         // per posizionare
         glm::mat4 model = glm::mat4(1.0f);
         if (m_pTransform) {

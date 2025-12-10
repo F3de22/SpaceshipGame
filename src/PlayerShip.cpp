@@ -111,7 +111,6 @@ namespace SpaceEngine {
     }
 
     void PlayerShip::HandleInput(float dt) {
-        float velocity = m_speed * dt;
 
         glm::vec3 m_position = m_pTransform->getLocalPosition();
         float velocity = m_speed * dt;
