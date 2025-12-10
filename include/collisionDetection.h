@@ -68,18 +68,31 @@ namespace SpaceEngine
                     bbox.r[0], bbox.r[1], bbox.r[2])
             }
 
-            //bugged
             static int testCollidersLocalSpace(const Collider* a, const Collider* b)
             {
-                Matrix4 invTA = Math::inverse(a->gameObj->getComponent<Transform>()->getWorldMatrix());
+                // World matrices
+                const Transform* tA = a->gameObj->getComponent<Transform>();
+                const Transform* tB = b->gameObj->getComponent<Transform>();
+                        
+                Matrix4 worldA = tA->getWorldMatrix();
+                Matrix4 worldB = tB->getWorldMatrix();
+                Matrix4 invWorldA = Math::inverse(worldA);
+                        
+                // AABB A stays in its own local space
                 AABB bboxA = a->bbox;
+                bboxA.c = Vector3{0.f}; // centered in A local space
+                        
+                // Transform B's center into A's local space
+                Vector4 bCenterWorld = worldB * Vector4(b->bbox.c, 1.f);
+                Vector4 bCenterInALocal = invWorldA * bCenterWorld;
+                        
                 AABB bboxB = b->bbox;
-                Vector3 meshPos = a->gameObj->getComponent<Transform>()->getWorldPosition();
-                bboxB.c -= bboxA.c - meshPos;
-                bboxA.c = Vector3{0.f};
-                Vector4 posB = {b->bbox.c, 1.f}; //World pos bounding box in omogeneous coordinate  
-                posB =  invTA * posB; //coordiante local to A
-                bboxB.c = Vector3{posB.x, posB.y, posB.z};
+                bboxB.c = Vector3{
+                    bCenterInALocal.x,
+                    bCenterInALocal.y,
+                    bCenterInALocal.z
+                };
+            
                 return AABB::test(bboxA, bboxB);
             }
 
