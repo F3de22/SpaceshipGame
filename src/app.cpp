@@ -44,9 +44,17 @@ namespace SpaceEngine{
     void App::Start()
     {
         //initialize main scene
-        scene = new Scene();
+        scene = new Scene(&physicsManager);
         Player* pPlayer = new Player("TestCube.obj");
+        GameObject* pCube = new GameObject();
+        //make another cube
+        pCube->addComponent(pPlayer->getComponent<Mesh>()); // this avoid to reallocate mesh cube data
+        pCube->addComponent(new Transform());
+        pCube->getComponent<Transform>()->setWorldPosition(Vector3{0.f, 0.f, -3.f});
+        pCube->addComponent(new Collider(pCube));
+        //add GameObject to the scene
         scene->addSceneComponent<Player*>(pPlayer);
+        scene->addSceneComponent<GameObject*>(pCube);
         //TODO: initialize correctly the camera please 
         PerspectiveCamera* pCamera = new PerspectiveCamera();
         pCamera->transf.translateGlobal(Vector3(0.f, 3.f, 3.f));

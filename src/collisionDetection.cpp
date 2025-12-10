@@ -18,6 +18,7 @@ namespace SpaceEngine
         {
             lColliders.push_back(col);
             grid.AddColliderToHGrid(col);
+            SPACE_ENGINE_INFO("Added collider");
         }
         else SPACE_ENGINE_FATAL("AddCollider: col nullptr");
     }
@@ -28,6 +29,7 @@ namespace SpaceEngine
         {
             lColliders.remove(col);
             grid.RemoveObjectFromGrid(col);
+            SPACE_ENGINE_INFO("Removed collider");
         }
         else SPACE_ENGINE_FATAL("RemoveCollider: col nullptr");
     }

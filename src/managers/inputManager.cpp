@@ -134,7 +134,7 @@ namespace SpaceEngine
             Joystick::setClamp(true);
             Joystick::init();
         }
-        else SPACE_ENGINE_ERROR("No joystick detected");
+        else SPACE_ENGINE_WARN("No joystick detected");
         
         //callbacks for handling the input
         glfwSetJoystickCallback(joystick_callback);

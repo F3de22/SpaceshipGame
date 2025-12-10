@@ -71,11 +71,11 @@ namespace SpaceEngine
                 }
                 else if constexpr (std::is_same_v<T, Transform*>)
                 {
-                    m_pTransform.push_back(component);
+                    m_pTransform = component;
                 }
                 else if constexpr (std::is_same_v<T, Collider*>)
                 {
-                    m_pCollider.push_back(component);
+                    m_pCollider = component;
                 }
             }
             bool pendingDestroy = false;

@@ -50,18 +50,22 @@ namespace SpaceEngine
             {
                 //x
                 bbox.c.x = gameObj->getComponent<Mesh>()->maxPos.x;
-                bbox.r[0] = (gameObj->getComponent<Mesh>()->minPos.x - bbox.c.x) / 2.f;
-                bbox.c.x += bbox.r[0];
+                bbox.r[0] = (bbox.c.x - gameObj->getComponent<Mesh>()->minPos.x) / 2.f;
+                bbox.c.x -= bbox.r[0];
                 //y
                 bbox.c.y = gameObj->getComponent<Mesh>()->maxPos.y;
-                bbox.r[1] = (gameObj->getComponent<Mesh>()->minPos.y - bbox.c.y) / 2.f;
-                bbox.c.y += bbox.r[1];
+                bbox.r[1] = (bbox.c.y - gameObj->getComponent<Mesh>()->minPos.y) / 2.f;
+                bbox.c.y -= bbox.r[1];
                 //z
                 bbox.c.z = gameObj->getComponent<Mesh>()->maxPos.z;
-                bbox.r[0] = (gameObj->getComponent<Mesh>()->minPos.z - bbox.c.z) / 2.f;
-                bbox.c.z += bbox.r[0];
+                bbox.r[2] = (bbox.c.z - gameObj->getComponent<Mesh>()->minPos.z) / 2.f;
+                bbox.c.z -= bbox.r[2];
 
                 pos = bbox.c;
+
+                SPACE_ENGINE_DEBUG("Collider: center: {}, {}, {} radious: {}, {}, {}", 
+                    bbox.c.x, bbox.c.y, bbox.c.z,
+                    bbox.r[0], bbox.r[1], bbox.r[2])
             }
 
             static int testCollidersLocalSpace(const Collider* a, const Collider* b)
@@ -100,7 +104,7 @@ namespace SpaceEngine
         private:
             static const int HGRID_MAX_LEVELS = 2;
             static const int NUM_BUCKETS = 1024;
-            static const int MIN_CELL_SIZE = 2;
+            static const int MIN_CELL_SIZE = 16;
             //this allows to create a margin for the cell where is palced the object
             static constexpr float SPHERE_TO_CELL_RATIO = 1.f/4.f;//is considered the diameter
             static constexpr float CELL_TO_CELL_RATIO = 2.f;
@@ -148,7 +152,8 @@ namespace SpaceEngine
                 int bucket = ComputeHashBucketIndex(cellPos);
                 col->bucket = bucket;
                 col->level = level;
-                col->pPrev = (bucket >= 0) ? colliderBucket[bucket-1] : nullptr;
+                col->pPrev = nullptr;
+                if(colliderBucket[bucket]) colliderBucket[bucket]->pPrev = col;
                 col->pNext = colliderBucket[bucket];
                 colliderBucket[bucket] = col;
 
@@ -197,7 +202,7 @@ namespace SpaceEngine
 
                     for(int x = x1; x <= x2; x++)
                         for(int y = y1; y <= y2; y++)
-                            for(int z = z1; z <= z2; y++)
+                            for(int z = z1; z <= z2; z++)
                             {
                                 Cell cellPos(x, y, z, level);
                                 int bucket = ComputeHashBucketIndex(cellPos);
@@ -209,12 +214,9 @@ namespace SpaceEngine
 
                                 Collider *p = colliderBucket[bucket];
 
-                                if(p->gameObj->pendingDestroy)
-                                    continue;
-
                                 while(p)
                                 {
-                                    if(p != col)
+                                    if(p != col || p->gameObj->pendingDestroy)
                                     {
                                         if(Collider::testCollidersLocalSpace(col, p))
                                         {

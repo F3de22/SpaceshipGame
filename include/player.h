@@ -9,6 +9,8 @@ namespace SpaceEngine
         public:
             Player(std::string fileNameModel);
             void update(float dt) override;
+            void fixedUpdate(float fixed_dt) override;
+            void onCollisionEnter(Collider* col) override;
         
         private:
             float angularVY = 10.f;

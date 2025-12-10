@@ -18,7 +18,7 @@ namespace SpaceEngine
     class Scene
     {
         public:
-            Scene() = default;
+            Scene(PhysicsManager* pPhyManager):pPhyManager(pPhyManager){};
             ~Scene() = default;
 
             unsigned int LoadCubemap(vector<string> faces);
