@@ -123,128 +123,151 @@ namespace SpaceEngine
             static constexpr float SPHERE_TO_CELL_RATIO = 1.f/4.f;//is considered the diameter
             static constexpr float CELL_TO_CELL_RATIO = 2.f;
 
-        struct HGrid
-        {
-            uint32_t occupiedLevelsMask = 0;
-            int collidersAtLevel[HGRID_MAX_LEVELS] = {0};
-            Collider* colliderBucket[NUM_BUCKETS] = {nullptr};
-            int timeStamp[NUM_BUCKETS] = {0};
-            int tick = 0;
-
-            int ComputeHashBucketIndex(Cell cellPos)
+            struct CollisionPair
             {
-                const int h1 = 0x8da6b343;
-                const int h2 = 0xd8163841;
-                const int h3 = 0xcb1ab31f;
-                const int h4 = 0x165667b1;
-
-                int n = h1 * cellPos.x + h2 * cellPos.y + h3 * cellPos.z + h4 * cellPos.z;
-
-                n = n % NUM_BUCKETS;
-
-                if(n < 0) n += NUM_BUCKETS;
-
-                return n;
-
-            }
-
-            void AddColliderToHGrid(Collider* col)
-            {
-                int level;
-                float size = MIN_CELL_SIZE, diameter = 2.f* col->bbox.maxSide();
-
-                //find the lowest level where objcet fully fits inside cell
-                for(level = 0; size * SPHERE_TO_CELL_RATIO < diameter; level++)
-                    size *= CELL_TO_CELL_RATIO;
-
-                assert(level < HGRID_MAX_LEVELS);
-
-                Cell cellPos(static_cast<int>(col->bbox.c.x / size), 
-                    static_cast<int>(col->bbox.c.y / size), 
-                    static_cast<int>(col->bbox.c.z / size), 
-                    level);
-                int bucket = ComputeHashBucketIndex(cellPos);
-                col->bucket = bucket;
-                col->level = level;
-                col->pPrev = nullptr;
-                if(colliderBucket[bucket]) colliderBucket[bucket]->pPrev = col;
-                col->pNext = colliderBucket[bucket];
-                colliderBucket[bucket] = col;
-
-                collidersAtLevel[level]++;
-                occupiedLevelsMask |= (1 << level);
-            }
-
-            void RemoveObjectFromGrid(Collider* col)
-            {
-                if(--collidersAtLevel[col->level] == 0)
-                    occupiedLevelsMask &= ~(1 << col->level);
-
-                int bucket = col->bucket;
-
-                (col->pPrev != nullptr) ? col->pPrev->pNext = col->pNext : colliderBucket[bucket] = col->pNext;
-            }
-
-            void CheckObjAgainstGrid(Collider* col, void(*pCallbakckFunc)(Collider* pA, Collider* pB))
-            {
-                float size = MIN_CELL_SIZE;
-                int startLevel = 0;
-                uint32_t occupiedLevelsMask = this->occupiedLevelsMask;
-                Vector3 pos = col->bbox.c;
-
-                tick++;
-
-                for(int level = startLevel; level < HGRID_MAX_LEVELS; 
-                    size *= CELL_TO_CELL_RATIO, occupiedLevelsMask >>= 1, level++)
+                Collider* a;
+                Collider* b;
+            
+                bool operator==(const CollisionPair& o) const
                 {
-                    //no colliders in the HGrid
-                    if(occupiedLevelsMask == 0)
-                        break;
-                    //no colliders at this level
-                    if((occupiedLevelsMask & 1) == 0)
-                        continue;
+                    return (a == o.a && b == o.b);
+                }
+            };
 
-                    float delta = col->bbox.maxSide() + size * SPHERE_TO_CELL_RATIO;
-                    float ooSize = 1.f / size;
+            struct CollisionPairHash
+            {
+                size_t operator()(const CollisionPair& p) const
+                {
+                    return ((size_t)p.a >> 4) ^ ((size_t)p.b >> 4);
+                }
+            };
 
-                    int x1 = static_cast<int>(floorf((pos.x - delta) * ooSize));
-                    int y1 = static_cast<int>(floorf((pos.y - delta) * ooSize));
-                    int z1 = static_cast<int>(floorf((pos.z - delta) * ooSize));
-                    int x2 = static_cast<int>(ceilf((pos.x + delta) * ooSize));
-                    int y2 = static_cast<int>(ceilf((pos.y + delta) * ooSize));
-                    int z2 = static_cast<int>(ceilf((pos.z + delta) * ooSize));
+            
 
-                    for(int x = x1; x <= x2; x++)
-                        for(int y = y1; y <= y2; y++)
-                            for(int z = z1; z <= z2; z++)
-                            {
-                                Cell cellPos(x, y, z, level);
-                                int bucket = ComputeHashBucketIndex(cellPos);
+            struct HGrid
+            {
+                uint32_t occupiedLevelsMask = 0;
+                int collidersAtLevel[HGRID_MAX_LEVELS] = {0};
+                Collider* colliderBucket[NUM_BUCKETS] = {nullptr};
+                int timeStamp[NUM_BUCKETS] = {0};
+                int tick = 0;
 
-                                if(timeStamp[bucket] == tick) 
-                                    continue;
+                int ComputeHashBucketIndex(Cell cellPos)
+                {
+                    const int h1 = 0x8da6b343;
+                    const int h2 = 0xd8163841;
+                    const int h3 = 0xcb1ab31f;
+                    const int h4 = 0x165667b1;
 
-                                timeStamp[bucket] = tick;
+                    int n = h1 * cellPos.x + h2 * cellPos.y + h3 * cellPos.z + h4 * cellPos.z;
 
-                                Collider *p = colliderBucket[bucket];
+                    n = n % NUM_BUCKETS;
 
-                                while(p)
-                                {
-                                    if(p != col || p->gameObj->pendingDestroy)
-                                    {
-                                        if(Collider::testCollidersLocalSpace(col, p))
-                                        {
-                                            col->gameObj->onCollisionEnter(p);
-                                            p->gameObj->onCollisionEnter(col);
-                                        }
-                                    }
-                                    p = p->pNext;
-                                }
-                            }
+                    if(n < 0) n += NUM_BUCKETS;
+
+                    return n;
+
                 }
 
-            }
-        };
+                void AddColliderToHGrid(Collider* col)
+                {
+                    int level;
+                    float size = MIN_CELL_SIZE, diameter = 2.f* col->bbox.maxSide();
+
+                    //find the lowest level where objcet fully fits inside cell
+                    for(level = 0; size * SPHERE_TO_CELL_RATIO < diameter; level++)
+                        size *= CELL_TO_CELL_RATIO;
+
+                    assert(level < HGRID_MAX_LEVELS);
+
+                    Cell cellPos(static_cast<int>(col->bbox.c.x / size), 
+                        static_cast<int>(col->bbox.c.y / size), 
+                        static_cast<int>(col->bbox.c.z / size), 
+                        level);
+                    int bucket = ComputeHashBucketIndex(cellPos);
+                    col->bucket = bucket;
+                    col->level = level;
+                    col->pPrev = nullptr;
+                    if(colliderBucket[bucket]) colliderBucket[bucket]->pPrev = col;
+                    col->pNext = colliderBucket[bucket];
+                    colliderBucket[bucket] = col;
+
+                    collidersAtLevel[level]++;
+                    occupiedLevelsMask |= (1 << level);
+                }
+
+                void RemoveObjectFromGrid(Collider* col)
+                {
+                    if(--collidersAtLevel[col->level] == 0)
+                        occupiedLevelsMask &= ~(1 << col->level);
+
+                    int bucket = col->bucket;
+
+                    (col->pPrev != nullptr) ? col->pPrev->pNext = col->pNext : colliderBucket[bucket] = col->pNext;
+                }
+
+                void CheckObjAgainstGrid(Collider* col, std::unordered_set<CollisionPair, CollisionPairHash>& currCollisions)
+                {
+                    float size = MIN_CELL_SIZE;
+                    int startLevel = 0;
+                    uint32_t occupiedLevelsMask = this->occupiedLevelsMask;
+                    Vector3 pos = col->bbox.c;
+
+                    //tick++;
+
+                    for(int level = startLevel; level < HGRID_MAX_LEVELS; 
+                        size *= CELL_TO_CELL_RATIO, occupiedLevelsMask >>= 1, level++)
+                    {
+                        //no colliders in the HGrid
+                        if(occupiedLevelsMask == 0)
+                            break;
+                        //no colliders at this level
+                        if((occupiedLevelsMask & 1) == 0)
+                            continue;
+
+                        float delta = col->bbox.maxSide() + size * SPHERE_TO_CELL_RATIO;
+                        float ooSize = 1.f / size;
+
+                        int x1 = static_cast<int>(floorf((pos.x - delta) * ooSize));
+                        int y1 = static_cast<int>(floorf((pos.y - delta) * ooSize));
+                        int z1 = static_cast<int>(floorf((pos.z - delta) * ooSize));
+                        int x2 = static_cast<int>(ceilf((pos.x + delta) * ooSize));
+                        int y2 = static_cast<int>(ceilf((pos.y + delta) * ooSize));
+                        int z2 = static_cast<int>(ceilf((pos.z + delta) * ooSize));
+
+                        for(int x = x1; x <= x2; x++)
+                            for(int y = y1; y <= y2; y++)
+                                for(int z = z1; z <= z2; z++)
+                                {
+                                    Cell cellPos(x, y, z, level);
+                                    int bucket = ComputeHashBucketIndex(cellPos);
+
+                                    if(timeStamp[bucket] == tick) 
+                                        continue;
+
+                                    timeStamp[bucket] = tick;
+
+                                    Collider *p = colliderBucket[bucket];
+
+                                    while(p)
+                                    {
+                                        if(p != col || p->gameObj->pendingDestroy)
+                                        {
+                                            if(Collider::testCollidersLocalSpace(col, p))
+                                            {
+                                                CollisionPair pair{col, p};
+                                                currCollisions.insert(pair);
+                                                //col->gameObj->onCollisionEnter(p);
+                                                //p->gameObj->onCollisionEnter(col);
+                                            }
+                                        }
+                                        p = p->pNext;
+                                    }
+                                }
+                    }
+
+                }
+            };
 
 
         public:
@@ -261,6 +284,9 @@ namespace SpaceEngine
             void Shutdown();
         
         private:
+            void HandleCollisionEvents();
+            std::unordered_set<CollisionPair, CollisionPairHash> prevCollisions;
+            std::unordered_set<CollisionPair, CollisionPairHash> currCollisions;
             std::list<Collider*> lColliders;
             HGrid grid;
     };

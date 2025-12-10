@@ -61,7 +61,7 @@ namespace SpaceEngine
             exit(-1);
         }
 
-        SPACE_ENGINE_DEBUG("Binding properties material to shader");
+        //SPACE_ENGINE_DEBUG("Binding properties material to shader");
         std::vector<std::tuple<const std::string, GLenum>> uniformsShader = pShader->getPairUniformNameLocation();
         
         for(const auto& [name, type] : uniformsShader)

@@ -43,6 +43,22 @@ namespace SpaceEngine
             grid.AddColliderToHGrid(col);
         }
     }
+
+    void PhysicsManager::HandleCollisionEvents()
+    {
+        for (const auto& pair : currCollisions)
+        {
+            if (prevCollisions.find(pair) == prevCollisions.end())
+            {
+        
+                GameObject* A = pair.a->gameObj;
+                GameObject* B = pair.b->gameObj;
+                A->onCollisionEnter(pair.a);
+                B->onCollisionEnter(pair.b);
+            }
+        }
+    }
+
     
     void PhysicsManager::Step(float fixed_dt)
     {
@@ -64,13 +80,16 @@ namespace SpaceEngine
                 }   
             }
         }
-
+        
+        grid.tick++;
         for(Collider* col : lColliders)
         {
             if(!col->gameObj->pendingDestroy)
-                grid.CheckObjAgainstGrid(col, 0);
+                grid.CheckObjAgainstGrid(col, currCollisions);
         }
 
+        HandleCollisionEvents();
+        prevCollisions = currCollisions;
         //check collision on hgrid
     }
 

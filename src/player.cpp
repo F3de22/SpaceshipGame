@@ -27,7 +27,7 @@ namespace SpaceEngine
 
     void Player::onCollisionEnter(Collider* col) 
     {
-        SPACE_ENGINE_INFO("Collision onEnter Called!");
+        SPACE_ENGINE_INFO("GameObject:{} Collision onEnter Called!", reinterpret_cast<std::uintptr_t>(this));
     }
     
 }

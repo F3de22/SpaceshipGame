@@ -53,7 +53,7 @@ namespace SpaceEngine
                     return m_pCollider;
                 }
             
-                SPACE_ENGINE_WARN("Component not found");
+                //SPACE_ENGINE_WARN("Component not found");
                 return nullptr;
             }
 
