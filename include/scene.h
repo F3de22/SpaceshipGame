@@ -94,15 +94,6 @@ namespace SpaceEngine
             std::queue<GameObject*> destroyQ;
             std::list<SpawnRequest> spawnQ;
             //cameras[0] is always the active camera
-            vector<BaseCamera*> cameras; 
-            unsigned int cubemapTexture;
-            vector<string> faces = {            //TODO: sistemare i path con i file giusti
-                "assets/textures/skybox/right.png",
-                "assets/textures/skybox/left.png",
-                "assets/textures/skybox/top.png",
-                "assets/textures/skybox/bottom.png",
-                "assets/texture/skybox/front.png",
-                "assets/textures/skybox/back.png"
-            };
+            vector<BaseCamera*> cameras;
     };
 }

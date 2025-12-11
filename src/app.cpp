@@ -62,7 +62,7 @@ namespace SpaceEngine{
         scene->initSkybox(faces);
 
         //crea e inizializza il player
-        PlayerShip* pPlayer = new PlayerShip("assets/meshes/Navicella_LowPoly.obj");
+        PlayerShip* pPlayer = new PlayerShip("TestCube.obj");
         pPlayer->Init();
         //GameObject* pCube = new GameObject();
         //make another cube
@@ -149,7 +149,7 @@ namespace SpaceEngine{
             //spawn asteroidi
             if(asteroidTimer >= 3.0f)
             {
-                Asteroid* pAsteroid = new Asteroid("assets/meshes/Asteroid_LowPoly.obj");
+                Asteroid* pAsteroid = new Asteroid("TestCube.obj");
 
                 float angle = (float)(rand() % 360);
                 float rad = angle * 3.14159f / 180.0f;
@@ -165,7 +165,7 @@ namespace SpaceEngine{
  
             //spawn navicelle nemiche
             if (enemyTimer >= 5.0f) {
-                EnemyShip* enemy = new EnemyShip("assets/meshes/TestCube.obj");
+                EnemyShip* enemy = new EnemyShip("TestCube.obj");
                 
                 // Posizione randomica
                 float angle = (float)(rand() % 360);
@@ -194,7 +194,7 @@ namespace SpaceEngine{
             //collects the renderizable objects in the scene
             scene->gatherRenderables(worldRenderables, uiRenderables);
             //before rendering
-            glClearColor(1.f, 1.f, 1.f, 1.f);
+            glClearColor(0.1f, 0.1f, 0.1f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             BaseCamera* cam = scene->getActiveCamera();
             scene->drawSkybox(cam->getViewMatrix(), cam->getProjectionMatrix());
