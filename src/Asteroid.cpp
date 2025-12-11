@@ -175,4 +175,8 @@ namespace SpaceEngine {
         renderObj.modelMatrix = model;
         return renderObj;
     }
+
+    void Asteroid::onCollisionEnter(Collider* col) {
+        SPACE_ENGINE_INFO("PlayerShip Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
+    }
 }

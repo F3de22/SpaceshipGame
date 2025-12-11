@@ -585,7 +585,7 @@ namespace SpaceEngine
         createShaderProgram("ui");
         createShaderProgram("simpleTex");
         createShaderProgram("pbr");
-
+        createShaderProgram("skybox");
     }
 
     void ShaderManager::Shutdown()
