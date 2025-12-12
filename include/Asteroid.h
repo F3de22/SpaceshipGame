@@ -37,8 +37,6 @@ namespace SpaceEngine {
         
         float m_spawnZ, m_despawnZ;
 
-        Mesh* m_pMesh;
-
         void Spawn();
     };
 
