@@ -13,6 +13,7 @@ namespace SpaceEngine {
         m_pMesh = MeshManager::loadMesh(filePathModel);
         BaseMaterial* pMat = m_pMesh->getMaterialBySubMeshIndex(0);
         pMat->pShader = ShaderManager::findShaderProgram("simpleTex");
+        m_pTransform = new Transform();
         m_pCollider = new Collider(this);
 
         m_speed = 10.0f;

@@ -59,8 +59,6 @@ namespace SpaceEngine {
         float m_shootTimer;
         float m_shootCooldown; // Ogni quanto spara
 
-        Mesh* m_pMesh;
-
         void performAI(float dt);
 
         //std::vector<Bullet> Shoot(glm::vec3 playerPos); // Logica di sparo
