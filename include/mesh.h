@@ -5,6 +5,7 @@
 #include <memory>
 #include "utils/utils.h"
 #include "material.h"
+#include <unordered_map>
 
 #define INVALID_MATERIAL 0xFFFFFFFF
 
@@ -98,6 +99,7 @@ namespace SpaceEngine
         void Initialize();
         static Mesh* loadMesh(const std::string& fileName);
         static UIMesh* getUIMesh();
+        static Mesh* findMesh(const std::string& name);
         //create box 
         //create square
         //create a sphere
@@ -118,6 +120,7 @@ namespace SpaceEngine
             static void loadColors(const aiMaterial* pMaterial, int index);
 
             static Mesh* pTMPMesh;
+            static std::unordered_map<std::string, Mesh*> meshMap;
             static UIMesh* pUIMesh;
     };
     

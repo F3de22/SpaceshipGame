@@ -87,6 +87,7 @@ namespace SpaceEngine
     //MeshManager
     Mesh* MeshManager::pTMPMesh = nullptr;
     UIMesh* MeshManager::pUIMesh = nullptr;
+    std::unordered_map<std::string, Mesh*> MeshManager::meshMap;
     
     UIMesh* MeshManager::getUIMesh()
     {
@@ -98,37 +99,48 @@ namespace SpaceEngine
         return pUIMesh;
     }
 
+    Mesh* MeshManager::findMesh(const std::string& name)
+    {
+        if( meshMap.find(name) != meshMap.end())
+            return meshMap[name];
+
+        SPACE_ENGINE_WARN("MeshManager: Mesh not found");
+        return nullptr;
+    }
+
     
     Mesh* MeshManager::loadMesh(const std::string& fileName)
     {
-        //clear();
-        Mesh* pMesh = new Mesh();
-        pTMPMesh = pMesh;
-        //VAO
-        glGenVertexArrays(1, &pTMPMesh->VAO);
-        glBindVertexArray(pTMPMesh->VAO);
-        glGenBuffers(ARRAY_SIZE_IN_ELEMENTS(pTMPMesh->buffers), pTMPMesh->buffers);
-
-        bool ret = false;
-        
-        Assimp::Importer importer;
-        std::string fullPath(MESHES_PATH + fileName);
-        const aiScene* pScene = importer.ReadFile(fullPath.c_str(), ASSIMP_LOAD_FLAGS);
-        pTMPMesh->name = Utils::getFileNameNoExt(fileName);
-        if(pScene)
-        {
-            /*capiamo*/
-            //globalInverseTransform = aiMat4_2_Mat4(pScene->mRootNode->mTransformation);
-            //globalInverseTransform = inverse(globalInverseTransform);
-            if(!initFromScene(pScene, fileName))
-            {
-                SPACE_ENGINE_FATAL("Impossible to init the scene:{}", fileName);
-                exit(-1);
-            }
-        }
-
         pTMPMesh = nullptr;
-        return pMesh;
+        std::string name = Utils::getFileNameNoExt(fileName);
+
+        if(pTMPMesh = findMesh(name), !pTMPMesh)
+        {
+            Mesh* pMesh = new Mesh();
+            pTMPMesh = pMesh;
+            //VAO
+            glGenVertexArrays(1, &pTMPMesh->VAO);
+            glBindVertexArray(pTMPMesh->VAO);
+            glGenBuffers(ARRAY_SIZE_IN_ELEMENTS(pTMPMesh->buffers), pTMPMesh->buffers);
+
+            Assimp::Importer importer;
+            std::string fullPath(MESHES_PATH + fileName);
+            const aiScene* pScene = importer.ReadFile(fullPath.c_str(), ASSIMP_LOAD_FLAGS);
+            pTMPMesh->name = name;
+
+            if(pScene)
+            {
+                if(!initFromScene(pScene, fileName))
+                {
+                    SPACE_ENGINE_FATAL("Impossible to init the scene:{}", fileName);
+                    exit(-1);
+                }
+            }
+
+            meshMap[name] = pMesh;
+
+        }
+        return pTMPMesh;
     }
 
     bool MeshManager::initFromScene(const aiScene* pScene, const std::string& fileName)

@@ -59,7 +59,7 @@ namespace SpaceEngine
                 glm::mat4>;
     
             
-
+            virtual ~BaseMaterial() {} 
             void bindingPropsToShader();
             void bindingPropsToShader(ShaderProgram* pShaderProg);
             ShaderProgram* getShader();
@@ -178,7 +178,8 @@ namespace SpaceEngine
                     materialsMap[name] = pMat;
                     return pMat;   
                 }
-                return nullptr;
+
+                return dynamic_cast<T*>(materialsMap[name]);
             }
 
         private:
