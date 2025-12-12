@@ -58,8 +58,7 @@ namespace SpaceEngine{
         //pCube->getComponent<Transform>()->setWorldPosition(Vector3{0.f, 0.f, -3.f});
         pCube->addComponent(new Collider(pCube));*/
         //add GameObject to the scene
-        scene->requestInstatiate(pPlayer);
-        //scene->addSceneComponent<GameObject*>(pCube);
+        scene->addSceneComponent<GameObject*>(pPlayer);
 
         //TODO: initialize correctly the camera please 
         PerspectiveCamera* pCamera = new PerspectiveCamera();

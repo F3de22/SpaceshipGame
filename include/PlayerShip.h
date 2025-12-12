@@ -27,12 +27,7 @@ namespace SpaceEngine {
         float m_limitX;
         float m_limitY;
 
-        //unsigned int m_textureID;
-
         float m_shootCooldown;
-
-        Mesh* m_pMesh;
-
         void HandleInput(float dt);
     };
 }

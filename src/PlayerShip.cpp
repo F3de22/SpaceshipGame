@@ -11,6 +11,7 @@ namespace SpaceEngine {
         m_pMesh = MeshManager::loadMesh(filePathModel);
         BaseMaterial* pMat = m_pMesh->getMaterialBySubMeshIndex(0);
         pMat->pShader = ShaderManager::findShaderProgram("simpleTex");
+        m_pTransform = new Transform();
         m_pCollider = new Collider(this);
 
         m_speed = 15.0f;               
@@ -25,8 +26,7 @@ namespace SpaceEngine {
 
     void PlayerShip::Init() {
         if (m_pTransform) {
-            m_pTransform->setLocalPosition(glm::vec3(0.0f, 0.0f, -10.0f));
-            m_pTransform->setLocalScale(glm::vec3(1.0f));
+            m_pTransform->setLocalPosition(Vector3(0.0f, 0.0f, -10.0f));
         }
     }
 
