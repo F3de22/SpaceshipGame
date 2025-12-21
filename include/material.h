@@ -99,8 +99,6 @@ namespace SpaceEngine
                     {"albedo_tex", nullptr},
                     {"metalness_tex", nullptr},
                     {"roughness_tex", nullptr},
-                    {"specular_tex", nullptr},
-                    {"diffuse_tex", nullptr},
                     {"normal_map_tex", nullptr},
                     {"ambient_occlusion_tex", nullptr}
                 };
@@ -108,13 +106,10 @@ namespace SpaceEngine
                 props = 
                 {
                     
-                    {"ambient_color_val", Vector4{0.f, 0.f, 0.f, 1.f}},
-                    {"diffuse_color_val", Vector3{0.f, 0.f, 0.f}},
-                    {"specular_color_val", Vector3{0.f, 0.f, 0.f}},
-                    {"base_color_val", Vector4{0.f, 0.f, 0.f, 1.f}},
+                    {"albedo_color_val", Vector4{0.f, 0.f, 0.f, 1.f}},
                     {"metalness_val", float{0.f}},
                     {"roughness_val", float{0.f}},
-                    {"emissive_color_val", Vector3{0.f, 0.f, 0.f}}
+                    {"ambient_occlusion_val", float{1.f}}
                 };
             }
         friend class MaterialManager;
