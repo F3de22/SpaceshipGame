@@ -45,5 +45,6 @@ set_target_properties(WindowManager PROPERTIES FOLDER "WindowManager")
 add_library(InputManager STATIC inputManager.cpp)
 target_include_directories(InputManager PRIVATE ${CMAKE_SOURCE_DIR}/include/managers)
 target_link_libraries(InputManager PRIVATE WindowManager
-    PRIVATE LogManager)
+    PRIVATE LogManager
+    PRIVATE App)
 set_target_properties(InputManager PROPERTIES FOLDER "InputManager")

@@ -47,7 +47,8 @@ namespace SpaceEngine {
     }
 
     void PlayerShip::update(float dt) {
-        HandleInput(dt);
+        m_dt = dt;
+        //HandleInput(dt);
 
         if(m_shootCooldown > 0.0f) {
             m_shootCooldown -= dt;
@@ -76,5 +77,49 @@ namespace SpaceEngine {
 
     void PlayerShip::onCollisionEnter(Collider* col) {
         SPACE_ENGINE_INFO("PlayerShip Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
+    }
+
+    void PlayerShip::MoveUp()
+    {        
+        Vector3 m_position = m_pTransform->getWorldPosition();
+        float velocity = m_speed * m_dt;
+        m_position.y += velocity;
+
+        if (m_position.y > m_limitY)  m_position.y = m_limitY;
+
+        m_pTransform->setWorldPosition(m_position);
+    }
+
+    void PlayerShip::MoveDown()
+    {
+        Vector3 m_position = m_pTransform->getWorldPosition();
+        float velocity = m_speed * m_dt;
+        m_position.y -= velocity;
+
+        if (m_position.y < -m_limitY)  m_position.y = -m_limitY;
+
+        m_pTransform->setWorldPosition(m_position);
+    }
+
+    void PlayerShip::MoveLeft()
+    {
+        Vector3 m_position = m_pTransform->getWorldPosition();
+        float velocity = m_speed * m_dt;
+        m_position.x -= velocity;
+
+        if (m_position.x < -m_limitX)  m_position.x = -m_limitX;
+        
+        m_pTransform->setWorldPosition(m_position);
+    }
+
+    void PlayerShip::MoveRight()
+    {
+        Vector3 m_position = m_pTransform->getWorldPosition();
+        float velocity = m_speed * m_dt;
+        m_position.x += velocity;
+
+        if (m_position.x > m_limitX)  m_position.x = m_limitX;
+        
+        m_pTransform->setWorldPosition(m_position);
     }
 }

@@ -13,6 +13,16 @@
 
 namespace SpaceEngine
 {
+
+    enum class EAppState
+    {
+        START,
+        PAUSE,
+        RUN,
+        CLOSE,
+        COUNT
+    };
+
     class App
     {
         public:
@@ -21,6 +31,7 @@ namespace SpaceEngine
             void Run();
         private:
             void Start();
+            void InputHandle();
             //managers
             LogManager logManager;
             InputManager inputManager;
@@ -34,6 +45,6 @@ namespace SpaceEngine
             Renderer* renderer;
             UIRenderer* uiRenderer;
             WindowManager windowManager;
-            
+            InputHandler* inputHandler;
     };
 };

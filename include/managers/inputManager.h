@@ -3,7 +3,7 @@
 #include <memory>
 #include <unordered_map>
 
-enum
+enum 
 {
     //Mouse
     SPACE_ENGINE_MOUSE_BUTTON_FIRST,
@@ -89,8 +89,38 @@ enum
 
 namespace SpaceEngine
 {
-    
-    class GameObject;
+    enum class EAppState;
+
+    enum class EInputType
+    {
+        SPACE_ENGINE_INPUT_MOUSE,
+        SPACE_ENGINE_INPUT_KEYBOARD,
+        SPACE_ENGINE_INPUT_JOYSTICK,
+        COUNT
+    };
+    class Command 
+    {
+        public:
+          virtual ~Command() = default;
+          virtual void execute(void* actor) = 0;
+    };
+
+    struct InputBinding
+    {
+        int inputCode;
+        EInputType inputType;
+        Command* command;
+    };
+
+    class InputHandler
+    {
+        public:
+            void handleInput();
+            int bindCommand(EAppState state, void* obj, const InputBinding& inputBind);
+        private:
+        std::unordered_map<EAppState, std::unordered_map<void*, std::vector<InputBinding>>> m_bindings;
+    };
+
     class InputManager
     {
         public:
@@ -98,25 +128,6 @@ namespace SpaceEngine
             void Update();
             void Shutdown();
     };
-    class Command
-    {
-        public:
-        virtual ~Command(){}
-        virtual void Execute(GameObject gameobj) = 0;
-        
-    };
-
-    class InputHandler
-    {
-
-    };
-
-
-
-};
-
-namespace SpaceEngine
-{
     class Mouse
     {
         public:

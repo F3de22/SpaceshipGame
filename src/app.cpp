@@ -5,9 +5,9 @@
 #include "playerShip.h"
 #include <vector>
 
-namespace SpaceEngine{
-    //static functions
-    static void joystick_callback(int jid, int event);
+namespace SpaceEngine
+{
+    EAppState state = EAppState::START;
     
     App::App()
     {
@@ -24,6 +24,10 @@ namespace SpaceEngine{
         SPACE_ENGINE_INFO("Initilization app done");
         //scene 
         SPACE_ENGINE_DEBUG("Start the initialization the scene");
+        //input handler init
+        inputHandler = new InputHandler();
+        SPACE_ENGINE_DEBUG("Input handler initialization done");
+
         Start();
         SPACE_ENGINE_INFO("Initialization the scene done");
     }
@@ -44,6 +48,7 @@ namespace SpaceEngine{
     
     void App::Start()
     {
+        state = EAppState::START;
         //initialize main scene
         pScene = new Scene(&physicsManager);
         pScene->Init();
@@ -51,7 +56,46 @@ namespace SpaceEngine{
         PlayerShip* pPlayer = new PlayerShip(pScene, "TestCube.obj");
         pPlayer->Init();
         auto glError = glGetError();
-        
+        //--------------------------------------------------------
+        //-------------------set the InputHandler-----------------
+        //--------------------------------------------------------
+        //Command init
+        MoveUpCommand* playerMoveUp = new MoveUpCommand();
+        MoveDownCommand* playerMoveDown = new MoveDownCommand();
+        MoveLeftCommand* playerMoveLeft = new MoveLeftCommand();
+        MoveRightCommand* playerMoveRight = new MoveRightCommand();
+        //up-joystick  
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_JK_BUTTON_UP, 
+            EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
+            playerMoveUp});
+        //up-keyboard
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_KEY_BUTTON_W, 
+            EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
+            playerMoveUp});
+        //down-joystick  
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_JK_BUTTON_DOWN, 
+            EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
+            playerMoveDown});
+        //down-keyboard
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_KEY_BUTTON_S, 
+            EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
+            playerMoveDown});
+        //left-joystick  
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_JK_BUTTON_LEFT, 
+            EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
+            playerMoveLeft});
+        //left-keyboard
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_KEY_BUTTON_A, 
+            EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
+            playerMoveLeft});
+        //right-joystick  
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_JK_BUTTON_RIGHT, 
+            EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
+            playerMoveRight});
+        //right-keyboard
+        inputHandler->bindCommand(EAppState::RUN, pPlayer, {SPACE_ENGINE_KEY_BUTTON_D, 
+            EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
+            playerMoveRight});
         //add GameObject to the scene
         pScene->addSceneComponent<GameObject*>(pPlayer);
 
@@ -74,11 +118,33 @@ namespace SpaceEngine{
         glError = glGetError();
     }
 
+    void App::InputHandle()
+    {
+        bool token = false; 
+        
+        if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && WindowManager::fullScreenState)
+        {
+            token = true;
+            windowManager.Windowed();
+        }
+        else if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && !WindowManager::fullScreenState)
+        {
+            windowManager.SetWindowShouldClose();
+        }
+        if(Keyboard::keyUp(SPACE_ENGINE_KEY_BUTTON_ESCAPE))
+        {
+            token = false;
+        }
+
+    }
+
+
     void App::Run()
     {
         SPACE_ENGINE_DEBUG("App - GameLoop");
+        state = EAppState::RUN;
         //token debug stuff
-        bool token = false; 
+        
         float lastTime = static_cast<float>(glfwGetTime());
         float currentTime;
         //handle the tunneling caused by a to slow frame dt
@@ -105,8 +171,10 @@ namespace SpaceEngine{
                 accumulator -= fixed_dt;
             }
 
-            //refresh the input 
+            //refresh the input data
             inputManager.Update();
+            InputHandle();
+            inputHandler->handleInput();
 
             //mouse debug
             #if 0
@@ -115,28 +183,15 @@ namespace SpaceEngine{
             if(Mouse::buttonDown(SPACE_ENGINE_MOUSE_BUTTON_RIGHT))
                 SPACE_ENGINE_DEBUG("Right mouse button pressed");
             #endif
-            #if 0
-            if(Joystick::buttonDown(SPACE_ENGINE_JK_BUTTON_A))
-                SPACE_ENGINE_DEBUG("Joystick: Pressed button A");
-            if(Joystick::buttonDown(SPACE_ENGINE_JK_BUTTON_B))
-                SPACE_ENGINE_DEBUG("Joystick: Pressed button B");
-            SPACE_ENGINE_DEBUG("Joystick: Left axis x:{} Left axis y:{}", Joystick::axis(SPACE_ENGINE_JK_AXIS_LEFT_X), 
-            Joystick::axis(SPACE_ENGINE_JK_AXIS_LEFT_Y));
+            #if 1
+            if(Joystick::button(SPACE_ENGINE_JK_BUTTON_LEFT))
+                SPACE_ENGINE_DEBUG("Joystick: Pressed button Down");
+            //if(Joystick::buttonDown(SPACE_ENGINE_JK_BUTTON_B))
+            //    SPACE_ENGINE_DEBUG("Joystick: Pressed button B");
+            //SPACE_ENGINE_DEBUG("Joystick: Left axis x:{} Left axis y:{}", Joystick::axis(SPACE_ENGINE_JK_AXIS_LEFT_X), 
+            //Joystick::axis(SPACE_ENGINE_JK_AXIS_LEFT_Y));
             #endif
             //fast debug for windowed and fullwindow feature
-            if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && WindowManager::fullScreenState)
-            {
-                token = true;
-                windowManager.Windowed();
-            }
-            else if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && !WindowManager::fullScreenState)
-            {
-                windowManager.SetWindowShouldClose();
-            }
-            if(Keyboard::keyUp(SPACE_ENGINE_KEY_BUTTON_ESCAPE))
-            {
-                token = false;
-            }
 
             //update game objects in the scene
             pScene->Update(dt);
@@ -151,7 +206,7 @@ namespace SpaceEngine{
             std::vector<Light*>* pLights = pScene->getLights();
             RendererParams rParams{worldRenderables, *(pLights), *(pCam), pScene->getSkybox()};
             
-            glError = glGetError();
+            auto glError = glGetError();
             renderer->render(rParams);
             glError = glGetError();
             

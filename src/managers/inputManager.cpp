@@ -1,15 +1,61 @@
 #include "inputManager.h"
 #include "windowManager.h"
 #include "log.h"
+#include "../app.h"
+
 
 namespace SpaceEngine
 {
+    extern EAppState state;
     //callbacks
     static void joystick_callback(int jid, int event);
     static void mouse_button_callback(GLFWwindow* window, int buttonID, int action, int mods);
     static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
     static void keyboard_button_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-    
+    //InputBinding
+    void InputHandler::handleInput()
+    {
+        if(m_bindings.find(state) != m_bindings.end())
+        {
+            std::unordered_map<void*,  std::vector<InputBinding>>& binds = m_bindings[state]; 
+            for(const auto& actor : binds)
+            {
+                std::vector<InputBinding> cmds = actor.second;
+                for(const auto& cmd : cmds)
+                {
+                    if(cmd.inputType == EInputType::SPACE_ENGINE_INPUT_MOUSE)
+                    {
+                        if(Mouse::buttonDown(cmd.inputCode))
+                            cmd.command->execute(actor.first);
+                    }
+                    else if(cmd.inputType == EInputType::SPACE_ENGINE_INPUT_KEYBOARD)
+                    {
+                        if(Keyboard::key(cmd.inputCode))
+                            cmd.command->execute(actor.first);
+                    }
+                    else if(cmd.inputType == EInputType::SPACE_ENGINE_INPUT_JOYSTICK)
+                    {
+                        if(Joystick::button(cmd.inputCode))
+                            cmd.command->execute(actor.first);
+                    }
+                }
+            }
+        }
+    }
+
+    int InputHandler::bindCommand(EAppState state, void* obj, const InputBinding& inputBind)
+    {
+
+        assert(inputBind.inputType >= EInputType::SPACE_ENGINE_INPUT_MOUSE && inputBind.inputType < EInputType::COUNT);
+        assert(state >= EAppState::START && state < EAppState::COUNT);
+
+        m_bindings[state][obj].push_back(inputBind);
+
+
+        return 1;
+    }
+
+        
     //Mouse
     std::array<bool, SPACE_ENGINE_MOUSE_BUTTON_LAST+1> Mouse::buttons;
     std::array<bool, SPACE_ENGINE_MOUSE_BUTTON_LAST+1> Mouse::buttonsLast;
@@ -181,13 +227,13 @@ namespace SpaceEngine
             GLFWgamepadstate state;
             if(glfwGetGamepadState(controller->cID, &state))
             {
-                for(int i = SPACE_ENGINE_JK_BUTTON_FIRST; i < SPACE_ENGINE_JK_BUTTON_LAST; i++)
+                for(int i = SPACE_ENGINE_JK_BUTTON_FIRST; i <= SPACE_ENGINE_JK_BUTTON_LAST; i++)
                 {
                     controller->buttonsLast[i]=controller->buttons[i];
                     controller->buttons[i]=static_cast<bool>(state.buttons[i]);
                 }
 
-                for(int i = SPACE_ENGINE_JK_AXIS_FIRST; i < SPACE_ENGINE_JK_AXIS_LAST; i++)
+                for(int i = SPACE_ENGINE_JK_AXIS_FIRST; i <= SPACE_ENGINE_JK_AXIS_LAST; i++)
                 {
                     controller->axiesLast[i]=controller->axies[i];
                     controller->axies[i]=state.axes[i];
