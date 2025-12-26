@@ -8,6 +8,9 @@ namespace SpaceEngine
     
     void Renderer::render(const RendererParams& rParams)
     {
+        //before rendering
+        glClearColor(1.f, 1.f, 1.f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for(const auto& renderObj : rParams.renderables)
         {

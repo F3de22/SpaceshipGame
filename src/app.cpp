@@ -176,31 +176,12 @@ namespace SpaceEngine
             InputHandle();
             inputHandler->handleInput();
 
-            //mouse debug
-            #if 0
-            if(Mouse::buttonDown(SPACE_ENGINE_MOUSE_BUTTON_LEFT))
-                SPACE_ENGINE_DEBUG("Left mouse button pressed");
-            if(Mouse::buttonDown(SPACE_ENGINE_MOUSE_BUTTON_RIGHT))
-                SPACE_ENGINE_DEBUG("Right mouse button pressed");
-            #endif
-            #if 1
-            if(Joystick::button(SPACE_ENGINE_JK_BUTTON_LEFT))
-                SPACE_ENGINE_DEBUG("Joystick: Pressed button Down");
-            //if(Joystick::buttonDown(SPACE_ENGINE_JK_BUTTON_B))
-            //    SPACE_ENGINE_DEBUG("Joystick: Pressed button B");
-            //SPACE_ENGINE_DEBUG("Joystick: Left axis x:{} Left axis y:{}", Joystick::axis(SPACE_ENGINE_JK_AXIS_LEFT_X), 
-            //Joystick::axis(SPACE_ENGINE_JK_AXIS_LEFT_Y));
-            #endif
-            //fast debug for windowed and fullwindow feature
-
             //update game objects in the scene
             pScene->Update(dt);
 
             //collects the renderizable objects in the scene
             pScene->gatherRenderables(worldRenderables, uiRenderables);
-            //before rendering
-            glClearColor(1.f, 1.f, 1.f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
             //gather scene object to rendering the scene
             BaseCamera* pCam = pScene->getActiveCamera();
             std::vector<Light*>* pLights = pScene->getLights();
