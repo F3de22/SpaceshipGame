@@ -11,6 +11,11 @@ namespace SpaceEngine
         m_pMesh = other.m_pMesh;
         m_layer = other.m_layer;
         m_pTransform = new Transform(*other.m_pTransform);
+        
+        if(m_pMesh)
+        {
+            m_pCollider = new Collider(this);
+        }
     }
 
     Layers GameObject::getLayer()

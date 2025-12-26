@@ -1,6 +1,6 @@
 #pragma once
-#include "utils/stb_image.h"
 #include <vector>
+#include "scene.h"
 
 namespace SpaceEngine{
 
@@ -22,7 +22,8 @@ namespace SpaceEngine{
         bool isHovered;
     };
 
-    class TitleScreen{
+    class TitleScreen : public Scene
+    {
     public:
         TitleScreen();
         ~TitleScreen();

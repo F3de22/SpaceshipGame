@@ -27,8 +27,8 @@ namespace SpaceEngine
                 //add a constructor where you can pass the path of skybox
                 pSkybox = nullptr;
             };
-            ~Scene() = default;
-
+            virtual ~Scene() = default;
+            
             void OnLoad()
             {
                 SPACE_ENGINE_INFO("On load scene");
@@ -83,20 +83,31 @@ namespace SpaceEngine
             void gatherColliderables();
             void gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables);
             void requestDestroy(GameObject* pGameObj);
-            void requestInstatiate(GameObject* pGameObj);
-            void requestInstatiate(GameObject* pGameObj, float time);
-            void requestInstatiate(GameObject* pGameObj, Vector3 wPos);
-            void requestInstatiate(GameObject* pGameObj, float time, Vector3 wPos);
+            
+            template <typename T>
+            void requestInstantiate(const T* prefab, float time = 0.f)
+            {
+                requestInstantiateImpl(prefab, time, false, {});
+            }
+
+            template <typename T>
+            void requestInstantiate(const T* prefab, Vector3 wPos)
+            {
+                requestInstantiateImpl(prefab, 0.0f, true, wPos);
+            }
+
+            template <typename T>
+            void requestInstantiate(const T* prefab, float time, Vector3 wPos)
+            {
+                requestInstantiateImpl(prefab, time, true, wPos);
+            }
+
             BaseCamera* getActiveCamera() const;
             std::vector<Light*>* getLights() const; 
             Skybox* getSkybox() const;
             void Update(float dt);
-        private:
-            
 
-            PhysicsManager* pPhyManager = nullptr;
-            void processDestroyQ();
-            void processInstantiateQ(float dt);
+        private:
             
             struct SpawnRequest
             {
@@ -104,9 +115,33 @@ namespace SpaceEngine
                 GameObject* prefab = nullptr;
                 bool overrideWorldPos = false;
                 Vector3 wPos;
-            };
-        
-            GameObject* instatiate(const SpawnRequest& sr);
+            };            
+
+            PhysicsManager* pPhyManager = nullptr;
+            virtual void UpdateScene(float dt){}
+            void processDestroyQ();
+            void processInstantiateQ(float dt);
+            inline void enqueueSpawn(SpawnRequest&& sr){spawnQ.push_back(std::move(sr));}
+            template <typename T>
+            void requestInstantiateImpl(const T* prefab,
+                                        float time,
+                                        bool overrideWorldPos,
+                                        const Vector3& wPos)
+            {
+                static_assert(std::is_base_of_v<GameObject, T>,
+                              "T must derive from GameObject");
+                
+                SpawnRequest sr;
+                sr.prefab = new T(*prefab);  // ← exactly what you asked
+                sr.timeRemaining = time;
+                sr.overrideWorldPos = overrideWorldPos;
+                sr.wPos = wPos;
+                
+                enqueueSpawn(std::move(sr));
+            }
+
+            //Don't use it to instantiate GameObjects directly instead use RequestInstatiate
+            GameObject* instantiate(const SpawnRequest& sr);
             //may be is useful a table with duoble link list to keep the gameObjects
             //for avoing a complex gathering
             vector<GameObject*> gameObjects;
@@ -116,6 +151,20 @@ namespace SpaceEngine
             //cameras[0] is always the active camera
             vector<BaseCamera*> cameras;
             Skybox* pSkybox = nullptr;
+
+            //scene property
+            std::string name;
+            bool active = true;
+            void handleSpawning(float dt);
+            float randomRange(float min, float max);
+    };
+
+    class SpaceScene : public Scene
+    {
+        private:
+            void UpdateScene(float dt) override;
+            float randomRange(float min, float max); 
+            void handleSpawning(float dt);
 
             //GESTIONE SPAWN
             float m_asteroidTimer = 0.0f;
@@ -127,10 +176,17 @@ namespace SpaceEngine
             float m_spawnZ = -100.0f; // Lontano dalla camera
             float m_gameAreaX = 50.0f; // Larghezza totale area spawn
             float m_gameAreaY = 30.0f; // Altezza totale area spawn
-            //scene property
-            std::string name;
-            bool active = true;
-            void handleSpawning(float dt);
-            float randomRange(float min, float max);
+    };
+
+    class DeathScene : public Scene
+    {
+        public:
+        private:
+    };
+
+    class StartupScene : public Scene
+    {
+        public:
+        private:
     };
 }
