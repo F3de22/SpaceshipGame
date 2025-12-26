@@ -19,6 +19,8 @@ namespace SpaceEngine
         shaderManager.Initialize();
         materialManager.Initialize();
         textureManager.Initialize();
+        sceneManager.Initialize();
+        
         //Objects
         renderer = new Renderer();
         SPACE_ENGINE_INFO("Initilization app done");
@@ -35,6 +37,7 @@ namespace SpaceEngine
     App::~App()
     {
         //Shutdown Managers
+        sceneManager.Shutdown();
         textureManager.Shutdown();
         materialManager.Shutdown();
         shaderManager.Shutdown();
@@ -116,6 +119,8 @@ namespace SpaceEngine
         pLight = new Light(Vector3{-10.f, -10.f, 0.f}, Vector3{1.f, 1.f, 1.f}); //left-bottom
         pScene->addSceneComponent<PerspectiveCamera*>(pCamera);
         glError = glGetError();
+
+        SceneManager::LoadScene(pScene);
     }
 
     void App::InputHandle()
@@ -176,19 +181,23 @@ namespace SpaceEngine
             inputHandler->handleInput();
 
             //update game objects in the scene
-            pScene->Update(dt);
+            sceneManager.Update(dt);
 
             //collects the renderizable objects in the scene
-            pScene->gatherRenderables(worldRenderables, uiRenderables);
-            
+            sceneManager.GatherRenderables(worldRenderables, uiRenderables);
             //gather scene object to rendering the scene
-            BaseCamera* pCam = pScene->getActiveCamera();
-            std::vector<Light*>* pLights = pScene->getLights();
-            RendererParams rParams{worldRenderables, *(pLights), *(pCam), pScene->getSkybox()};
+            //BaseCamera* pCam = sceneManager.GetActiveCamera();
+            //std::vector<Light*>* pLights = sceneManager.GetLights();
+            RendererParams rParams{worldRenderables, 
+                *(sceneManager.GetLights()), 
+                sceneManager.GetActiveCamera(), 
+                pScene->getSkybox()};
             
             auto glError = glGetError();
             renderer->render(rParams);
             glError = glGetError();
+
+            sceneManager.LateUpdate();
             
             windowManager.PollEvents();
             windowManager.SwapBuffers();

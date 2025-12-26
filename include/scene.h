@@ -87,9 +87,9 @@ namespace SpaceEngine
             void requestInstatiate(GameObject* pGameObj, float time);
             void requestInstatiate(GameObject* pGameObj, Vector3 wPos);
             void requestInstatiate(GameObject* pGameObj, float time, Vector3 wPos);
-            BaseCamera* getActiveCamera();
-            std::vector<Light*>* getLights(); 
-            Skybox* getSkybox();
+            BaseCamera* getActiveCamera() const;
+            std::vector<Light*>* getLights() const; 
+            Skybox* getSkybox() const;
             void Update(float dt);
         private:
             

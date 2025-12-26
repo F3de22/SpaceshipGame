@@ -50,10 +50,47 @@ namespace SpaceEngine
         m_vecScenes.push_back(pScene);
     }
 
-    void SceneManager::UnloadScene(Scene* pScene)
+    void SceneManager::UnloadScene(const std::string& nameScene)
     {
-        //make a queue to deallocate the scene
+        assert(m_currScene);
+    
+        if(m_currScene->getNameScene() == nameScene)
+        {
+            SPACE_ENGINE_ERROR("Cannot unload the current scene");
+            return;
+        }
+
+        for(const Scene* pScene : m_vecScenes)
+        {
+            if(pScene->getNameScene() == nameScene)
+            {
+                SPACE_ENGINE_INFO("Scene: {} in pending to unload", nameScene)
+                return;
+            }
+        }
+
+        SPACE_ENGINE_ERROR("Scene not found");
     }
+
+    void SceneManager::LateUpdate()
+    {
+        ProcessUnload();
+    }
+
+
+    void SceneManager::ProcessUnload()
+    {
+        const Scene* pendingScene;
+        while(!m_pendingUnloadQ.empty())
+        {
+            pendingScene = m_pendingUnloadQ.front();
+            m_pendingUnloadQ.pop();
+            m_vecScenes.erase(std::remove_if(m_vecScenes.begin(),
+                m_vecScenes.end(), 
+                pendingScene), m_vecScenes.end());
+        }
+    }
+    
  
     void SceneManager::SwitchScene(const std::string & name)
     {
@@ -68,6 +105,47 @@ namespace SpaceEngine
         }
     }
 
+    BaseCamera* SceneManager::GetActiveCamera()
+    {
+        for(const Scene* pScene : m_vecScenes)
+        {
+            if(pScene->isActive()) 
+            {
+                if(BaseCamera* pActiveCam = pScene->getActiveCamera(); pActiveCam)
+                    return pActiveCam;
+            }
+        }
+
+        SPACE_ENGINE_DEBUG("No active camera is found");
+    }
+
+    std::vector<Light*>* SceneManager::GetLights()
+    {
+        for(const Scene* pScene : m_vecScenes)
+        {
+            if(pScene->isActive()) 
+            {
+                if(std::vector<Light*>* pLights = pScene->getLights(); pLights)
+                    return pLights;
+            }
+        }
+
+        SPACE_ENGINE_DEBUG("No lights are found");
+    }
+
+    Skybox* SceneManager::GetSkybox()
+    {
+        for(const Scene* pScene : m_vecScenes)
+        {
+            if(pScene->isActive()) 
+            {
+                if(Skybox* pSkybox = pScene->getSkybox(); pSkybox)
+                    return pSkybox;
+            }
+        }
+
+        SPACE_ENGINE_DEBUG("No skybox is found");
+    }
 
 
 }

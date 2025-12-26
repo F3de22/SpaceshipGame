@@ -32,7 +32,7 @@ namespace SpaceEngine
     {
         const std::vector<RenderObject>& renderables; 
         const std::vector<Light*>& lights;
-        const BaseCamera& cam;
+        const BaseCamera* cam;
         Skybox* pSkybox = nullptr; 
     };
 

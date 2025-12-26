@@ -12,59 +12,62 @@ namespace SpaceEngine
         glClearColor(1.f, 1.f, 1.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for(const auto& renderObj : rParams.renderables)
+        if(rParams.cam)
         {
-            if(!renderObj.mesh ) continue;
-            
-            for(int idSubMesh = 0, nSubMesh = renderObj.mesh->getNumSubMesh();  idSubMesh < nSubMesh; idSubMesh++)
+            for(const auto& renderObj : rParams.renderables)
             {
-                auto glError = glGetError();
-                //get shader
-                ShaderProgram* shader = renderObj.mesh->getMaterialBySubMeshIndex(idSubMesh)->getShader();
-                shader->use();
-                glError = glGetError();
-                if(shader)
-                {
-                    //bind material
-                    renderObj.mesh->getMaterialBySubMeshIndex(idSubMesh)->bindingPropsToShader();
-                    //set matrices
-                    shader->setUniform("model", renderObj.modelMatrix);
-                    shader->setUniform("view", rParams.cam.getViewMatrix());
-                    shader->setUniform("projection", rParams.cam.getProjectionMatrix());
-                    //lights bind
-                    if(shader->isPresentUniform("lights[0].pos") && rParams.lights.size())
-                    {
-                        shader->setUniform("normalMatrix", Math::transpose(Math::inverse(Matrix3(renderObj.modelMatrix))));
-                        glError = glGetError();
-                        
-                        for(int i = 0; i < rParams.lights.size(); i++)
-                        {
-                            std::string strLight = "lights[" + std::to_string(i) + "].pos"; 
-                            shader->setUniform(strLight.c_str(), rParams.lights[i]->pos);
-                            glError = glGetError();
-                            strLight = "lights[" + std::to_string(i) + "].color"; 
-                            shader->setUniform(strLight.c_str(), rParams.lights[i]->color);
-                            glError = glGetError();
-                        }
-                    }
-                    
-                    //call the draw for the mesh
-                    renderObj.mesh->bindVAO();
-                    renderObj.mesh->drawSubMesh(idSubMesh);
-                    glError = glGetError();
+                if(!renderObj.mesh ) continue;
 
-                }
-                glUseProgram(0);
-            }    
+                for(int idSubMesh = 0, nSubMesh = renderObj.mesh->getNumSubMesh();  idSubMesh < nSubMesh; idSubMesh++)
+                {
+                    auto glError = glGetError();
+                    //get shader
+                    ShaderProgram* shader = renderObj.mesh->getMaterialBySubMeshIndex(idSubMesh)->getShader();
+                    shader->use();
+                    glError = glGetError();
+                    if(shader)
+                    {
+                        //bind material
+                        renderObj.mesh->getMaterialBySubMeshIndex(idSubMesh)->bindingPropsToShader();
+                        //set matrices
+                        shader->setUniform("model", renderObj.modelMatrix);
+                        shader->setUniform("view", rParams.cam->getViewMatrix());
+                        shader->setUniform("projection", rParams.cam->getProjectionMatrix());
+                        //lights bind
+                        if(shader->isPresentUniform("lights[0].pos") && rParams.lights.size())
+                        {
+                            shader->setUniform("normalMatrix", Math::transpose(Math::inverse(Matrix3(renderObj.modelMatrix))));
+                            glError = glGetError();
+
+                            for(int i = 0; i < rParams.lights.size(); i++)
+                            {
+                                std::string strLight = "lights[" + std::to_string(i) + "].pos"; 
+                                shader->setUniform(strLight.c_str(), rParams.lights[i]->pos);
+                                glError = glGetError();
+                                strLight = "lights[" + std::to_string(i) + "].color"; 
+                                shader->setUniform(strLight.c_str(), rParams.lights[i]->color);
+                                glError = glGetError();
+                            }
+                        }
+
+                        //call the draw for the mesh
+                        renderObj.mesh->bindVAO();
+                        renderObj.mesh->drawSubMesh(idSubMesh);
+                        glError = glGetError();
+
+                    }
+                    glUseProgram(0);
+                }    
+            }
         }
         if(rParams.pSkybox)
         {
             auto glError = glGetError();
             ShaderProgram* pShaderSkybox = rParams.pSkybox->pShader;
-            Matrix4 viewNoTransl = Matrix4(Matrix3(rParams.cam.getViewMatrix()));
+            Matrix4 viewNoTransl = Matrix4(Matrix3(rParams.cam->getViewMatrix()));
             pShaderSkybox->use();
             pShaderSkybox->setUniform("view", viewNoTransl);
-            pShaderSkybox->setUniform("projection", rParams.cam.getProjectionMatrix());
+            pShaderSkybox->setUniform("projection", rParams.cam->getProjectionMatrix());
             pShaderSkybox->setUniform("skybox", 0);
             // disegna la skybox come se fosse lontanissima
             glDepthFunc(GL_LEQUAL);

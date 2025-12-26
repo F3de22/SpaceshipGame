@@ -5,9 +5,12 @@
 namespace SpaceEngine
 {
 
-    BaseCamera* Scene::getActiveCamera()
+    BaseCamera* Scene::getActiveCamera() const
     {
-        return cameras[0];
+        if(cameras.size() != 0 )
+            return cameras[0];
+
+        return nullptr;
     }
 
     void Scene::Init()
@@ -53,7 +56,7 @@ namespace SpaceEngine
             float y = randomRange(-safeY, safeY);
             float z = m_spawnZ;
 
-            Asteroid* pAsteroid = new Asteroid(this, "TestCube.obj");
+            Asteroid* pAsteroid = new Asteroid(this, "Asteroid_LowPoly.obj");
             
             pAsteroid->Init(); 
             pAsteroid->getTransform()->setWorldPosition(Vector3(x, y, z));
@@ -183,7 +186,7 @@ namespace SpaceEngine
 
     }
 
-    Skybox* Scene::getSkybox()
+    inline Skybox* Scene::getSkybox() const
     {
         return pSkybox;
     }
@@ -223,9 +226,11 @@ namespace SpaceEngine
         }
     }
 
-    std::vector<Light*>* Scene::getLights()
+    std::vector<Light*>* Scene::getLights() const
     {
-        return &lights;
+        if(lights.size() != 0)
+            return const_cast<std::vector<Light*>*>(&lights);
+        return nullptr;
     }
 
     inline void Scene::setActive(bool flag)

@@ -4,6 +4,7 @@
 #include "managers/logManager.h"
 #include "managers/inputManager.h"
 #include "managers/windowManager.h"
+#include "managers/sceneManager.h"
 #include "collisionDetection.h"
 #include "mesh.h"
 #include "material.h"
@@ -39,7 +40,7 @@ namespace SpaceEngine
             TextureManager textureManager;
             ShaderManager shaderManager;
             PhysicsManager physicsManager;
-            
+            SceneManager sceneManager;
             //Objects
             Scene* pScene;
             Renderer* renderer;
