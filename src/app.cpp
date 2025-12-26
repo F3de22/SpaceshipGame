@@ -155,7 +155,6 @@ namespace SpaceEngine
         //Gathers
         std::vector<RenderObject> worldRenderables;
         std::vector<UIRenderObject> uiRenderables;
-        std::list<Collider> l;
 
         while(!windowManager.WindowShouldClose())
         {

@@ -190,9 +190,6 @@ namespace SpaceEngine
 
     void Scene::gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables)
     {
-        worldRenderables.clear();
-        uiRenderables.clear();
-
         for (auto& gameObj : gameObjects)
         {
             // --- World objects ---
@@ -229,5 +226,24 @@ namespace SpaceEngine
     std::vector<Light*>* Scene::getLights()
     {
         return &lights;
+    }
+
+    inline void Scene::setActive(bool flag)
+    {
+        active = flag;
+    }
+    
+    inline bool Scene::isActive() const
+    {
+        return active;
+    }
+
+    inline void Scene::setNameScene(const std::string& name)
+    {
+        this->name = name;
+    }
+    inline std::string Scene::getNameScene() const
+    {
+        return name;
     }
 }

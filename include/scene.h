@@ -29,8 +29,21 @@ namespace SpaceEngine
             };
             ~Scene() = default;
 
+            void OnLoad()
+            {
+                SPACE_ENGINE_INFO("On load scene");
+            }
+            void OnUnload()
+            {
+                SPACE_ENGINE_INFO("On unload scene");
+            }
+
             void Init();
             void createGameObject();
+            void setActive(bool flag);
+            bool isActive() const;
+            void setNameScene(const std::string& name);
+            std::string getNameScene() const;
 
             template<typename T>
             void addSceneComponent(T sceneComponent)
@@ -114,7 +127,9 @@ namespace SpaceEngine
             float m_spawnZ = -100.0f; // Lontano dalla camera
             float m_gameAreaX = 50.0f; // Larghezza totale area spawn
             float m_gameAreaY = 30.0f; // Altezza totale area spawn
-
+            //scene property
+            std::string name;
+            bool active = true;
             void handleSpawning(float dt);
             float randomRange(float min, float max);
     };
