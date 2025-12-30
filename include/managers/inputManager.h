@@ -181,6 +181,7 @@ namespace SpaceEngine
             static void setClamp(bool flag);
             static bool getDeadzone();
             static bool getClamp();
+            static bool isConnected();
 
             
         private:

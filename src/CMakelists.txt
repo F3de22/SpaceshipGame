@@ -12,6 +12,7 @@ add_library(App STATIC app.cpp
                     enemyShip.cpp 
                     asteroid.cpp 
                     gameobject.cpp 
+                    bullet.cpp
                     player.cpp 
                     collisionDetection.cpp 
                     skybox.cpp)

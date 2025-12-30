@@ -328,6 +328,13 @@ namespace SpaceEngine
     {
         return clamp;
     }
+
+    bool Joystick::isConnected()
+    {
+        if(controller.get())
+            return true;
+        return false;
+    }
     
     //callbacks
     static void joystick_callback(int jid, int event)

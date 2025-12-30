@@ -38,6 +38,7 @@
 
 #define GET_GL_TEXTURE_UNIT(N) GL_TEXTURE##N
 
+
 namespace SpaceEngine
 {
     std::wstring toWide(const std::string& str)
@@ -87,15 +88,6 @@ namespace SpaceEngine
     std::string Utils::getFullPath(const std::string& dir, const aiString& path)
     {
         std::string p(path.data);
-
-        /*
-        if (p == "C:\\\\") {
-            p = "";
-        }
-        else if (p.substr(0, 2) == ".\\") {
-            p = p.substr(2, p.size() - 2);
-        }
-        */
         p = getFileNameFormPath(p);
 
         std::string fullPath = dir + "/" + p;

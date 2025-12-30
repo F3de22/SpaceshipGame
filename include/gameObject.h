@@ -9,12 +9,13 @@
 namespace SpaceEngine
 {
 
-    enum class Layers
+    enum class ELayers
     {
         DEFAULT_LAYER,
         PLAYER_LAYER,
         ENEMY_LAYER,
-        BULLET_LAYER
+        BULLET_LAYER,
+        ASTEROID_LAYER
     };
 
     class Scene;
@@ -27,7 +28,7 @@ namespace SpaceEngine
             GameObject(const GameObject& other);
             virtual ~GameObject();
             int getNumInstances();
-            Layers getLayer();
+            ELayers getLayer();
             void destroy(); 
             virtual void update(float dt);
             virtual void fixedUpdate(float fixed_dt);
@@ -81,14 +82,13 @@ namespace SpaceEngine
             bool pendingDestroy = false;
         private:
             //Attention
-            Scene* pScene = nullptr;
+            
         protected:
             GameObject(const std::string& filePathModel);
             Transform* m_pTransform;
             Mesh* m_pMesh = nullptr;
             Collider* m_pCollider = nullptr;
-            Layers m_layer = Layers::DEFAULT_LAYER;
-
-            //TODO: add componet for the physics 
+            Scene* pScene = nullptr;
+            ELayers m_layer = ELayers::DEFAULT_LAYER;
     };
 }

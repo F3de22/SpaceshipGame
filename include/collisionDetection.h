@@ -43,7 +43,6 @@ namespace SpaceEngine
             Vector3 pos;
             int bucket;
             int level;
-            int layer;
             GameObject* gameObj = nullptr;
 
             Collider(GameObject* gameObj):gameObj(gameObj)

@@ -8,6 +8,7 @@
 
 
 
+
 #define DEFAULT_LOGGER_NAME "SpaceEngineLogger"
 #ifdef SPACE_ENGINE_PLATFORM_WINDOWS
 #define SPACE_ENGINE_BREAK __debugbreak();
@@ -93,3 +94,36 @@
 #define SPACE_ENGINE_INFO(...) (void)0
 #define SPACE_ENGINE_FATAL(...) (void)0
 #endif
+
+const char* getGLErrorString(GLenum error) 
+{
+    switch (error) 
+    {
+        case GL_NO_ERROR:
+            return "No error";
+        case GL_INVALID_ENUM:
+            return "Invalid enum";
+        case GL_INVALID_VALUE:
+            return "Invalid value";
+        case GL_INVALID_OPERATION:
+            return "Invalid operation";
+        case GL_OUT_OF_MEMORY:
+            return "Out of memory";
+        default:
+            return "Unknown GL error";
+    }
+}
+
+#define GL_CHECK(call)                                                   \
+    do {                                                                 \
+        call;                                                            \
+        if (GLenum err = glGetError(); err != GL_NO_ERROR)               \
+            SPACE_ENGINE_FATAL("GL error: %s for " #call, getGLErrorString(err)); \
+    } while (0)
+
+#define GL_CHECK_ERRORS()                                     \
+    do {                                                      \
+        if (GLenum err = glGetError(); err != GL_NO_ERROR)    \
+            SPACE_ENGINE_FATAL("GL error: %s", getGLErrorString(err)); \
+    } while (0)
+

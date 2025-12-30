@@ -132,23 +132,30 @@ namespace SpaceEngine
         pUIMeshRend->bindMaterial(pMat);
         
     }
-    void Button::update(float mx,float my, bool pressed)
+    bool Button::update(int mx, int my)
     {
-        hovered = Rect::pointInRect(pUITransf->getRect(),mx,my);
-        if(hovered && !wasHovered)
+        hovered = Rect::pointInRect(pUITransf->getRect(), 
+                                        static_cast<float>(mx),
+                                        static_cast<float>(my));
+        if(hovered)
         {
             UIButtonMaterial* pMat = dynamic_cast<UIButtonMaterial*>(pUIMeshRend->getMaterial());
             pMat->setSubroutineHover(true);
         }
-        if(!hovered && wasHovered)
+        else
         {
             UIButtonMaterial* pMat = dynamic_cast<UIButtonMaterial*>(pUIMeshRend->getMaterial());
             pMat->setSubroutineHover(false);
         }
-        //if(hovered && !pressed && wasPressed && onClick) onClick();
-        wasPressed = pressed;
-        wasHovered = hovered;
+
+        return hovered;
     }
+
+    bool Button::isHovered()
+    {
+        return hovered;
+    }
+
 
     //---------------------------------//
     //-----------Background------------//
@@ -176,6 +183,7 @@ namespace SpaceEngine
             m_pMoveDownCmd = new UINavMoveDownCommand();
             m_pMoveUpCmd = new UINavMoveUpCommand();
             m_pOnClickCmd = new UINavOnClickCommand();
+            m_pOnPressCmd = new UINavOnPressCommand();
         }
 
         //Down command for joystick and keyboard
@@ -206,12 +214,12 @@ namespace SpaceEngine
             this, 
             {SPACE_ENGINE_JK_BUTTON_A, 
                 EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
-                m_pMoveUpCmd});
+                m_pOnPressCmd});
         inputHandler.bindCommand(EAppState::RUN, 
             this, 
             {SPACE_ENGINE_KEY_BUTTON_ENTER, 
                 EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
-                m_pMoveUpCmd});
+                m_pOnClickCmd});
         count++;
     }
 
@@ -225,6 +233,7 @@ namespace SpaceEngine
             delete m_pMoveDownCmd;
             delete m_pMoveUpCmd;
             delete m_pOnClickCmd;
+            delete m_pOnPressCmd;
         }
 
         //TODO::Remove the entry on the InputHandler
@@ -243,18 +252,47 @@ namespace SpaceEngine
     void UINavigator::launchOnClick()
     {
         assert(m_focused >= 0 && m_focused < m_vecButtons.size());
+        if(m_vecButtons[m_focused]->isHovered()){
+            m_vecButtons[m_focused]->onClick();
+            SPACE_ENGINE_DEBUG("Launch OnClick");
+        }
+    }
+
+    void UINavigator::launchOnPress()
+    {
+        assert(m_focused >= 0 && m_focused < m_vecButtons.size());
         m_vecButtons[m_focused]->onClick();
         SPACE_ENGINE_DEBUG("Launch OnClick");
     }
     
     void UINavigator::update()
     {
-        for(Button* pbutton : m_vecButtons)
+        if(!Joystick::isConnected())
         {
-            //Check that is hover
+            for(int i = 0; i < m_vecButtons.size(); i++)
+            {
+                if(m_vecButtons[i]->update(Mouse::getPosX(), Mouse::getPosY()))
+                {
+                    m_focused = i;
+                    return;
+                }
+            }
         }
     }
 
-
+    //-------------------------------------//
+    //---------------UILayout--------------//
+    //-------------------------------------//
+    int UILayout::removeUIElement(const UIBase* pUIBase)
+    {
+        auto it = std::find(m_vecUIElements.begin(), m_vecUIElements.end(), pUIBase);
+        if(it != m_vecUIElements.end())
+        {
+            m_vecUIElements.erase(it);
+            return;
+        }
+        
+        SPACE_ENGINE_ERROR("UILayout::removeUIElement: UIElement not found");
+    }
 
 }

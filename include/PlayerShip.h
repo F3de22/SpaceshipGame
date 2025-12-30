@@ -4,6 +4,7 @@
 #include "collisionDetection.h"
 #include "renderer.h"
 #include "inputManager.h"
+#include "bullet.h"
 
 namespace SpaceEngine {
 
@@ -18,15 +19,17 @@ namespace SpaceEngine {
         void MoveDown();
         void MoveLeft();
         void MoveRight();
+        void Fire();
 
         // Gestisce l'input e aggiorna la posizione
         virtual void update(float dt) override;
-
         virtual void onCollisionEnter(Collider* col) override;
-
         RenderObject getRenderObject();
 
     private:
+        void HandleInput(float dt);
+        
+        Bullet* m_pBullet = nullptr;
         float m_speed;
         float m_dt = 0.f;
         // Limiti di movimento
@@ -34,7 +37,6 @@ namespace SpaceEngine {
         float m_limitY;
 
         float m_shootCooldown;
-        void HandleInput(float dt);
     };
 
     class MoveUpCommand : public Command
@@ -74,6 +76,16 @@ namespace SpaceEngine {
             {
                 PlayerShip* ship = static_cast<PlayerShip*>(actor);
                 ship->MoveRight();
+            }
+    };
+
+    class FireCommand : public Command
+    {
+        public:
+            virtual void execute(void* actor) override
+            {
+                PlayerShip* ship = static_cast<PlayerShip*>(actor);
+                ship->Fire();
             }
     };
 }

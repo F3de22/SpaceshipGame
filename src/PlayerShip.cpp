@@ -1,5 +1,6 @@
 #include "playerShip.h"
 #include "inputManager.h"
+#include "scene.h"
 #include <glad/gl.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,6 +15,7 @@ namespace SpaceEngine {
         pMat->pShader = ShaderManager::findShaderProgram("simpleTex");
         m_pTransform = new Transform();
         m_pCollider = new Collider(this);
+        m_pBullet = new Bullet(pScene, "Bullet.obj");
 
         m_speed = 15.0f;               
         m_limitX = 7.0f;              
@@ -75,9 +77,23 @@ namespace SpaceEngine {
         m_pTransform->setLocalPosition(m_position);
     }
 
-    void PlayerShip::onCollisionEnter(Collider* col) {
+    void PlayerShip::onCollisionEnter(Collider* col) 
+    {
         SPACE_ENGINE_INFO("PlayerShip Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
+        if(col->gameObj->getLayer() == ELayers::ENEMY_LAYER || col->gameObj->getLayer() == ELayers::ASTEROID_LAYER)
+        {
+
+        }
     }
+
+    void PlayerShip::Fire()
+    {
+        if(!pScene)
+        {
+            pScene->requestInstantiate(m_pBullet);
+        }
+    }
+
 
     void PlayerShip::MoveUp()
     {        

@@ -123,7 +123,8 @@ namespace SpaceEngine
             Button(Vector2 anchor, Vector2 size);
             Button(Vector2 anchor, UIButtonMaterial* pMat);
             ~Button() = default;
-            void update(float mx,float my, bool pressed);
+            bool update(int mx, int my);
+            bool isHovered();
             std::function<void()> onClick;
         private:
             bool hovered=false;
@@ -135,12 +136,15 @@ namespace SpaceEngine
     class UINavMoveDownCommand;
     class UINavMoveUpCommand;
     class UINavOnClickCommand;
+    class UINavOnPressCommand;
 
     class UINavigator
     {
         friend UINavMoveDownCommand;
         friend UINavMoveUpCommand;
         friend UINavOnClickCommand;
+        friend UINavOnPressCommand;
+
         public:
             UINavigator(InputHandler& inputHandler);
             ~UINavigator();
@@ -149,13 +153,15 @@ namespace SpaceEngine
         private:
             void move(int delta);
             void launchOnClick();
-            int m_focused = 0;
+            void launchOnPress();
             std::vector<Button*> m_vecButtons;
             //Make them static in future
             static UINavMoveDownCommand* m_pMoveDownCmd;
             static UINavMoveUpCommand* m_pMoveUpCmd;
             static UINavOnClickCommand* m_pOnClickCmd;
+            static UINavOnPressCommand* m_pOnPressCmd;
             static int count;
+            int m_focused = 0;
     };
 
     class UINavMoveDownCommand : public Command
@@ -185,6 +191,16 @@ namespace SpaceEngine
             {
                 UINavigator* nav = static_cast<UINavigator*>(actor);
                 nav->launchOnClick();
+            }
+    };
+
+    class UINavOnPressCommand : public Command
+    {
+        public:
+            virtual void execute(void* actor) override
+            {
+                UINavigator* nav = static_cast<UINavigator*>(actor);
+                nav->launchOnPress();
             }
     };
 
