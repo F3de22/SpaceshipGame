@@ -7,7 +7,6 @@ add_library(App STATIC app.cpp
                     renderer.cpp 
                     camera.cpp 
                     titleScreen.cpp 
-                    scene.cpp 
                     playerShip.cpp 
                     enemyShip.cpp 
                     asteroid.cpp 
@@ -27,6 +26,7 @@ target_link_libraries(App PRIVATE WindowManager
     PRIVATE LogManager
     PRIVATE InputManager
     PUBLIC ShaderProgram
+    PRIVATE SceneManager
     PUBLIC Mesh)
 
 target_include_directories(Main PRIVATE ${CMAKE_SOURCE_DIR}/include/)
@@ -35,6 +35,7 @@ target_link_libraries(Main PRIVATE WindowManager
                         PRIVATE App
                         PRIVATE LogManager
                         PRIVATE InputManager
+                        PRIVATE SceneManager
                         PRIVATE Mesh)
 set_target_properties(App PROPERTIES FOLDER "App")
 

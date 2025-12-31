@@ -40,10 +40,12 @@ namespace SpaceEngine
             }
 
             void Init();
-            void setActive(bool flag);
-            bool isActive() const;
-            void setNameScene(const std::string& name);
-            std::string getNameScene() const;
+
+            inline void setActive(bool flag){active = flag;}
+            inline bool isActive() const{return active;}
+            inline void setNameScene(const std::string& name){this->name = name;}
+            inline std::string getNameScene() const{return name;}
+            inline Skybox* getSkybox() const{return pSkybox;}
 
             template<typename T>
             void addSceneComponent(T sceneComponent)
@@ -108,7 +110,6 @@ namespace SpaceEngine
 
             BaseCamera* getActiveCamera() const;
             std::vector<Light*>* getLights() const; 
-            Skybox* getSkybox() const;
             void Update(float dt);
 
         private:

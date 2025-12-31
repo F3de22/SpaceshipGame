@@ -3,8 +3,9 @@
 namespace SpaceEngine
 {
     std::vector<Scene*> SceneManager::m_vecScenes;
+    std::queue<Scene*> SceneManager::m_pendingUnloadQ;
     Scene* SceneManager::m_currScene = nullptr;
-
+    
     void SceneManager::Shutdown()
     {
         for(Scene* pScene : m_vecScenes)

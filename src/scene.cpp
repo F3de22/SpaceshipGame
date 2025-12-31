@@ -95,11 +95,6 @@ namespace SpaceEngine
             );
     }
 
-    inline Skybox* Scene::getSkybox() const
-    {
-        return pSkybox;
-    }
-
     void Scene::gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables)
     {
         for (auto& gameObj : gameObjects)
@@ -141,24 +136,7 @@ namespace SpaceEngine
         return nullptr;
     }
 
-    inline void Scene::setActive(bool flag)
-    {
-        active = flag;
-    }
-    
-    inline bool Scene::isActive() const
-    {
-        return active;
-    }
 
-    inline void Scene::setNameScene(const std::string& name)
-    {
-        this->name = name;
-    }
-    inline std::string Scene::getNameScene() const
-    {
-        return name;
-    }
 
     //-----------------------------------------// 
     //---------------SpaceScene----------------//

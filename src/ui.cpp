@@ -52,8 +52,8 @@ namespace SpaceEngine
     //---------------------------------//
     //-----------UITrasform------------//
     //---------------------------------//
-    static int resWidth = 0; 
-    static int resHeight = 0;
+    int UITransform::resWidth = 0; 
+    int UITransform::resHeight = 0;
     Rect* UITransform::getRect()
     {
         if(resWidth !=WindowManager::width || resHeight != WindowManager::height)
@@ -174,6 +174,8 @@ namespace SpaceEngine
     UINavMoveDownCommand* UINavigator::m_pMoveDownCmd = nullptr;
     UINavMoveUpCommand* UINavigator::m_pMoveUpCmd = nullptr;
     UINavOnClickCommand* UINavigator::m_pOnClickCmd = nullptr;
+    UINavOnPressCommand* UINavigator::m_pOnPressCmd = nullptr;
+    
     int UINavigator::count = 0;
 
     UINavigator::UINavigator()

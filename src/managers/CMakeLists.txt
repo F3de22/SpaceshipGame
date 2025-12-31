@@ -51,8 +51,11 @@ target_link_libraries(InputManager PRIVATE WindowManager
     PRIVATE LogManager)
 set_target_properties(InputManager PROPERTIES FOLDER "InputManager")
 #SceneManager
-add_library(SceneManager STATIC sceneManager.cpp)
-target_include_directories(SceneManager PRIVATE ${CMAKE_SOURCE_DIR}/include/managers)
+add_library(SceneManager STATIC sceneManager.cpp ../scene.cpp)
+target_include_directories(SceneManager PRIVATE ${CMAKE_SOURCE_DIR}/include/managers
+                                        PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(SceneManager PRIVATE LogManager
-    PRIVATE App)
+                                    PRIVATE Mesh
+                                    PRIVATE UI
+                                    )
 set_target_properties(SceneManager PROPERTIES FOLDER "SceneManager")

@@ -7,8 +7,6 @@
 #include <spdlog/spdlog.h>
 #include <glad/gl.h>
 
-
-
 #define DEFAULT_LOGGER_NAME "SpaceEngineLogger"
 #ifdef SPACE_ENGINE_PLATFORM_WINDOWS
 #define SPACE_ENGINE_BREAK __debugbreak();
@@ -95,7 +93,7 @@
 #define SPACE_ENGINE_FATAL(...) (void)0
 #endif
 
-const char* getGLErrorString(GLenum error) 
+static const char* getGLErrorString(GLenum error) 
 {
     switch (error) 
     {

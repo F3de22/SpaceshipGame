@@ -1,4 +1,8 @@
 #pragma once
+
+#include <queue>
+#include <vector>
+
 #include "../scene.h"
 #include "../camera.h"
 #include "../Light.h"

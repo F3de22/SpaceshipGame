@@ -1,6 +1,5 @@
 #pragma once
 #include "renderer.h"
-#include "scene.h"
 #include "managers/logManager.h"
 #include "managers/inputManager.h"
 #include "managers/windowManager.h"
