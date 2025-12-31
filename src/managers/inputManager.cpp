@@ -1,7 +1,6 @@
 #include "inputManager.h"
 #include "windowManager.h"
 #include "log.h"
-#include "../app.h"
 
 
 namespace SpaceEngine
