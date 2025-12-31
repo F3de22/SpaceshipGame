@@ -240,7 +240,6 @@ namespace SpaceEngine
             delete m_pOnPressCmd;
         }
 
-        //TODO::Remove the entry on the InputHandler
         InputHandler& inputHandler = App::GetInputHandler();
         inputHandler.clearBindingsFor(this);
     }
