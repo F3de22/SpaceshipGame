@@ -1,8 +1,8 @@
 #include <algorithm>
 
 #include "ui.h"
-#include "log.h"
 #include "app.h"
+#include "renderer.h"
 
 namespace SpaceEngine
 {
@@ -251,7 +251,7 @@ namespace SpaceEngine
 
     void UINavigator::move(int delta)
     {
-        m_focused = (m_focused + delta + m_vecButtons.size()) % m_vecButtons.size();
+        m_focused = (m_focused + delta + static_cast<int>(m_vecButtons.size())) % static_cast<int>(m_vecButtons.size());
     }
 
     void UINavigator::launchOnClick()
@@ -310,10 +310,11 @@ namespace SpaceEngine
         if(it != m_vecUIElements.end())
         {
             m_vecUIElements.erase(it);
-            return;
+            return 1;
         }
         
         SPACE_ENGINE_ERROR("UILayout::removeUIElement: UIElement not found");
+        return 0;
     }
 
     std::vector<UIRenderObject> UILayout::gatherUIRenderables()

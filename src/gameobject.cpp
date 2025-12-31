@@ -18,7 +18,7 @@ namespace SpaceEngine
         }
     }
 
-    Layers GameObject::getLayer()
+    ELayers GameObject::getLayer()
     {
         return m_layer;
     }
