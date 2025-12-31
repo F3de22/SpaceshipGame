@@ -1,7 +1,8 @@
 #Logmanager
 add_library(LogManager STATIC logManager.cpp)
 target_include_directories(LogManager PRIVATE ${CMAKE_SOURCE_DIR}/include/managers)
-target_link_libraries(LogManager PUBLIC spdlog)
+target_link_libraries(LogManager PUBLIC spdlog
+                        PUBLIC glad_gl_core_33)
 set_target_properties(LogManager PROPERTIES FOLDER "LogManager")
 #macros
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
