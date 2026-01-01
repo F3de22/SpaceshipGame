@@ -55,7 +55,7 @@ namespace SpaceEngine
     {
         state = EAppState::START;
         //initialize main scene
-        pScene = new Scene(&physicsManager);
+        pScene = new SpaceScene(&physicsManager);
         pScene->Init();
         //crea e inizializza il player
         PlayerShip* pPlayer = new PlayerShip(pScene, "TestCube.obj");
@@ -158,10 +158,10 @@ namespace SpaceEngine
                 sceneManager.GetActiveCamera(), 
                 sceneManager.GetSkybox()};
             
-            auto glError = glGetError();
+            GL_CHECK_ERRORS(); 
             renderer->render(rParams);
             uiRenderer->render(uiRenderables);
-            glError = glGetError();
+            GL_CHECK_ERRORS();
 
             sceneManager.LateUpdate();
             

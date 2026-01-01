@@ -20,11 +20,11 @@ namespace SpaceEngine
 
                 for(int idSubMesh = 0, nSubMesh = renderObj.mesh->getNumSubMesh();  idSubMesh < nSubMesh; idSubMesh++)
                 {
-                    auto glError = glGetError();
+                    GL_CHECK_ERRORS();
                     //get shader
                     ShaderProgram* shader = renderObj.mesh->getMaterialBySubMeshIndex(idSubMesh)->getShader();
                     shader->use();
-                    glError = glGetError();
+                    GL_CHECK_ERRORS();
                     if(shader)
                     {
                         //bind material
@@ -37,24 +37,24 @@ namespace SpaceEngine
                         if(shader->isPresentUniform("lights[0].pos") && rParams.lights.size())
                         {
                             shader->setUniform("normalMatrix", Math::transpose(Math::inverse(Matrix3(renderObj.modelMatrix))));
-                            glError = glGetError();
+                            GL_CHECK_ERRORS();
+                            
 
                             for(int i = 0; i < rParams.lights.size(); i++)
                             {
                                 std::string strLight = "lights[" + std::to_string(i) + "].pos"; 
                                 shader->setUniform(strLight.c_str(), rParams.lights[i]->pos);
-                                glError = glGetError();
+                                GL_CHECK_ERRORS();
                                 strLight = "lights[" + std::to_string(i) + "].color"; 
                                 shader->setUniform(strLight.c_str(), rParams.lights[i]->color);
-                                glError = glGetError();
+                                GL_CHECK_ERRORS();
                             }
                         }
 
                         //call the draw for the mesh
                         renderObj.mesh->bindVAO();
                         renderObj.mesh->drawSubMesh(idSubMesh);
-                        glError = glGetError();
-
+                        GL_CHECK_ERRORS();
                     }
                     glUseProgram(0);
                 }    
@@ -62,7 +62,7 @@ namespace SpaceEngine
         }
         if(rParams.pSkybox)
         {
-            auto glError = glGetError();
+            GL_CHECK_ERRORS();
             ShaderProgram* pShaderSkybox = rParams.pSkybox->pShader;
             Matrix4 viewNoTransl = Matrix4(Matrix3(rParams.cam->getViewMatrix()));
             pShaderSkybox->use();
@@ -79,7 +79,7 @@ namespace SpaceEngine
 
             glEnable(GL_CULL_FACE);
             glDepthFunc(GL_LESS);
-            glError = glGetError();
+            GL_CHECK_ERRORS();
             glUseProgram(0);
         }
     }
@@ -104,6 +104,8 @@ namespace SpaceEngine
             
             // Draw UI mesh
             ui.pUIMesh->draw();
+            GL_CHECK_ERRORS();
+            glUseProgram(0);
         }
     }
 

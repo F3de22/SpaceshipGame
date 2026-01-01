@@ -3,6 +3,7 @@
 #include "ui.h"
 #include "app.h"
 #include "renderer.h"
+#include "shader.h"
 
 namespace SpaceEngine
 {
@@ -19,6 +20,10 @@ namespace SpaceEngine
     {
         pUIMeshRend = new UIMeshRenderer();
         pUIMeshRend->bindMaterial(pUIMaterial);
+        
+        if(!pUIMaterial->pShader)
+            pUIMaterial->pShader = ShaderManager::findShaderProgram("ui");
+        
         pUITransf = new UITransform();
         Texture* pTex = pUIMaterial->getTexture("ui_tex");
         int w = 0;
@@ -33,6 +38,10 @@ namespace SpaceEngine
     {
         pUIMeshRend = new UIMeshRenderer();
         pUIMeshRend->bindMaterial(pUIMaterial);
+
+        if(!pUIMaterial->pShader)
+            pUIMaterial->pShader = ShaderManager::findShaderProgram("ui");
+        
         pUITransf = new UITransform();
         pUITransf->setAnchor(posAncor);
         Texture* pTex = pUIMaterial->getTexture("ui_tex");
@@ -132,7 +141,8 @@ namespace SpaceEngine
         pUITransf->setSize(size);
         UIButtonMaterial* pMat = MaterialManager::createMaterial<UIButtonMaterial>(std::to_string(reinterpret_cast<std::uintptr_t>(this)));
         pUIMeshRend->bindMaterial(pMat);
-        
+        if(!pMat->pShader)
+            pMat->pShader = ShaderManager::findShaderProgram("uiButton");
     }
     bool Button::update(int mx, int my)
     {
@@ -332,15 +342,19 @@ namespace SpaceEngine
             vecUIRenderObj.push_back(uiRObj);
         }
 
-        std::vector<UIRenderObject> vecUIRendObjNav;
-        vecUIRendObjNav = m_pNavigator->gatherUIRenderables();
+        if(m_pNavigator)
+        {
 
-        vecUIRenderObj.insert(
-            vecUIRenderObj.end(),
-            std::move_iterator(vecUIRendObjNav.begin()),
-            std::move_iterator(vecUIRendObjNav.end())
-        );
-
+            std::vector<UIRenderObject> vecUIRendObjNav;
+            vecUIRendObjNav = m_pNavigator->gatherUIRenderables();
+            
+            vecUIRenderObj.insert(
+                vecUIRenderObj.end(),
+                std::move_iterator(vecUIRendObjNav.begin()),
+                std::move_iterator(vecUIRendObjNav.end())
+            );
+        }
+            
         return vecUIRenderObj;
     }
 
