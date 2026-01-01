@@ -82,6 +82,7 @@ namespace SpaceEngine
                 else if constexpr (std::is_base_of<UILayout, PureT>::value)
                 {
                     m_vecUILayouts.push_back(sceneComponent);
+                    return;
                 }
                 SPACE_ENGINE_ERROR("Component not valid!");
             }

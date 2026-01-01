@@ -257,6 +257,7 @@ namespace SpaceEngine
                 else if constexpr (std::is_base_of<UIBase, PureT>::value)
                 {
                     m_vecUIElements.push_back(pUIElement);
+                    return;
                 }
                 SPACE_ENGINE_ERROR("UIElement not valid!");
             }
