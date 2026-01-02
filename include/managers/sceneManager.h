@@ -23,6 +23,7 @@ namespace SpaceEngine
             BaseCamera* GetActiveCamera();
             std::vector<Light*>* GetLights();
             Skybox* GetSkybox();
+            static int ActiveScene(const std::string& nameScene, bool flag);
             static void LoadScene(Scene* pScene);
             static void UnloadScene(const std::string& nameScene);
             static void SwitchScene(const std::string & name);

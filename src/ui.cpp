@@ -135,6 +135,11 @@ namespace SpaceEngine
         pUITransf->setAnchor(anchor);
     }
 
+    Button::Button(Vector2 anchor, UIButtonMaterial* pMat, std::function<bool()> func):Button(anchor, pMat)
+    {
+        onClick = func; 
+    }
+
     Button::Button(Vector2 anchor, Vector2 size)
     {
         pUITransf->setAnchor(anchor);
@@ -169,10 +174,18 @@ namespace SpaceEngine
     }
 
 
+
+
     //---------------------------------//
     //-----------Background------------//
     //---------------------------------//
     Background::Background()
+    {
+        pUITransf->setAnchor(Vector2{0.f, 0.f});
+        pUITransf->setSize(Vector2{1.f, 1.f});
+    }
+
+    Background::Background(UIMaterial* pUIMaterial):UIBase(pUIMaterial)
     {
         pUITransf->setAnchor(Vector2{0.f, 0.f});
         pUITransf->setSize(Vector2{1.f, 1.f});
@@ -190,7 +203,7 @@ namespace SpaceEngine
 
     UINavigator::UINavigator()
     {
-        assert(count < 0);
+        assert(count >= 0);
 
         if(!count)
         {

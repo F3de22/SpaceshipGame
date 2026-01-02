@@ -117,8 +117,10 @@ namespace SpaceEngine
 
     class Background : public UIBase
     {
-        Background();
-        ~Background() = default;
+        public:
+            Background();
+            Background(UIMaterial* pUIMaterial);
+            ~Background() = default;
     };
 
     class Button : public UIBase
@@ -126,10 +128,11 @@ namespace SpaceEngine
         public: 
             Button(Vector2 anchor, Vector2 size);
             Button(Vector2 anchor, UIButtonMaterial* pMat);
+            Button(Vector2 anchor, UIButtonMaterial* pMat, std::function<bool()> func);
             ~Button() = default;
             bool update(int mx, int my);
             bool isHovered();
-            std::function<void()> onClick;
+            std::function<bool()> onClick;
         private:
             bool hovered=false;
             bool wasHovered=false;

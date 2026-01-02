@@ -144,13 +144,15 @@ namespace SpaceEngine
     SpaceScene::SpaceScene(PhysicsManager* pPhyManager):
     Scene(pPhyManager)
     {
+        name = "SpaceScene";
         UIMaterial* iconMat = MaterialManager::createMaterial<UIMaterial>("HealthIcon");
         Texture* pTex = TextureManager::load(TEXTURES_PATH"HUD/Health.png");
         iconMat->addTexture("ui_tex", pTex);
         UIBase* healthIcon1 = new UIBase({0.067, 0.083}, iconMat);
-        //added 0.035
-        UIBase* healthIcon2 = new UIBase({0.102, 0.083}, iconMat);
-        UIBase* healthIcon3 = new UIBase({0.137, 0.083}, iconMat);
+        //added 0.035*2
+        UIBase* healthIcon2 = new UIBase({0.137, 0.083}, iconMat);
+        //added 0.035*3
+        UIBase* healthIcon3 = new UIBase({0.207, 0.083}, iconMat);
         UILayout* pUILayout = new UILayout();
         addSceneComponent(pUILayout);
         pUILayout->addUIElement(healthIcon1);

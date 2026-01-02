@@ -101,7 +101,6 @@ namespace SpaceEngine
                 shader->setUniform("size", ui.pRect->size);
                 shader->setUniform("projection", WindowManager::sceenProjMatrix);
             }
-            auto gl_error = glGetError();
             // Draw UI mesh
             ui.pUIMesh->bindVAO();
             ui.pUIMesh->draw();

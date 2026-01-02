@@ -159,9 +159,9 @@ namespace SpaceEngine
             Skybox* pSkybox = nullptr;
 
             //scene property
-            std::string name;
             bool active = true;
         protected:
+            std::string name;
             std::vector<UILayout*> m_vecUILayouts;
     };
 

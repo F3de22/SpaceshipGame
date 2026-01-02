@@ -92,7 +92,7 @@ namespace SpaceEngine
         }
     }
     
- 
+    //TODO: better handle
     void SceneManager::SwitchScene(const std::string & name)
     {
         for(Scene* pScene : m_vecScenes)
@@ -150,6 +150,22 @@ namespace SpaceEngine
         SPACE_ENGINE_DEBUG("No skybox is found");
         return nullptr;
     }
+
+    int SceneManager::ActiveScene(const std::string& nameScene, bool flag)
+    {
+        for(Scene* pScene : m_vecScenes)
+        {
+            if(pScene->getNameScene() == nameScene)
+            {
+                pScene->setActive(flag);
+                return 1;
+            }
+        }
+        
+        SPACE_ENGINE_ERROR("Scene: {} not found", nameScene);
+        return 0;
+    }
+
 
 
 }

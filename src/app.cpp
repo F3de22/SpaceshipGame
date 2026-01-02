@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "player.h"
 #include "playerShip.h"
+#include "titleScreen.h"
 #include <vector>
 
 namespace SpaceEngine
@@ -60,7 +61,7 @@ namespace SpaceEngine
         //crea e inizializza il player
         PlayerShip* pPlayer = new PlayerShip(pScene, "TestCube.obj");
         pPlayer->Init();
-        auto glError = glGetError();
+        GL_CHECK_ERRORS();
         //add GameObject to the scene
         pScene->addSceneComponent<GameObject*>(pPlayer);
 
@@ -80,9 +81,15 @@ namespace SpaceEngine
         pScene->addSceneComponent<Light*>(pLight);
         pLight = new Light(Vector3{-10.f, -10.f, 0.f}, Vector3{1.f, 1.f, 1.f}); //left-bottom
         pScene->addSceneComponent<PerspectiveCamera*>(pCamera);
-        glError = glGetError();
+        GL_CHECK_ERRORS();
 
+        pScene->setActive(false);
         SceneManager::LoadScene(pScene);
+
+        //TitleScreen scene
+        TitleScreen* pTitleScreen = new TitleScreen(&physicsManager);
+        SceneManager::LoadScene(pTitleScreen);
+
     }
 
     void App::InputHandle()
