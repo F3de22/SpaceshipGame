@@ -63,12 +63,10 @@ namespace SpaceEngine{
         SPACE_ENGINE_INFO("StartNewGame");
         //for debugging
         //We assuming that SpaceScene is early loaded but set not active by the app
-        if(SceneManager::ActiveScene("SpaceScene", true))//Maybe is better to use another approach
-        {
-            SceneManager::SwitchScene("SpaceScene");//Maybe is better to use another approach
-            return true;
-        }
-        return false;
+        
+        SceneManager::SwitchScene("SpaceScene");//Maybe is better to use another approach
+        return true;
+
     }
 
     bool TitleScreen::ExitGame()

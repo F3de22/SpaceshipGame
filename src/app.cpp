@@ -82,12 +82,14 @@ namespace SpaceEngine
         pScene->addSceneComponent<PerspectiveCamera*>(pCamera);
         GL_CHECK_ERRORS();
 
-        pScene->setActive(false);
-        SceneManager::LoadScene(pScene);
-
+        
+        //actually the order of insert is important        
         //TitleScreen scene
         TitleScreen* pTitleScreen = new TitleScreen(&physicsManager);
         SceneManager::LoadScene(pTitleScreen);
+
+        pScene->setActive(false);
+        SceneManager::LoadScene(pScene);
 
     }
 

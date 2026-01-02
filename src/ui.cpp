@@ -249,6 +249,12 @@ namespace SpaceEngine
             this, 
             {SPACE_ENGINE_KEY_BUTTON_ENTER, 
                 EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
+                m_pOnPressCmd});
+        //Click command for mouse
+        inputHandler.bindCommand(EAppState::RUN, 
+            this, 
+            {SPACE_ENGINE_MOUSE_BUTTON_LEFT, 
+                EInputType::SPACE_ENGINE_INPUT_MOUSE, 
                 m_pOnClickCmd});
         count++;
     }

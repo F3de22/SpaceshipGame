@@ -47,6 +47,10 @@ namespace SpaceEngine
 
     void SceneManager::LoadScene(Scene* pScene)
     {
+        if(!m_currScene)
+        {
+            m_currScene = pScene;
+        }
         pScene->OnLoad();
         m_vecScenes.push_back(pScene);
     }
