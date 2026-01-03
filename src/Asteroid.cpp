@@ -74,7 +74,9 @@ namespace SpaceEngine {
 
     void Asteroid::onCollisionEnter(Collider* col) {
         SPACE_ENGINE_INFO("PlayerShip Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
-
+        if (auto* audioMgr = pScene->getAudioManager()) {
+            audioMgr->PlaySound("asteroid_explosion");
+        }
         destroy();
     }
 }

@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <random>
 #include "gameObject.h"
+#include "scene.h"
 #include "collisionDetection.h"
 #include "renderer.h"
 

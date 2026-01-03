@@ -80,9 +80,9 @@ namespace SpaceEngine
             }
             bool pendingDestroy = false;
         private:
-            //Attention
-            Scene* pScene = nullptr;
+            
         protected:
+            Scene* pScene = nullptr;
             GameObject(const std::string& filePathModel);
             Transform* m_pTransform;
             Mesh* m_pMesh = nullptr;

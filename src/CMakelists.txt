@@ -14,8 +14,7 @@ add_library(App STATIC app.cpp
                     gameobject.cpp 
                     player.cpp 
                     collisionDetection.cpp 
-                    skybox.cpp
-                    bullet.cpp)
+                    skybox.cpp)
 
 target_include_directories(App PRIVATE ${CMAKE_SOURCE_DIR}/include/
                             PRIVATE ${CMAKE_SOURCE_DIR}/include/managers
