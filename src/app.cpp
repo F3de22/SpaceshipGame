@@ -27,7 +27,7 @@ namespace SpaceEngine{
         audioManager.LoadSound("shoot_player", "assets/audio/laser_player.wav");
         audioManager.LoadSound("shoot_enemy", "assets/audio/laser_enemy.wav");
         audioManager.LoadSound("enemy_explosion", "assets/audio/enemyexplosion.wav");
-        audioManager.LoadSound("asteroid_explosion", "assets/audio/asteroid_explosion.wav");
+        audioManager.LoadSound("asteroid_explosion", "assets/audio/asteroid_crash.wav");
         audioManager.LoadSound("game_over", "assets/audio/game_over.wav");
 
         audioManager.PlayMusic("bg_music", true);
