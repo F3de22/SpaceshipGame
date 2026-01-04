@@ -90,4 +90,26 @@ namespace SpaceEngine
             static std::string joinPaths(const std::string& a, const std::string& b);
     };
 
+    template <typename EntityT, typename EventT>
+    class Observer
+    {
+        public:
+            virtual ~Observer() = default;
+            virtual void onNotify(const EntityT& entity, const EventT& event) = 0; 
+    };
+
+    class ScoreSys : public Observer<GameObject, int>
+    {
+        void onNotify(const GameObject& entity, const int& event) override
+        {
+            if(const Asteroid* pAsteroid = dynamic_cast<const Asteroid*>(&entity))
+            {
+
+            }
+            else if(const EnemyShip* pEnemy = dynamic_cast<const EnemyShip*>(&entity))
+            {
+                
+            }
+        }
+    };
 }
