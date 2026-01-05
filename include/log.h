@@ -125,7 +125,7 @@ static const char* getGLErrorString(GLenum error)
             SPACE_ENGINE_FATAL("GL error: %s", getGLErrorString(err)); \
     } while (0)
 
-#define FT_CKECK(call)                                                  \
+#define FT_CHECK(call)                                                  \
     do                                                                  \
     {                                                                   \
         if(int error = call; error)                                     \

@@ -102,7 +102,8 @@ target_link_libraries(Font PUBLIC glad_gl_core_33
     PRIVATE OpenGL::GL
     PRIVATE Mesh
     PUBLIC Utils
-    PRIVATE LogManager)
+    PRIVATE LogManager
+    PUBLIC freetype)
 target_include_directories(Font PRIVATE ${CMAKE_SOURCE_DIR}/include/)
 target_include_directories(Font PRIVATE ${CMAKE_SOURCE_DIR}/include/utils)
 set_target_properties(Font PROPERTIES FOLDER "Font")
