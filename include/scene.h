@@ -168,8 +168,28 @@ namespace SpaceEngine
             std::vector<UILayout*> m_vecUILayouts;
     };
 
+    class ScoreSys : public Observer<GameObject, int>
+    {
+        public:
+            void onNotify(const GameObject& entity, const int& event) override
+            {
+                if(const Asteroid* pAsteroid = dynamic_cast<const Asteroid*>(&entity))
+                {
+                    m_score += static_cast<uint32_t>(event); 
+                }
+                else if(const EnemyShip* pEnemy = dynamic_cast<const EnemyShip*>(&entity))
+                {
+                    m_score += static_cast<uint32_t>(event); 
+                }
+            }
+        private:
+            uint32_t m_score = 0; 
+    };
+    
+
     class SpaceScene : public Scene
     {
+            
         public:
             SpaceScene(PhysicsManager* pPhyManager);
             ~SpaceScene() = default;

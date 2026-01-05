@@ -90,26 +90,90 @@ namespace SpaceEngine
             static std::string joinPaths(const std::string& a, const std::string& b);
     };
 
+    //WARN: An Observer can only be part of one subject's observer list
+    //If necessary use a pool of list nodes.
+    //So to semplify the distruction of Observer and the Subject.
+    //the last object that own the pointer to the subject notify the destruction 
+    //of Subject to the Observer
+    template <typename EntityT, typename EventT>class Subject;
+
     template <typename EntityT, typename EventT>
     class Observer
     {
+        friend class Subject<EntityT, EventT>;
         public:
-            virtual ~Observer() = default;
-            virtual void onNotify(const EntityT& entity, const EventT& event) = 0; 
+            Observer():m_pNext(nullptr), m_pSubject(nullptr){}
+            virtual ~Observer(){}
+
+            virtual void onNotify(const EntityT& entity, const EventT& event) = 0;
+            void destroyObsList()
+            {
+                Observer<EntityT, EventT>* pCurrent = m_pNext;
+                while(pCurrent != nullptr)
+                {
+                    Observer<EntityT, EventT>* next = pCurrent->m_pNext;
+                    pCurrent = nullptr;
+                    pCurrent = next;
+                }
+            }
+        private:
+            Observer<EntityT, EventT>* m_pNext;
+            Subject<EntityT, EventT>* m_pSubject;
     };
 
-    class ScoreSys : public Observer<GameObject, int>
+    template <typename EntityT, typename EventT>
+    class Subject
     {
-        void onNotify(const GameObject& entity, const int& event) override
-        {
-            if(const Asteroid* pAsteroid = dynamic_cast<const Asteroid*>(&entity))
+        public:
+            Subject(): m_pObsHead(nullptr){}
+            ~Subject()
             {
+                m_pObsHead->destroyObsList();
+                m_pObsHead = nullptr;
+            }
+            void addObserver(Observer<EntityT, EventT>* observer)
+            {
+                observer->m_pNext = m_pObsHead;
+                m_pObsHead = observer;
+            }
 
-            }
-            else if(const EnemyShip* pEnemy = dynamic_cast<const EnemyShip*>(&entity))
+            void removeObserver(Observer<EntityT, EventT>* observer)
             {
-                
+                if(m_pObsHead == observer)
+                {
+                    m_pObsHead = observer->m_pNext;
+                    observer->m_pNext = nullptr;
+                    return;
+                }
+
+                Observer<EntityT, EventT>* current = m_pObsHead;
+                while(current != nullptr)
+                {
+                    if(current->m_pNext == observer)
+                    {
+                        current->m_pNext = observer->m_pNext;
+                        observer->m_pNext = nullptr;
+                        return;
+                    }
+
+                    current = current->m_pNext;
+                }
             }
-        }
+
+        protected:
+            void notify(const EntityT& entity, EventT event)
+            {
+                Observer<EntityT, EventT>* pObs = m_pObsHead;
+
+                while(pObs != nullptr)
+                {
+                    pObs->onNotify(entity, event);
+                    pObs = pObs->m_pNext;
+                }
+            }
+
+        private:
+            Observer<EntityT, EventT>* m_pObsHead;
     };
+
 }
