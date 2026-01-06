@@ -94,6 +94,22 @@ namespace SpaceEngine
             friend class MaterialManager;
     };
 
+    class TextMaterial : public BaseMaterial
+    {
+        private:
+         TextMaterial()
+         {
+            texs = 
+            {
+                {"text_tex", nullptr}
+            };
+            props = 
+            {
+                {"color_val", Vector3{1.f, 1.f, 1.f}}
+            };
+         }
+    };
+
     class PBRMaterial : public BaseMaterial
     {
         private:

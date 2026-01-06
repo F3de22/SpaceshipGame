@@ -263,6 +263,7 @@ namespace SpaceEngine
 
             // generate texture
             Texture *pTex = new Texture(GL_TEXTURE_2D);
+            pTex->setTexUnitHandle(GL_TEXTURE0);
             pTex->fileName = Utils::getFileNameNoExt(nameFont)+ "_" + static_cast<char>(c);
             glGenTextures(1, &pTex->textureObj);
             glBindTexture(pTex->textureTarget, pTex->textureObj);
