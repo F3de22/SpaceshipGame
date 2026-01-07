@@ -111,4 +111,13 @@ namespace SpaceEngine
         
     }
 
+
+
+    void TextRenderer::render(const std::vector<TextRenderObject>& textRenderables)
+    {
+        for(TextRenderObject textRendObj : textRenderables)
+        {
+            //blablabla
+        }
+    }
 };
