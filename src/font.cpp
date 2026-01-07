@@ -1,5 +1,7 @@
 #include "font.h"
 #include "log.h"
+#include "material.h"
+#include "mesh.h"
 
 namespace SpaceEngine
 {

@@ -57,6 +57,7 @@ target_link_libraries(Mesh PUBLIC glad_gl_core_33
     PUBLIC assimp
     PRIVATE glm
     PUBLIC Texture
+    PRIVATE Font
     PRIVATE LogManager)
 target_include_directories(Mesh PRIVATE ${CMAKE_SOURCE_DIR}/include/)
 target_include_directories(Mesh PRIVATE ${CMAKE_SOURCE_DIR}/include/utils)

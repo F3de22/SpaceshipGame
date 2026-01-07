@@ -6,8 +6,6 @@
 
 #include "texture.h"
 #include "utils/utils.h"
-#include "mesh.h"
-#include "material.h"                             
 
 namespace SpaceEngine
 {
@@ -40,6 +38,9 @@ namespace SpaceEngine
         Transform2D(Vector2 anchor, Vector2 scale, Vector2 pos):
         anchor(anchor), scale(scale), pos(pos){}
     };
+
+    class TextMaterial;
+    class TextMeshRenderer;
 
     class Text
     {
