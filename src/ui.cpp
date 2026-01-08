@@ -61,26 +61,21 @@ namespace SpaceEngine
     //---------------------------------//
     //-----------UITrasform------------//
     //---------------------------------//
-
+    
     Rect* UITransform::getRect()
     {
         if((dirty))
         {
             if(!fill)
             {
-                float scaleX = WindowManager::width / static_cast<float>(REF_WIDTH);
-                float scaleY = WindowManager::height / static_cast<float>(REF_HEIGHT);
-                float scale = std::min(scaleX, scaleY);
+                float scale = 1.f;
+                Vector2 offset = {0.f, 0.f};
+                Vector2 outPos = {0.f, 0.f};
 
-                //offset when change the resolution
-                float offsetX = (WindowManager::width - REF_WIDTH * scale) * 0.5f;
-                float offsetY = (WindowManager::height - REF_HEIGHT * scale) * 0.5f;
-                //anchor valuation
-                float anchorX = anchor.x * REF_WIDTH;
-                float anchorY = anchor.y * REF_HEIGHT;
+                Utils::applyRatioScreenResolution(anchor, pos, scale, offset, outPos);                
                 //space postion
-                float x = (anchorX + pos.x) * scale + offsetX;
-                float y = (anchorY + pos.y) * scale + offsetY;
+                float x = outPos.x;
+                float y = outPos.y;
                 //size valuation
                 float w = size.x * scale;
                 float h = size.y * scale;

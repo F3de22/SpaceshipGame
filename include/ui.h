@@ -12,9 +12,6 @@
 
 namespace SpaceEngine
 {
-    //resolution used in figma
-    constexpr int REF_WIDTH  = 1920;
-    constexpr int REF_HEIGHT = 1080;
     //px screen info
     struct Rect
     {

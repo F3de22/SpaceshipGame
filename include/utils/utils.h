@@ -18,6 +18,9 @@ namespace SpaceEngine
     using Vector2i = glm::ivec2;
     using Quat = glm::quat;
     
+    //resolution used in figma
+    constexpr int REF_WIDTH  = 1920;
+    constexpr int REF_HEIGHT = 1080;
 
     namespace Math
     {
@@ -89,6 +92,7 @@ namespace SpaceEngine
             static std::string getExtension(const char *name); 
             static std::string getFileNameNoExt(const std::string& filePath);
             static std::string joinPaths(const std::string& a, const std::string& b);
+            static void applyRatioScreenResolution(Vector2 anchor, Vector2 pos, float& outScale, Vector2& outOffset, Vector2& outPos);
     };
 
     //WARN: An Observer can only be part of one subject's observer list
