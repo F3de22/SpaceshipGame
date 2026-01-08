@@ -117,7 +117,29 @@ namespace SpaceEngine
     {
         for(TextRenderObject textRendObj : textRenderables)
         {
-            //blablabla
+            TextMaterial* pMat = textRendObj.pText->pTextMeshRend->getMaterial();
+            TextMesh* pMesh = textRendObj.pText->pTextMeshRend->getTextMesh();
+            ShaderProgram* pShader = pMat->getShader();
+            
+            if (pShader)
+            {
+                pShader->use();
+                pMat->bindingPropsToShader();
+                pShader->setUniform("projection", WindowManager::sceenProjMatrix);
+                pShader->setUniform("text_tex", 0);
+                std::string string = textRendObj.pText->getString();
+                float offsetX = textRendObj.pText->pTransf->pos.x;
+
+                for(auto c = string.begin(); c != string.end(); ++c)
+                {
+                    pMesh->bindVAO();
+                    std::array<std::array<float, 4>, 6> data = pMat->bindCharacter(*c, offsetX, *textRendObj.pText->pTransf);
+                    pMesh->subData(data);
+                    pMesh->draw();
+                }
+            }
         }
+
+        glUseProgram(0);
     }
 };

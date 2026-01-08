@@ -50,9 +50,10 @@ namespace SpaceEngine
             //posAncor is in the range[0,1], pos is in px
             Text(Vector2 posAncor, Vector2 pos, TextMaterial* pTextMaterial);
             Text(Vector2 posAncor, Vector2 pos, Vector2 scale, TextMaterial* pTextMaterial);
+            
             ~Text();
         
-            inline std::string getString(const std::string& str){return m_string;}
+            inline std::string getString(){return m_string;}
             
             inline void setString(const std::string& str){m_string = str;}
             inline void appendString(const std::string& str){m_string.append(str);}

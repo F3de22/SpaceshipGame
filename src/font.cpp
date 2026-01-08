@@ -30,6 +30,11 @@ namespace SpaceEngine
     {
         pTextMeshRend = new TextMeshRenderer();
         pTextMeshRend->bindMaterial(pTextMaterial);
+
+        if(!pTextMaterial->pShader)
+        {
+            pTextMaterial->pShader = ShaderManager::findShaderProgram("glyphs"); 
+        }
     }
 
     Text::Text(Vector2 posAncor, Vector2 pos, TextMaterial* pTextMaterial):

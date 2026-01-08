@@ -734,6 +734,12 @@ namespace SpaceEngine
         glBindVertexArray(VAO);
     }
 
+    void TextMesh::subData(const std::array<std::array<float, 4>, 6>& vertices)
+    {
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float)*4*6, vertices.data());
+        GL_CHECK_ERRORS();
+    }
+
     //---------------------------------------------//
     //--------------TextMeshRenderer---------------//
     //---------------------------------------------//
@@ -742,10 +748,6 @@ namespace SpaceEngine
         pMesh = MeshManager::getTextMesh();
     }
 
-    void TextMeshRenderer::bindVAO()
-    {
-        pMesh->bindVAO();
-    }
 
     int TextMeshRenderer::bindMaterial(TextMaterial *pMat)
     {

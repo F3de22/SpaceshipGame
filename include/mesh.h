@@ -3,9 +3,10 @@
 #include <assimp/postprocess.h>
 #include <glad/gl.h>
 #include <memory>
+#include <unordered_map>
+
 #include "utils/utils.h"
 #include "material.h"
-#include <unordered_map>
 
 #define INVALID_MATERIAL 0xFFFFFFFF
 
@@ -93,6 +94,8 @@ namespace SpaceEngine
         TextMesh();
         void draw();
         void bindVAO();
+        void subData(const std::array<std::array<float, 4>, 6>& vertices);
+
 
     private:
         void populateBuffers();
@@ -104,7 +107,7 @@ namespace SpaceEngine
     {
         public:
         TextMeshRenderer();
-        void bindVAO();
+        
         int bindMaterial(TextMaterial *pMat);
         TextMaterial *getMaterial();
         TextMesh *getTextMesh();

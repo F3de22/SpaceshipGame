@@ -7,6 +7,7 @@
 
 #include <variant>
 #include <map>
+#include <array>
 
 namespace SpaceEngine
 {
@@ -100,6 +101,40 @@ namespace SpaceEngine
 
     class TextMaterial : public BaseMaterial
     {
+        public:
+        std::array<std::array<float, 4>, 6> bindCharacter(char c, float& offsetX, const Transform2D& transf)
+        {
+            if(m_font.find(c) == m_font.end())
+            {
+                SPACE_ENGINE_FATAL("TextMaterial: Charater not found");
+                exit(-1);
+            }
+
+            Character ch = m_font[c];
+            //bind texture
+            ch.pTex->bind(); 
+            float xpos = offsetX + ch.bearing.x * transf.scale.x;
+            float ypos = transf.pos.y - (ch.size.y - ch.bearing.y) * transf.scale.x;
+
+            float w = ch.size.x * transf.scale.x;
+            float h = ch.size.y * transf.scale.y;
+        
+            std::array<std::array<float, 4>, 6> vertices
+            {{
+                { xpos,     ypos + h,   0.0f, 0.0f },
+                { xpos,     ypos,       0.0f, 1.0f },
+                { xpos + w, ypos,       1.0f, 1.0f },
+                
+                { xpos,     ypos + h,   0.0f, 0.0f },
+                { xpos + w, ypos,       1.0f, 1.0f },
+                { xpos + w, ypos + h,   1.0f, 0.0f }
+            }};
+
+            offsetX += (ch.advance) * transf.scale.x;
+            
+            return vertices;
+        }
+
         private:
          TextMaterial(const std::string& nameFont)
          {
@@ -108,14 +143,17 @@ namespace SpaceEngine
                 {"color_val", Vector3{1.f, 1.f, 1.f}}
             };
 
-            if(!FontLoader::getFont(nameFont))
+            auto pFont = FontLoader::getFont(nameFont); 
+            if(!pFont)
             {
                 SPACE_ENGINE_FATAL("Font: {} not loaded");
                 exit(-1);
             }
+
+            m_font = *pFont;
          }
 
-         std::map<char, Character>* m_font = nullptr;
+         std::map<char, Character> m_font;
     };
 
     class PBRMaterial : public BaseMaterial
