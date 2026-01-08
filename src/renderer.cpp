@@ -128,12 +128,24 @@ namespace SpaceEngine
                 pShader->setUniform("projection", WindowManager::sceenProjMatrix);
                 pShader->setUniform("text_tex", 0);
                 std::string string = textRendObj.pText->getString();
-                float offsetX = textRendObj.pText->pTransf->pos.x;
+                Transform2D& transf = *textRendObj.pText->pTransf;
+                //resolution adaption
+                float resScale = 1.f;
+                float offsetX = 0.f;
+                Vector2 finalOffset = {0.f, 0.f}; 
+                Vector2 finalPos = {transf.pos.x, transf.pos.y};
+
+                
+                if(transf.dirty)
+                {
+                    Utils::applyRatioScreenRes(transf.anchor, transf.pos, resScale, finalOffset, finalPos);
+                    transf.setDirty(false);
+                }
 
                 for(auto c = string.begin(); c != string.end(); ++c)
                 {
                     pMesh->bindVAO();
-                    std::array<std::array<float, 4>, 6> data = pMat->bindCharacter(*c, offsetX, *textRendObj.pText->pTransf);
+                    std::array<std::array<float, 4>, 6> data = pMat->bindCharacter(*c, offsetX, resScale, transf);
                     pMesh->subData(data);
                     pMesh->draw();
                 }

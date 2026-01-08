@@ -104,7 +104,7 @@ namespace SpaceEngine
             );
     }
 
-    void Scene::gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables)
+    void Scene::gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables, std::vector<TextRenderObject>& textRenderables)
     {
         for (auto& gameObj : gameObjects)
         {

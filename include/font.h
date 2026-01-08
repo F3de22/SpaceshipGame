@@ -34,9 +34,15 @@ namespace SpaceEngine
         Vector2 pos = {0.f, 0.f};
         //Vector2 size = {0.f, 0.f};   // not normalizated
         bool dirty = true;
-
+        
+        public:
         Transform2D(Vector2 anchor, Vector2 scale, Vector2 pos):
         anchor(anchor), scale(scale), pos(pos){}
+
+        void setDirty(bool flag)
+        {
+            dirty = flag;
+        }
     };
 
     class TextMaterial;

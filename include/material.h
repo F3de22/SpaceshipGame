@@ -102,7 +102,7 @@ namespace SpaceEngine
     class TextMaterial : public BaseMaterial
     {
         public:
-        std::array<std::array<float, 4>, 6> bindCharacter(char c, float& offsetX, const Transform2D& transf)
+        std::array<std::array<float, 4>, 6> bindCharacter(char c, float& offsetX, float resScale,  Transform2D& transf)
         {
             if(m_font.find(c) == m_font.end())
             {
@@ -113,11 +113,11 @@ namespace SpaceEngine
             Character ch = m_font[c];
             //bind texture
             ch.pTex->bind(); 
-            float xpos = offsetX + ch.bearing.x * transf.scale.x;
-            float ypos = transf.pos.y - (ch.size.y - ch.bearing.y) * transf.scale.x;
+            float xpos = offsetX + ch.bearing.x * transf.scale.x * resScale;
+            float ypos = transf.pos.y - (ch.size.y - ch.bearing.y) * transf.scale.x * resScale;
 
-            float w = ch.size.x * transf.scale.x;
-            float h = ch.size.y * transf.scale.y;
+            float w = ch.size.x * transf.scale.x * resScale;
+            float h = ch.size.y * transf.scale.y * resScale;
         
             std::array<std::array<float, 4>, 6> vertices
             {{
@@ -130,7 +130,7 @@ namespace SpaceEngine
                 { xpos + w, ypos + h,   1.0f, 0.0f }
             }};
 
-            offsetX += (ch.advance) * transf.scale.x;
+            offsetX += (ch.advance) * transf.scale.x * resScale;
             
             return vertices;
         }

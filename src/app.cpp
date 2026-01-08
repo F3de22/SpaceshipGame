@@ -35,9 +35,11 @@ namespace SpaceEngine
         audioManager.LoadSound("game_over", AUDIO_PATH"game_over.wav");
 
         audioManager.PlayMusic("bg_music", true);
-        //Objects
+        //Renderer objects 
         renderer = new Renderer();
         uiRenderer = new UIRenderer();
+        textRenderer = new TextRenderer();
+
         SPACE_ENGINE_INFO("Initilization app done");
         //scene 
         SPACE_ENGINE_DEBUG("Start the initialization the scene");
@@ -149,6 +151,7 @@ namespace SpaceEngine
         //Gathers
         std::vector<RenderObject> worldRenderables;
         std::vector<UIRenderObject> uiRenderables;
+        std::vector<TextRenderObject> textRenderables;
 
         while(!windowManager.WindowShouldClose())
         {
@@ -177,7 +180,7 @@ namespace SpaceEngine
             sceneManager.Update(dt);
 
             //collects the renderizable objects in the scene
-            sceneManager.GatherRenderables(worldRenderables, uiRenderables);
+            sceneManager.GatherRenderables(worldRenderables, uiRenderables, textRenderables);
             //gather scene object to rendering the scene
             RendererParams rParams{worldRenderables, 
                 *(sceneManager.GetLights()), 
@@ -189,7 +192,9 @@ namespace SpaceEngine
             GL_CHECK_ERRORS();
             uiRenderer->render(uiRenderables);
             GL_CHECK_ERRORS();
-
+            textRenderer->render(textRenderables);
+            GL_CHECK_ERRORS();
+            
             sceneManager.LateUpdate();
             
             windowManager.PollEvents();

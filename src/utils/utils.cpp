@@ -47,7 +47,7 @@
 
 namespace SpaceEngine
 {
-    void Utils::applyRatioScreenResolution(Vector2 anchor, Vector2 pos, float& outScale, Vector2& outOffset, Vector2& outPos) 
+    void Utils::applyRatioScreenRes(Vector2 anchor, Vector2 pos, float& outScale, Vector2& outOffset, Vector2& outPos) 
     {
             float scaleX = WindowManager::width / static_cast<float>(REF_WIDTH);
             float scaleY = WindowManager::height / static_cast<float>(REF_HEIGHT);

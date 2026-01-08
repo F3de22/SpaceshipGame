@@ -129,6 +129,7 @@ namespace SpaceEngine
     class UINavOnClickCommand;
     class UINavOnPressCommand;
     struct UIRenderObject;
+    struct TextRenderObject;
 
     class UINavigator
     {
@@ -260,6 +261,8 @@ namespace SpaceEngine
             void notifyChangeRes();
             int removeUIElement(const UIBase* pUIBase);
             std::vector<UIRenderObject> gatherUIRenderables();
+            std::vector<TextRenderObject> gatherTextRenderables();
+
         private:
             std::vector<UIBase*> m_vecUIElements;
             std::vector<Text*> m_vecText;

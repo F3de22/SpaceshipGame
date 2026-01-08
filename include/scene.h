@@ -91,8 +91,7 @@ namespace SpaceEngine
                 SPACE_ENGINE_ERROR("Component not valid!");
             }
 
-            void gatherColliderables();
-            void gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables);
+            void gatherRenderables(std::vector<RenderObject>& worldRenderables, std::vector<UIRenderObject>& uiRenderables, std::vector<TextRenderObject>& textRenderables);
             void requestDestroy(GameObject* pGameObj);
             
             template <typename T>

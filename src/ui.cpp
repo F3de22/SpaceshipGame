@@ -72,7 +72,7 @@ namespace SpaceEngine
                 Vector2 offset = {0.f, 0.f};
                 Vector2 outPos = {0.f, 0.f};
 
-                Utils::applyRatioScreenResolution(anchor, pos, scale, offset, outPos);                
+                Utils::applyRatioScreenRes(anchor, pos, scale, offset, outPos);                
                 //space postion
                 float x = outPos.x;
                 float y = outPos.y;
@@ -368,12 +368,32 @@ namespace SpaceEngine
         return vecUIRenderObj;
     }
 
+    std::vector<TextRenderObject> UILayout::gatherTextRenderables()
+    {
+        std::vector<TextRenderObject> vecTextRenderObj;
+        
+        for(Text* pText : m_vecText)
+        {
+            TextRenderObject textRObj;
+            textRObj.pText = pText;
+            vecTextRenderObj.push_back(textRObj);
+        }
+
+            
+        return vecTextRenderObj;
+    }
+
     void UILayout::notifyChangeRes()
     {
         for(UIBase* pUIElement : m_vecUIElements)
         {
             pUIElement->pUITransf->setDirty(true);
         }
+
+        for(Text* pText: m_vecText)
+        {
+            pText->pTransf->setDirty(true);
+        }        
 
         if(m_pNavigator)
         {
