@@ -11,5 +11,5 @@ illum 2
 map_ka Enemy_AO.png
 map_Kd Enemy_Albedo.png
 map_Pr Enemy_Roughness.png
-map_refl Enemy_Metallic.png
+map_Pm Enemy_Metallic.png
 norm Enemy_Normals.png

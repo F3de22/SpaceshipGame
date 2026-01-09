@@ -12,5 +12,5 @@ illum 2
 map_ka PlayerShip_AO.png
 map_Kd PlayerShip_Albedo.png
 map_Pr PlayerShip_Roughness.png
-map_refl PlayerShip_Metallic.png
+map_Pm PlayerShip_Metallic.png
 norm PlayerShip_Normals.png
