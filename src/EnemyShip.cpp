@@ -55,12 +55,12 @@ namespace SpaceEngine {
             case EnemyType::AIMER:
                 m_speed = 2.0f; // Più lento ma mira
                 m_shootCooldown = 1.5f;
-                m_health = 3;
+                m_health = 1;
                 break;
             case EnemyType::SPREAD:
                 m_speed = 4.0f; // Veloce
                 m_shootCooldown = 3.0f;
-                m_health = 3;
+                m_health = 1;       //TODO: aumentare vita navicelle AIMER e SPREAD a 3
                 break;
         }
     }
@@ -129,6 +129,10 @@ namespace SpaceEngine {
             pBullet->Fire(spawnPos, shootDir, visualRot, 15.0f);
             pScene->requestInstantiate(pBullet);
         }
+
+        if (auto* audioMgr = pScene->getAudioManager()) {
+            audioMgr->PlaySound("shoot_enemy");
+        }
     }
 
     void EnemyShip::performAI(float dt) {
@@ -156,6 +160,9 @@ namespace SpaceEngine {
 
         if (m_health <= 0) {
             if(pScene) pScene->requestDestroy(this);
-        }
+            if (auto* audioMgr = pScene->getAudioManager()) {
+                audioMgr->PlaySound("enemy_explosion");
+            }
+        }  
     }
 }

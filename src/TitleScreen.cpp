@@ -8,8 +8,9 @@
 
 namespace SpaceEngine{
 
-    TitleScreen::TitleScreen(PhysicsManager* pPhyManager):Scene(pPhyManager)
+    TitleScreen::TitleScreen(PhysicsManager* pPhyManager, AudioManager* am):Scene(pPhyManager)
     {
+        setAudioManager(am);
         Init();
         SPACE_ENGINE_DEBUG("Title Screen opening...");
     }
@@ -22,6 +23,9 @@ namespace SpaceEngine{
         SPACE_ENGINE_DEBUG("Loading textures...");
         //assign the name(important)
         name = "TitleScreen";
+        if (getAudioManager()) {
+            getAudioManager()->PlayMusic("menu_music", true);
+        }
         //Add UILayout 
         UILayout* pUILayout = new UILayout();
         addSceneComponent(pUILayout);
@@ -65,7 +69,10 @@ namespace SpaceEngine{
         SPACE_ENGINE_INFO("StartNewGame");
         //for debugging
         //We assuming that SpaceScene is early loaded but set not active by the app
-        
+        if (auto* am = getAudioManager()) 
+        {
+            am->PlayMusic("bg_music", true);
+        }
         SceneManager::SwitchScene("SpaceScene");//Maybe is better to use another approach
         return true;
 

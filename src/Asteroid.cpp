@@ -74,6 +74,6 @@ namespace SpaceEngine {
         if (auto* audioMgr = pScene->getAudioManager()) {
             audioMgr->PlaySound("asteroid_explosion");
         }
-        destroy();
+        pScene->requestDestroy(this);
     }
 }

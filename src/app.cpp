@@ -31,11 +31,12 @@ namespace SpaceEngine
         audioManager.LoadSound("bg_music", AUDIO_PATH"music_space.wav");
         audioManager.LoadSound("shoot_player", AUDIO_PATH"laser_player.wav");
         audioManager.LoadSound("shoot_enemy", AUDIO_PATH"laser_enemy.wav");
+        audioManager.LoadSound("player_explosion", AUDIO_PATH"player_explosion.wav");
+        audioManager.LoadSound("lose_hp", AUDIO_PATH"lose_hp.wav");
         audioManager.LoadSound("enemy_explosion", AUDIO_PATH"enemyexplosion.wav");
         audioManager.LoadSound("asteroid_explosion", AUDIO_PATH"asteroid_crash.wav");
         audioManager.LoadSound("game_over", AUDIO_PATH"game_over.wav");
 
-        audioManager.PlayMusic("bg_music", true);
         //Renderer objects 
         renderer = new Renderer();
         uiRenderer = new UIRenderer();
@@ -106,7 +107,7 @@ namespace SpaceEngine
         
         //actually the order of insert is important        
         //TitleScreen scene
-        TitleScreen* pTitleScreen = new TitleScreen(&physicsManager);
+        TitleScreen* pTitleScreen = new TitleScreen(&physicsManager, &audioManager);
         SceneManager::LoadScene(pTitleScreen);
 
         pScene->setActive(false);

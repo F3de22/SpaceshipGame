@@ -1,5 +1,7 @@
 #include "bullet.h"
 #include "collisionDetection.h"
+#include "Asteroid.h"
+#include "EnemyShip.h"
 #include "scene.h"
 
 namespace SpaceEngine
@@ -53,12 +55,14 @@ namespace SpaceEngine
     void Bullet::onCollisionEnter(Collider* col)
     {
         SPACE_ENGINE_INFO("Bullet Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
-        if(col->gameObj->getLayer() == ELayers::ENEMY_LAYER || col->gameObj->getLayer() == ELayers::ASTEROID_LAYER)
+        if(col->gameObj->getLayer() == ELayers::ENEMY_LAYER)
         {
-            SPACE_ENGINE_INFO("Bullet Collision");
+            SPACE_ENGINE_INFO("Bullet hit an Enemy!");
+        }
+        if(col->gameObj->getLayer() == ELayers::ASTEROID_LAYER){
+            SPACE_ENGINE_INFO("Bullet hit an Asteroid!");
+            pScene->requestDestroy(col->gameObj);
         }
         pScene->requestDestroy(this);
     }
-
-
 }

@@ -24,6 +24,7 @@ namespace SpaceEngine {
         m_pCollider = new Collider(this);
         m_pBullet = new Bullet(pScene, "Bullet.obj");
         Transform* pTransformBullet = m_pBullet->getComponent<Transform>();
+        m_pBullet->setLayer(ELayers::BULLET_LAYER);
         //set the parent of the bullet's trasform and place an offset 
         pTransformBullet->setParent(m_pTransform);
         pTransformBullet->setLocalPosition(pTransformBullet->getLocalPosition() + 
@@ -166,6 +167,9 @@ namespace SpaceEngine {
             if(m_health > 0)
             {
                 m_health--;
+                if (auto* audioMgr = pScene->getAudioManager()) {
+                    audioMgr->PlaySound("lose_hp");
+                }
                 SPACE_ENGINE_INFO("Danno subito! Nuova salute: {}", m_health);
 
                 if (SpaceScene* pSpaceScene = dynamic_cast<SpaceScene*>(pScene)) {
@@ -179,6 +183,10 @@ namespace SpaceEngine {
                 {
                     SPACE_ENGINE_INFO("GAME OVER - PlayerShip distrutta!");
                     if(pScene) pScene->requestDestroy(this);
+                    if (auto* audioMgr = pScene->getAudioManager()) {
+                        audioMgr->PlaySound("player_explosion");
+                        audioMgr->PlaySound("game_over");
+                    }
                 }
             }
         }
@@ -186,10 +194,15 @@ namespace SpaceEngine {
 
     void PlayerShip::Fire()
     {
-        if(pScene)
-        {
-            pScene->requestInstantiate(m_pBullet);
-        }
+        if(m_shootCooldown <= 0.0f) {
+            if(pScene){
+                pScene->requestInstantiate(m_pBullet);
+                if (auto* audioMgr = pScene->getAudioManager()) {
+                    audioMgr->PlaySound("shoot_player");
+                }
+            }
+            m_shootCooldown = 0.5f;
+        } 
     }
 
 

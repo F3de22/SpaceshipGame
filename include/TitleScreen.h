@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "scene.h"
+#include "audioManager.h"
 
 namespace SpaceEngine{
 
@@ -15,7 +16,7 @@ namespace SpaceEngine{
     class TitleScreen : public Scene
     {
     public:
-        TitleScreen(PhysicsManager* pPhyManager);
+        TitleScreen(PhysicsManager* pPhyManager, AudioManager* am);
         ~TitleScreen();
     private:
         void Init();
