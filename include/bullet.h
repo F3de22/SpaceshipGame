@@ -13,10 +13,13 @@ namespace SpaceEngine
             void update(float dt) override;
             void onCollisionEnter(Collider* col) override;
 
+            void setOwner(ELayers ownerLayer) { m_owner = ownerLayer; }
+            ELayers getOwner() const { return m_owner; }
         private:
             float m_vel = 5.f;
             float m_distCulling = 200.0f;
             bool m_useCustomDirection = false;
             Vector3 m_moveDirection;
+            ELayers m_owner = ELayers::DEFAULT_LAYER;
     };
 }

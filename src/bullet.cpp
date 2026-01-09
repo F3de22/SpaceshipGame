@@ -54,6 +54,10 @@ namespace SpaceEngine
 
     void Bullet::onCollisionEnter(Collider* col)
     {
+        if(col->gameObj->getLayer() == m_owner) 
+        {
+            return; //ignora la collisione se fatta con il proprietario
+        }
         SPACE_ENGINE_INFO("Bullet Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
         if(col->gameObj->getLayer() == ELayers::ENEMY_LAYER)
         {
