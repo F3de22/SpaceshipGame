@@ -199,9 +199,12 @@ namespace SpaceEngine
             float m_enemyInterval = 7.0f;
             // Limiti dell'area di gioco dove possono spawnare
             float m_spawnZ = -100.0f; // Lontano dalla camera
-            float m_gameAreaX = 50.0f; // Larghezza totale area spawn
-            float m_gameAreaY = 30.0f; // Altezza totale area spawn
+            float m_gameAreaX = 10.0f; // Larghezza totale area spawn
+            float m_gameAreaY = 10.0f; // Altezza totale area spawn
             float m_elapsedTime = 0.0f;
+            Text* m_pPoints;
+            unsigned int m_points = 0;
+            float m_timer = 0.f;
             std::stack<UIBase*> healthIcons;
             PlayerShip* m_pPlayer = nullptr;
             

@@ -196,6 +196,7 @@ namespace SpaceEngine
         Text* pTextScore = new Text({0.5f, 0.0f}, {-200.f, 90.f}, {1.f, 1.f}, pScoreMat);
         Text* pTextPoints = new Text({0.5f, 0.0f}, {100.f, 90.f}, {1.f, 1.f}, pScoreMat);
         pScoreSys->pTextPoints = pTextPoints;
+        m_pPoints = pTextPoints;
         pTextScore->setString("SCORE: ");
         pTextPoints->setString("0");
 
@@ -214,6 +215,13 @@ namespace SpaceEngine
     void SpaceScene::UpdateScene(float dt)
     {
         m_elapsedTime +=dt;
+        m_timer += dt;
+        if(m_timer >= 1.f)
+        {
+            m_timer = 0.f;
+            m_points++;
+            m_pPoints->setString(std::to_string(m_points));
+        }
         SpaceScene::handleSpawning(dt);
     }
 
