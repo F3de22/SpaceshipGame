@@ -139,12 +139,9 @@ namespace SpaceEngine
                 Vector2 finalOffset = {0.f, 0.f}; 
                 Vector2 finalPos = {transf.pos.x, transf.pos.y};
 
+                Utils::applyRatioScreenRes(transf.anchor, transf.pos, resScale, finalOffset, finalPos);
+                transf.setDirty(false);
                 
-                if(transf.dirty)
-                {
-                    Utils::applyRatioScreenRes(transf.anchor, transf.pos, resScale, finalOffset, finalPos);
-                    transf.setDirty(false);
-                }
                 
                 offsetX = finalPos.x;
                 pMesh->bindVAO();
