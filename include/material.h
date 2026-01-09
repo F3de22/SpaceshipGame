@@ -116,7 +116,7 @@ namespace SpaceEngine
             ch.pTex->bind(); 
             GL_CHECK_ERRORS();
             float xpos = offsetX + ch.bearing.x * transf.scale.x * resScale;
-            float ypos = pos.y - (ch.size.y - ch.bearing.y) * transf.scale.x * resScale;
+            float ypos = pos.y - (ch.size.y - ch.bearing.y) * transf.scale.y * resScale;
 
             float w = ch.size.x * transf.scale.x * resScale;
             float h = ch.size.y * transf.scale.y * resScale;
