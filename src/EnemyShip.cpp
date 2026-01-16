@@ -85,8 +85,9 @@ namespace SpaceEngine {
 
             for (float angleOffset : angles) {
                 Bullet* pBullet = new Bullet(pScene, "Bullet.obj");
-                
                 pBullet->setLayer(ELayers::BULLET_LAYER);
+                pBullet->setOwner(ELayers::ENEMY_LAYER);
+
                 Vector3 shootDir = glm::rotateY(forwardDir, angleOffset);
 
                 float rotY = atan2(shootDir.x, shootDir.z);
@@ -99,6 +100,7 @@ namespace SpaceEngine {
         else if(m_type == EnemyType::AIMER && m_pTarget) {
             Bullet* pBullet = new Bullet(pScene, "Bullet.obj");
             pBullet->setLayer(ELayers::BULLET_LAYER);
+            pBullet->setOwner(ELayers::ENEMY_LAYER);
 
             // per trovare angolo di sparo verso il player in base alla sua pos attuale
             Vector3 targetPos = m_pTarget->getTransform()->getWorldPosition();
@@ -114,6 +116,7 @@ namespace SpaceEngine {
         else{
             Bullet* pBullet = new Bullet(pScene, "Bullet.obj");
             pBullet->setLayer(ELayers::BULLET_LAYER);
+            pBullet->setOwner(ELayers::ENEMY_LAYER);
 
             Vector3 shootDir(0.0f, 0.0f, 1.0f); // Dritto verso +Z
             Vector3 visualRot(1.5708f, 0.0f, 0.0f);
