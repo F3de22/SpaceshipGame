@@ -67,7 +67,7 @@ namespace SpaceEngine
 
         //SPACE_ENGINE_DEBUG("Binding properties material to shader");
         std::vector<std::tuple<const std::string, GLenum>> uniformsShader = pShader->getPairUniformNameLocation();
-        auto glError = glGetError();
+        GL_CHECK_ERRORS();
         
         for(const auto& [name, type] : uniformsShader)
         {
@@ -78,8 +78,7 @@ namespace SpaceEngine
                     if(compareTypeGL(val, type))
                     {
                         pShader->setUniform(name.c_str(), val);
-                        glError = glGetError();
-
+                        GL_CHECK_ERRORS();
                     }
                 }, props[name]);
             }
@@ -89,12 +88,12 @@ namespace SpaceEngine
                 {
                     texs[name]->bind();
                     pShader->setUniform(name.c_str(), texs[name]->getTexUnitIndex());
-                    glError = glGetError();
+                    GL_CHECK_ERRORS();
                 }
                 //else {SPACE_ENGINE_WARN("Material: {}, Name uniform texture:{} no texture", this->name, name);}
             }
         }
-        glError = glGetError();
+        GL_CHECK_ERRORS();
         bindSubroutines();
     }
 
