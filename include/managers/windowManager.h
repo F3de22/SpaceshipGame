@@ -21,6 +21,7 @@ namespace SpaceEngine
             int WindowShouldClose();
             void SetWindowShouldClose();
             void Windowed();
+            static void ToggleFullScreen();
             void PollEvents();
             void SwapBuffers();
             void Shutdown();

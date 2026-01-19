@@ -19,8 +19,9 @@ namespace SpaceEngine{
         ~TitleScreen();
     private:
         void Init();
-        //bool per avere conferma che la funzione sia stata lanciata 
-        //correttamente
+        virtual void UpdateScene(float dt) override; // Per controllare la risoluzione ogni frame
+        int m_lastWidth = 0;
+        int m_lastHeight = 0;
         bool StartNewGame(); 
         bool OpenOptions();
         bool OpenLeaderboard();
