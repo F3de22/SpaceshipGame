@@ -178,10 +178,14 @@ namespace SpaceEngine
     //---------------------------------//
     //-----------UINavigator-----------//
     //---------------------------------//
+
     UINavMoveDownCommand* UINavigator::m_pMoveDownCmd = nullptr;
     UINavMoveUpCommand* UINavigator::m_pMoveUpCmd = nullptr;
     UINavOnClickCommand* UINavigator::m_pOnClickCmd = nullptr;
     UINavOnPressCommand* UINavigator::m_pOnPressCmd = nullptr;
+    UINavMoveRightCommand* UINavigator::m_pMoveRightCmd = nullptr;
+    UINavMoveLeftCommand* UINavigator::m_pMoveLeftCmd = nullptr;
+    UINavigator* UINavigator::s_currentActiveNavigator = nullptr;
     
     int UINavigator::count = 0;
 
@@ -195,11 +199,13 @@ namespace SpaceEngine
             m_pMoveUpCmd = new UINavMoveUpCommand();
             m_pOnClickCmd = new UINavOnClickCommand();
             m_pOnPressCmd = new UINavOnPressCommand();
+            m_pMoveRightCmd = new UINavMoveRightCommand();
+            m_pMoveLeftCmd = new UINavMoveLeftCommand();
         }
 
         InputHandler& inputHandler = App::GetInputHandler();
         //Down command for joystick and keyboard
-        inputHandler.bindCommand(EAppState::RUN, 
+        /*inputHandler.bindCommand(EAppState::RUN, 
             this, 
             {SPACE_ENGINE_JK_BUTTON_DOWN, 
                 EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
@@ -238,9 +244,37 @@ namespace SpaceEngine
             this, 
             {SPACE_ENGINE_MOUSE_BUTTON_LEFT, 
                 EInputType::SPACE_ENGINE_INPUT_MOUSE, 
-                m_pOnClickCmd});
+                m_pOnClickCmd});*/
         count++;
     }
+
+    void UINavigator::bindCommands()
+    {
+        InputHandler& inputHandler = App::GetInputHandler();
+        // Down
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_JK_BUTTON_DOWN, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveDownCmd});
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_KEY_BUTTON_S, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveDownCmd});
+        // Up
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_JK_BUTTON_UP, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveUpCmd});
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_KEY_BUTTON_W, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveUpCmd});
+        // Click/Press
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_JK_BUTTON_A, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pOnPressCmd});
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_KEY_BUTTON_ENTER, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pOnPressCmd});
+        // Mouse
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_MOUSE_BUTTON_LEFT, EInputType::SPACE_ENGINE_INPUT_MOUSE, m_pOnClickCmd});
+        //destra
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_JK_BUTTON_RIGHT, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveRightCmd});
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_KEY_BUTTON_D, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveRightCmd});
+        //sinistra
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_JK_BUTTON_LEFT, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveLeftCmd});
+        inputHandler.bindCommand(EAppState::RUN, this, {SPACE_ENGINE_KEY_BUTTON_A, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveLeftCmd});
+    }
+
+    void UINavigator::unbindCommands()
+    {
+        InputHandler& inputHandler = App::GetInputHandler();
+        inputHandler.clearBindingsFor(this);
+    }   
 
     UINavigator::~UINavigator()
     {
@@ -253,6 +287,8 @@ namespace SpaceEngine
             delete m_pMoveUpCmd;
             delete m_pOnClickCmd;
             delete m_pOnPressCmd;
+            delete m_pMoveRightCmd;
+            delete m_pMoveLeftCmd;
         }
 
         InputHandler& inputHandler = App::GetInputHandler();
@@ -267,6 +303,26 @@ namespace SpaceEngine
     void UINavigator::move(int delta)
     {
         m_focused = (m_focused + delta + static_cast<int>(m_vecButtons.size())) % static_cast<int>(m_vecButtons.size());
+    }
+
+    void UINavigator::inputRight()
+    {
+        if (m_focused >= 0 && m_focused < m_vecButtons.size())
+        {
+            if (m_vecButtons[m_focused]->onRight) {
+                m_vecButtons[m_focused]->onRight();
+            }
+        }
+    }
+
+    void UINavigator::inputLeft()
+    {
+        if (m_focused >= 0 && m_focused < m_vecButtons.size())
+        {
+            if (m_vecButtons[m_focused]->onLeft) {
+                m_vecButtons[m_focused]->onLeft();
+            }
+        }
     }
 
     void UINavigator::launchOnClick()
@@ -287,6 +343,15 @@ namespace SpaceEngine
     
     void UINavigator::update()
     {
+        if (s_currentActiveNavigator != this)
+        {
+            if (s_currentActiveNavigator != nullptr)
+            {
+                s_currentActiveNavigator->unbindCommands();
+            }
+            bindCommands();
+            s_currentActiveNavigator = this;
+        }
         if(!Joystick::isConnected())
         {
             for(int i = 0; i < m_vecButtons.size(); i++)

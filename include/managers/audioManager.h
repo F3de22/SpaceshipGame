@@ -19,6 +19,7 @@ namespace SpaceEngine{
             void StopMusic();
 
             void SetVolume(float volume); // da 0.0f a 1.0f
+            float GetVolume() const { return m_masterVolume; }
 
         private:
             ALuint GetAvailableSource();
@@ -29,6 +30,8 @@ namespace SpaceEngine{
 
             //cache per suoni e musica
             std::unordered_map<std::string, ALuint> m_soundBuffers;
+
+            float m_masterVolume = 1.0f;
 
             ALuint m_musicSource = 0;
     };

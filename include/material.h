@@ -190,6 +190,7 @@ namespace SpaceEngine
     {
         public: 
             virtual ~UIMaterial() {} 
+            void setColor(const Vector4& color){addProperty("color_val", color);};
         protected:
             UIMaterial()
             {

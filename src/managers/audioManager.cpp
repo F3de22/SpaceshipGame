@@ -179,7 +179,7 @@ namespace SpaceEngine
         alSourcei(m_musicSource, AL_BUFFER, buffer);
         alSourcei(m_musicSource, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
         alSourcei(m_musicSource, AL_SOURCE_RELATIVE, AL_TRUE); //TODO: da cambiare se vogliamo musica 3D(probabilmente no)
-        alSourcef(m_musicSource, AL_GAIN, 0.5f); // Volume musica al 50% di default
+        alSourcef(m_musicSource, AL_GAIN, 1.f); // Volume musica al 50% di default
         alSourcePlay(m_musicSource);
 
         ALint state;
@@ -196,6 +196,10 @@ namespace SpaceEngine
 
     void AudioManager::SetVolume(float volume)
     {
+        if (volume < 0.0f) volume = 0.0f;
+        if (volume > 1.0f) volume = 1.0f;
+
+        m_masterVolume = volume;
         alListenerf(AL_GAIN, volume);
     }
 };

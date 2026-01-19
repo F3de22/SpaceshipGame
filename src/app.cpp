@@ -4,6 +4,7 @@
 #include "player.h"
 #include "playerShip.h"
 #include "titleScreen.h"
+#include "settingsScene.h"
 #include "font.h"
 
 #include <vector>
@@ -109,6 +110,11 @@ namespace SpaceEngine
         //TitleScreen scene
         TitleScreen* pTitleScreen = new TitleScreen(&physicsManager, &audioManager);
         SceneManager::LoadScene(pTitleScreen);
+
+        SettingsScene* pSettingsScene = new SettingsScene(&physicsManager);
+        pSettingsScene->setAudioManager(&audioManager);
+        pSettingsScene->setActive(false); 
+        SceneManager::LoadScene(pSettingsScene);
 
         pScene->setActive(false);
         SceneManager::LoadScene(pScene);
