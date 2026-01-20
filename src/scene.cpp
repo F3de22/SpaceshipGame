@@ -5,6 +5,8 @@
 #include "Asteroid.h"
 #include "EnemyShip.h"
 #include "PlayerShip.h"
+#include "gameObject.h"
+#include "app.h"
 
 namespace SpaceEngine
 {
@@ -171,12 +173,39 @@ namespace SpaceEngine
     //---------------SpaceScene----------------//
     //-----------------------------------------// 
     ScoreSys* SpaceScene::pScoreSys = new ScoreSys();
+    Bullet* SpaceScene::pBulletEnemy = nullptr;
+    EnemyShip* SpaceScene::m_pEnemy = nullptr;
+    Asteroid* SpaceScene::m_pAsteroid = nullptr;
+
     SpaceScene::SpaceScene(PhysicsManager* pPhyManager):
     Scene(pPhyManager)
     {
         name = "SpaceScene";
         m_pPauseScene = new PauseScene(this);
         m_elapsedTime = 0.0f;
+        //bullet enemy
+        if(!pBulletEnemy)
+        {
+            pBulletEnemy = new Bullet(this, "Bullet.obj");
+            pBulletEnemy->setOwner(ELayers::ENEMY_LAYER);
+            pBulletEnemy->setLayer(ELayers::BULLET_ENEMY_LAYER);
+        }
+
+        if(!m_pEnemy)
+        {
+            m_pEnemy = new EnemyShip(this, "Enemy.obj");
+        }
+
+        if(!m_pAsteroid)
+        {
+            m_pAsteroid = new Asteroid(this, "Asteroid_LowPoly.obj");
+        }
+        
+        if(m_asteroidDebug)
+        {
+            m_pAsteroid->Init(Vector3(0.f, 0.f, -30.f)); 
+            addSceneComponent(m_pAsteroid);
+        }
         UIMaterial* iconMat = MaterialManager::createMaterial<UIMaterial>("HealthIcon");
         Texture* pTex = TextureManager::load(TEXTURES_PATH"HUD/Health.png");
         iconMat->addTexture("ui_tex", pTex);
@@ -197,7 +226,6 @@ namespace SpaceEngine
         Text* pTextScore = new Text({0.5f, 0.0f}, {-200.f, 90.f}, {1.f, 1.f}, pScoreMat);
         Text* pTextPoints = new Text({0.5f, 0.0f}, {100.f, 90.f}, {1.f, 1.f}, pScoreMat);
         pScoreSys->pTextPoints = pTextPoints;
-        m_pPoints = pTextPoints;
         pTextScore->setString("SCORE: ");
         pTextPoints->setString("0");
 
@@ -211,6 +239,11 @@ namespace SpaceEngine
         healthIcons.push(healthIcon1);
         healthIcons.push(healthIcon2);
         healthIcons.push(healthIcon3);
+    }
+
+    void SpaceScene::OnSwitch()
+    {
+        App::state = EAppState::RUN;
     }
 
     void SpaceScene::removePauseLayout(UILayout* layout) {
@@ -250,13 +283,6 @@ namespace SpaceEngine
             return; 
         }
         m_elapsedTime +=dt;
-        m_timer += dt;
-        if(m_timer >= 1.f)
-        {
-            m_timer = 0.f;
-            m_points++;
-            m_pPoints->setString(std::to_string(m_points));
-        }
         SpaceScene::handleSpawning(dt);
     }
 
@@ -271,7 +297,7 @@ namespace SpaceEngine
         m_enemyTimer += dt;
 
         // --- SPAWN ASTEROIDI ---
-        if (m_asteroidTimer >= m_asteroidInterval)
+        if (!m_asteroidDebug && m_asteroidTimer >= m_asteroidInterval)
         {
             // Reset
             m_asteroidTimer = 0.0f;
@@ -288,16 +314,14 @@ namespace SpaceEngine
             float y = randomRange(-safeY, safeY);
             float z = m_spawnZ;
 
-            Asteroid* pAsteroid = new Asteroid(this, "Asteroid_LowPoly.obj");
+            Asteroid* m_pTmpAst = requestInstantiate(m_pAsteroid); 
             
-            pAsteroid->Init(Vector3(x, y, z)); 
-            pAsteroid->getTransform()->setWorldPosition(Vector3(x, y, z));
+            m_pTmpAst->Init(Vector3(x, y, z)); 
+            m_pTmpAst->getTransform()->setWorldPosition(Vector3(x, y, z));
             
             // per avere asteroidi di diverse dimensioni
             float randomScale = randomRange(1.0f, 2.5f);
-            pAsteroid->getTransform()->setLocalScale(Vector3(randomScale));
-
-            addSceneComponent(pAsteroid);
+            m_pTmpAst->getTransform()->setLocalScale(Vector3(randomScale));
         }
 
         // --- SPAWN NEMICI ---
@@ -330,11 +354,9 @@ namespace SpaceEngine
                 //dopo 20 secondi: random tra SPREAD e AIMER
                 typeToSpawn = (rand() % 2 == 0) ? EnemyType::SPREAD : EnemyType::AIMER;
             }
-
-            EnemyShip* pEnemy = new EnemyShip(this, "Enemy.obj");
             
-            pEnemy->Init(Vector3(x, y, z), typeToSpawn, m_pPlayer);
-            requestInstantiate(pEnemy); 
+            EnemyShip* pTmpE = requestInstantiate(m_pEnemy); 
+            pTmpE->Init(Vector3(x, y, z), typeToSpawn, m_pPlayer);
         }
     }
 
@@ -356,6 +378,10 @@ namespace SpaceEngine
         }
     }
 
+    //-----------------------------------------------------//
+    //---------------------ScoreSys------------------------//
+    //-----------------------------------------------------//
+
     void ScoreSys::onNotify(const GameObject& entity, const int& event)
     {
         if(const PlayerShip* pPlayer = dynamic_cast<const PlayerShip*>(&entity))
@@ -373,5 +399,19 @@ namespace SpaceEngine
             m_score += static_cast<uint32_t>(event); 
             pTextPoints->setString(std::to_string(m_score));
         }
+    }
+
+    //-----------------------------------------------------//
+    //-------------------PointSubject----------------------//
+    //-----------------------------------------------------//
+
+    PointSubject::PointSubject()
+    {
+        addObserver(SpaceScene::pScoreSys);
+    }
+
+    void PointSubject::notifyPoints(GameObject& pGameObj, int score)
+    {
+        notify(pGameObj, score);
     }
 }

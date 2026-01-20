@@ -15,13 +15,13 @@ namespace SpaceEngine {
         m_pTransform = new Transform();
         m_pCollider = new Collider(this);
         m_pBullet = new Bullet(pScene, "Bullet.obj");
+        m_pBullet->setOwner(ELayers::PLAYER_LAYER);
+        m_pBullet->setLayer(ELayers::BULLET_PLAYER_LAYER);
         Transform* pTransformBullet = m_pBullet->getComponent<Transform>();
-        m_pBullet->setLayer(ELayers::BULLET_LAYER);
+        //m_pBullet->setLayer(ELayers::BULLET_LAYER);
         //set the parent of the bullet's trasform and place an offset 
-        pTransformBullet->setParent(m_pTransform);
-        pTransformBullet->setLocalPosition(pTransformBullet->getLocalPosition() + 
-            pTransformBullet->forwardLocal() * -3.f);
         pTransformBullet->rotateGlobal(90.f, {1.f, 0.f, 0.f});
+        m_layer = ELayers::PLAYER_LAYER;
         m_speed = 15.f;               
         m_limitX = 7.f;              
         m_limitY = 3.5f;               
@@ -104,23 +104,6 @@ namespace SpaceEngine {
         }     
     }
 
-    RenderObject PlayerShip::getRenderObject() 
-    {
-        RenderObject obj;
-
-        obj.mesh = m_pMesh;
-
-        // calcola la Model Matrix
-        glm::mat4 model = glm::mat4(1.0f);
-        
-        // Sposta la mesh alla posizione del GameObject 
-        model = glm::translate(model, m_pTransform->getLocalPosition());
-
-        obj.modelMatrix = model; 
-        
-        return obj;
-    }
-
     void PlayerShip::update(float dt) {
         m_dt = dt;
         //HandleInput(dt);
@@ -130,30 +113,10 @@ namespace SpaceEngine {
         }
     }
 
-    void PlayerShip::HandleInput(float dt) {
-
-        glm::vec3 m_position = m_pTransform->getLocalPosition();
-        float velocity = m_speed * dt;
-
-        // --- MOVIMENTO ---
-        if (Keyboard::key(SPACE_ENGINE_KEY_BUTTON_A)) m_position.x -= velocity;
-        if (Keyboard::key(SPACE_ENGINE_KEY_BUTTON_D)) m_position.x += velocity;
-        if (Keyboard::key(SPACE_ENGINE_KEY_BUTTON_W)) m_position.y += velocity;
-        if (Keyboard::key(SPACE_ENGINE_KEY_BUTTON_S)) m_position.y -= velocity;
-
-        // Impedisce alla nave di uscire dall'area di gioco
-        if (m_position.x > m_limitX)  m_position.x = m_limitX;
-        if (m_position.x < -m_limitX) m_position.x = -m_limitX;
-        if (m_position.y > m_limitY)  m_position.y = m_limitY;
-        if (m_position.y < -m_limitY) m_position.y = -m_limitY;
-
-        m_pTransform->setLocalPosition(m_position);
-    }
-
     void PlayerShip::onCollisionEnter(Collider* col) 
     {
         SPACE_ENGINE_INFO("PlayerShip Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
-        if(col->gameObj->getLayer() == ELayers::ENEMY_LAYER || col->gameObj->getLayer() == ELayers::ASTEROID_LAYER || col->gameObj->getLayer() == ELayers::BULLET_LAYER)
+        if(col->gameObj->getLayer() == ELayers::ENEMY_LAYER || col->gameObj->getLayer() == ELayers::ASTEROID_LAYER || col->gameObj->getLayer() == ELayers::BULLET_ENEMY_LAYER)
         {
             SPACE_ENGINE_INFO("Layer nemico confermato! Salute attuale: {}", m_health);
         
@@ -175,7 +138,9 @@ namespace SpaceEngine {
                 if(m_health <= 0)
                 {
                     SPACE_ENGINE_INFO("GAME OVER - PlayerShip distrutta!");
-                    if(pScene) pScene->requestDestroy(this);
+                    //to avoid 
+                    //if(pScene) pScene->requestDestroy(this);
+                    m_pMesh = nullptr;
                     if (auto* audioMgr = pScene->getAudioManager()) {
                         audioMgr->PlaySound("player_explosion");
                         audioMgr->PlaySound("game_over");
@@ -189,7 +154,7 @@ namespace SpaceEngine {
     {
         if(m_shootCooldown <= 0.0f) {
             if(pScene){
-                pScene->requestInstantiate(m_pBullet);
+                 pScene->requestInstantiate(m_pBullet)->getComponent<Transform>()->setWorldPosition(m_pTransform->getWorldPosition());
                 if (auto* audioMgr = pScene->getAudioManager()) {
                     audioMgr->PlaySound("shoot_player");
                 }
