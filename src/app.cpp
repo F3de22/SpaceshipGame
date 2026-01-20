@@ -123,7 +123,7 @@ namespace SpaceEngine
 
     void App::InputHandle()
     {
-        bool token = false; 
+        /*bool token = false; 
         
         if(!token && Keyboard::keyDown(SPACE_ENGINE_KEY_BUTTON_ESCAPE) && WindowManager::fullScreenState)
         {
@@ -137,7 +137,7 @@ namespace SpaceEngine
         if(Keyboard::keyUp(SPACE_ENGINE_KEY_BUTTON_ESCAPE))
         {
             token = false;
-        }
+        }*/
 
     }
 

@@ -40,7 +40,7 @@ namespace SpaceEngine
         // cleanup gameobjects phase
         processInstantiateQ(dt);
         processDestroyQ();
-        
+        UpdateScene(dt);
     }
 
     GameObject* Scene::instantiate(const SpawnRequest& sr)
@@ -175,6 +175,7 @@ namespace SpaceEngine
     Scene(pPhyManager)
     {
         name = "SpaceScene";
+        m_pPauseScene = new PauseScene(this);
         m_elapsedTime = 0.0f;
         UIMaterial* iconMat = MaterialManager::createMaterial<UIMaterial>("HealthIcon");
         Texture* pTex = TextureManager::load(TEXTURES_PATH"HUD/Health.png");
@@ -212,8 +213,42 @@ namespace SpaceEngine
         healthIcons.push(healthIcon3);
     }
 
+    void SpaceScene::removePauseLayout(UILayout* layout) {
+        auto it = std::find(m_vecUILayouts.begin(), m_vecUILayouts.end(), layout);
+        if(it != m_vecUILayouts.end()) {
+            m_vecUILayouts.erase(it);
+        }
+    }
+
+    SpaceScene::~SpaceScene() {
+        if(m_pPauseScene) delete m_pPauseScene;
+    }
+
+    void SpaceScene::TogglePause() {
+        m_isPaused = !m_isPaused;
+
+        if (m_isPaused) {
+            m_pPauseScene->Show();
+        } else {
+            m_pPauseScene->Hide();
+        }
+    }
+
     void SpaceScene::UpdateScene(float dt)
     {
+        if (Keyboard::key(SPACE_ENGINE_KEY_BUTTON_ESCAPE)) {
+            if (!m_escProcessed) {
+                TogglePause();
+                m_escProcessed = true; 
+            }
+        } else {
+            m_escProcessed = false; 
+        }
+
+        if (m_isPaused) {
+            m_pPauseScene->Update();
+            return; 
+        }
         m_elapsedTime +=dt;
         m_timer += dt;
         if(m_timer >= 1.f)

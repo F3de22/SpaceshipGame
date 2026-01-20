@@ -8,6 +8,8 @@
 #include "log.h"
 #include "shader.h"
 #include "managers/audioManager.h"
+#include "sceneManager.h"
+#include "pauseScene.h"
 #include <vector>
 #include <string>
 #include <queue>
@@ -164,6 +166,7 @@ namespace SpaceEngine
         protected:
             std::string name;
             std::vector<UILayout*> m_vecUILayouts;
+            bool m_isPaused = false;
     };
 
     class ScoreSys : public Observer<GameObject, int>
@@ -181,16 +184,18 @@ namespace SpaceEngine
             
         public:
             SpaceScene(PhysicsManager* pPhyManager);
-            ~SpaceScene() = default;
+            ~SpaceScene();
             void removeHealthIcon();
             void SetPlayer(PlayerShip* player) { m_pPlayer = player; }
             static ScoreSys* pScoreSys;
+            void TogglePause();
+            void removePauseLayout(UILayout* layout);
             
         private:
             void UpdateScene(float dt) override;
             float randomRange(float min, float max); 
             void handleSpawning(float dt);
-            
+
             //GESTIONE SPAWN
             float m_asteroidTimer = 0.0f;
             float m_enemyTimer = 0.0f;
@@ -207,7 +212,8 @@ namespace SpaceEngine
             float m_timer = 0.f;
             std::stack<UIBase*> healthIcons;
             PlayerShip* m_pPlayer = nullptr;
-            
+            PauseScene* m_pPauseScene = nullptr;
+            bool m_escProcessed = false;
     };
 
     class DeathScene : public Scene
