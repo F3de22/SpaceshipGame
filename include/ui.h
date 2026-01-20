@@ -117,6 +117,8 @@ namespace SpaceEngine
             bool update(int mx, int my);
             bool isHovered();
             std::function<bool()> onClick;
+            std::function<bool()> onRight = nullptr; 
+            std::function<bool()> onLeft = nullptr;
         private:
             bool hovered=false;
             bool wasHovered=false;
@@ -128,6 +130,8 @@ namespace SpaceEngine
     class UINavMoveUpCommand;
     class UINavOnClickCommand;
     class UINavOnPressCommand;
+    class UINavMoveRightCommand;
+    class UINavMoveLeftCommand;
     struct UIRenderObject;
     struct TextRenderObject;
 
@@ -137,6 +141,8 @@ namespace SpaceEngine
         friend UINavMoveUpCommand;
         friend UINavOnClickCommand;
         friend UINavOnPressCommand;
+        friend UINavMoveRightCommand;
+        friend UINavMoveLeftCommand;
 
         public:
             UINavigator();
@@ -146,15 +152,21 @@ namespace SpaceEngine
             void addButton(Button* button);
             void update();
         private:
+            void bindCommands();
+            void unbindCommands();
             void move(int delta);
             void launchOnClick();
             void launchOnPress();
+            void inputRight();
+            void inputLeft();
             std::vector<Button*> m_vecButtons;
-            //Make them static in future
+            static UINavigator* s_currentActiveNavigator;
             static UINavMoveDownCommand* m_pMoveDownCmd;
             static UINavMoveUpCommand* m_pMoveUpCmd;
             static UINavOnClickCommand* m_pOnClickCmd;
             static UINavOnPressCommand* m_pOnPressCmd;
+            static UINavMoveRightCommand* m_pMoveRightCmd;
+            static UINavMoveLeftCommand* m_pMoveLeftCmd;
             static int count;
             int m_focused = 0;
     };
@@ -196,6 +208,22 @@ namespace SpaceEngine
             {
                 UINavigator* nav = static_cast<UINavigator*>(actor);
                 nav->launchOnPress();
+            }
+    };
+
+    class UINavMoveRightCommand : public Command
+    {
+        public:
+            virtual void execute(void* actor) override {
+                static_cast<UINavigator*>(actor)->inputRight();
+            }
+    };
+
+    class UINavMoveLeftCommand : public Command
+    {
+        public:
+            virtual void execute(void* actor) override {
+                static_cast<UINavigator*>(actor)->inputLeft();
             }
     };
 
@@ -274,7 +302,5 @@ namespace SpaceEngine
             std::vector<UIBase*> m_vecUIElements;
             std::vector<Text*> m_vecText;
             UINavigator* m_pNavigator = nullptr;
-    };
-
-    
+    }; 
 }

@@ -101,6 +101,33 @@ namespace SpaceEngine
         return true;
     }
 
+    void WindowManager::ToggleFullScreen()
+    {
+        if (fullScreenState)
+        {
+            fullScreenState = false;
+            glfwSetWindowMonitor(WindowManager::window,
+                            nullptr,
+                            WindowManager::xpos,
+                            WindowManager::ypos,
+                            SPACE_ENGINE_MIN_RES_W,
+                            SPACE_ENGINE_MIN_RES_H,
+                            0);
+        }
+        else
+        {
+            //posizione e dimensione corrente
+            glfwGetWindowPos(window, &xpos, &ypos);
+            glfwGetWindowSize(window, &width, &height);
+            
+            monitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+            
+            glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+            fullScreenState = true;
+        }
+    }
+
     void WindowManager::Shutdown()
     {
         glfwTerminate();

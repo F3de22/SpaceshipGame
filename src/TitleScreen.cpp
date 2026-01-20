@@ -26,6 +26,8 @@ namespace SpaceEngine{
         if (getAudioManager()) {
             getAudioManager()->PlayMusic("menu_music", true);
         }
+        m_lastWidth = WindowManager::width;
+        m_lastHeight = WindowManager::height;
         //Add UILayout 
         UILayout* pUILayout = new UILayout();
         addSceneComponent(pUILayout);
@@ -40,13 +42,16 @@ namespace SpaceEngine{
         //Buttons
         UIButtonMaterial* pStartMat = MaterialManager::createMaterial<UIButtonMaterial>("StartButton");
         UIButtonMaterial* pExitMat = MaterialManager::createMaterial<UIButtonMaterial>("ExitButton");
+        UIButtonMaterial* pSettingMat = MaterialManager::createMaterial<UIButtonMaterial>("SettingsButton");
         Texture* pTexStart = TextureManager::load(TEXTURES_PATH"buttons/NewGame.png");
         Texture* pTexExit = TextureManager::load(TEXTURES_PATH"buttons/Exit.png");
+        Texture* pTexSettings = TextureManager::load(TEXTURES_PATH"buttons/Options.png");
         //now We don't have the texture for the hover case
         pStartMat->addTexture("ui_tex", pTexStart);
         pExitMat->addTexture("ui_tex", pTexExit);
         pExitMat->addTexture("ui_hover_tex", pTexExit);
-        //Creation of the UI button
+        pSettingMat->addTexture("ui_tex", pTexSettings);
+        //Creation of the UI buttons
         //pos: x:153 y:330 | res x:1440 y:1024 | space between buttons 0.04
         Button* pStart = new Button({0.f, 0.f},
             {153.f, 330.f},
@@ -54,14 +59,34 @@ namespace SpaceEngine{
             [this]() {return StartNewGame();}
         ); 
         //pos: x:153 y:464
-        Button* pExit = new Button(
-            {0.f, 0.f}, 
-            {153.f, 464.f}, 
+        Button* pExit = new Button({0.f, 0.f}, 
+            {153.f, 570.f},
             pExitMat, 
             [this]() {return ExitGame();}
         );
+        //pos: x:153 y:397
+        Button* pSettings = new Button({0.f, 0.f}, 
+            {153.f, 450.f},
+            pSettingMat, 
+            [this]() {SceneManager::SwitchScene("SettingsScene");
+                return true;}
+        );
         pUILayout->addUIElement(pStart);
         pUILayout->addUIElement(pExit);
+        pUILayout->addUIElement(pSettings);
+    }
+
+    void TitleScreen::UpdateScene(float dt)
+    {
+        if (WindowManager::width != m_lastWidth || WindowManager::height != m_lastHeight)
+        {
+            m_lastWidth = WindowManager::width;
+            m_lastHeight = WindowManager::height;
+
+            notifyChangeRes(); 
+            
+            SPACE_ENGINE_DEBUG("TitleScreen UI Resized to: {}x{}", m_lastWidth, m_lastHeight);
+        }
     }
 
     bool TitleScreen::StartNewGame()
