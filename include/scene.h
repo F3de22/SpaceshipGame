@@ -39,6 +39,11 @@ namespace SpaceEngine
                 SPACE_ENGINE_INFO("On load scene");
             }
 
+            virtual void OnSwitch()
+            {
+                SPACE_ENGINE_INFO("On switch on the scene");
+            }
+
             virtual void OnUnload()
             {
                 SPACE_ENGINE_INFO("On unload scene");
@@ -199,7 +204,7 @@ namespace SpaceEngine
             ~SpaceScene() = default;
             void removeHealthIcon();
             void SetPlayer(PlayerShip* player) { m_pPlayer = player; }
-            void OnLoad() override;
+            virtual void OnSwitch() override;
             static ScoreSys* pScoreSys;
             static Bullet* pBulletEnemy; 
             

@@ -240,7 +240,7 @@ namespace SpaceEngine
         healthIcons.push(healthIcon3);
     }
 
-    void OnLoad()
+    void SpaceScene::OnSwitch()
     {
         App::state = EAppState::RUN;
     }

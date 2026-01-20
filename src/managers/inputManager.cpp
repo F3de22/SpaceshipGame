@@ -1,11 +1,11 @@
 #include "inputManager.h"
 #include "windowManager.h"
 #include "log.h"
+#include "app.h"
 
 
 namespace SpaceEngine
 {
-    extern EAppState state;
     //callbacks
     static void joystick_callback(int jid, int event);
     static void mouse_button_callback(GLFWwindow* window, int buttonID, int action, int mods);
@@ -14,9 +14,9 @@ namespace SpaceEngine
     //InputBinding
     void InputHandler::handleInput()
     {
-        if(m_bindings.find(state) != m_bindings.end())
+        if(m_bindings.find(App::state) != m_bindings.end())
         {
-            std::unordered_map<void*,  std::vector<InputBinding>>& binds = m_bindings[state]; 
+            std::unordered_map<void*,  std::vector<InputBinding>>& binds = m_bindings[App::state]; 
             for(const auto& actor : binds)
             {
                 std::vector<InputBinding> cmds = actor.second;

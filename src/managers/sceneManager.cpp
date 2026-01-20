@@ -108,6 +108,7 @@ namespace SpaceEngine
                 m_currScene->setActive(false);
                 m_currScene = pScene;
                 m_currScene->setActive(true);
+                m_currScene->OnSwitch();
             }
         }
     }
