@@ -180,25 +180,25 @@ namespace SpaceEngine {
     void SettingsScene::UpdateVolumeBar()
     {
         if(auto am = getAudioManager()) {
-        am->SetVolume(m_currentVolume);
-    }  
+            am->SetVolume(m_currentVolume);
+        }  
 
-    float startX = -140.f;      // Dove inizia la barra (Fisso)
-    float maxBarWidth = 280.f;  // Larghezza totale
-    float currentWidth = maxBarWidth * m_currentVolume;
+        float startX = -140.f;      // Dove inizia la barra (Fisso)
+        float maxBarWidth = 280.f;  // Larghezza totale
+        float currentWidth = maxBarWidth * m_currentVolume;
 
-    if(m_pVolumeFill) {
-        m_pVolumeFill->pUITransf->setWidth(currentWidth);
-        m_pVolumeFill->pUITransf->setPos({startX, 0.f});
-    }
+        if(m_pVolumeFill) {
+            m_pVolumeFill->pUITransf->setWidth(currentWidth);
+            m_pVolumeFill->pUITransf->setPos({startX, 0.f});
+        }
 
-    //aggiorna pallino
-    if(m_pVolumeKnob) {            
-        float knobWidth = 30.0f;
-        float knobX = startX + currentWidth - (knobWidth / 2.0f);
+        //aggiorna pallino
+        if(m_pVolumeKnob) {            
+            float knobWidth = 30.0f;
+            float knobX = startX + currentWidth - (knobWidth / 2.0f);
 
-        m_pVolumeKnob->pUITransf->setPos({knobX, 0.f});
-    }
+            m_pVolumeKnob->pUITransf->setPos({knobX, 0.f});
+        }
     }
 
     void SettingsScene::UpdateFullscreenIcons() {

@@ -6,45 +6,6 @@
 
 namespace SpaceEngine
 {
-    /*void PlayTestBeep(ALCdevice* device) {
-        // Frequenza 440Hz (La), durata 1 secondo
-        const int sampleRate = 44100;
-        const int duration = 1; 
-        const int size = sampleRate * duration;
-        std::vector<short> bufferData(size);
-
-        for (int i = 0; i < size; ++i) {
-            // Onda sinusoidale semplice
-            bufferData[i] = static_cast<short>(32760 * sin((2.0 * 3.14159 * 440.0 * i) / sampleRate));
-        }
-
-        ALuint buffer;
-        alGenBuffers(1, &buffer);
-        alBufferData(buffer, AL_FORMAT_MONO16, bufferData.data(), bufferData.size() * sizeof(short), sampleRate);
-
-        ALuint source;
-        alGenSources(1, &source);
-        alSourcei(source, AL_BUFFER, buffer);
-        alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE); // Suona "in testa"
-        alSourcef(source, AL_GAIN, 1.0f); // Volume massimo
-        
-        alSourcePlay(source);
-        
-        SPACE_ENGINE_INFO("--- TEST BEEP START ---");
-        
-        // Attendiamo che finisca (solo per test, blocca il thread per 1 secondo!)
-        // In un gioco vero non si fa, ma qui serve per capire.
-        ALint state;
-        do {
-            alGetSourcei(source, AL_SOURCE_STATE, &state);
-        } while (state == AL_PLAYING);
-
-        SPACE_ENGINE_INFO("--- TEST BEEP END ---");
-
-        alDeleteSources(1, &source);
-        alDeleteBuffers(1, &buffer);
-    }*/
-
     void AudioManager::Initialize()
     {
         m_device = alcOpenDevice(nullptr);
@@ -116,7 +77,7 @@ namespace SpaceEngine
         SPACE_ENGINE_INFO(" > SampleRate: {}", sampleRate);
         SPACE_ENGINE_INFO(" > Frames: {}", totalPCMFrameCount);per verificare che i file audio non siano vuoti o corrotti*/
 
-        ALenum format;
+        ALenum format; //se audio mono o stereo
         if (channels == 1) format = AL_FORMAT_MONO16;
         else if (channels == 2) format = AL_FORMAT_STEREO16;
         else {

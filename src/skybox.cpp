@@ -82,10 +82,7 @@ namespace SpaceEngine
             pCubeMapTex->bind();
         }
 
-
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
-
-        
     }
 }
