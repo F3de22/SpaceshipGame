@@ -31,7 +31,7 @@ namespace SpaceEngine {
 
         // score
         TextMaterial* pScoreMat = MaterialManager::createMaterial<TextMaterial>("PauseScoreValFont", "Orbitron-Regular");
-        m_pScoreText = new Text({0.5f, 0.5f}, {0.f, -195.f}, {0.8f, 0.8f}, pScoreMat);
+        m_pScoreText = new Text({0.5f, 0.5f}, {0.f, -185.f}, {0.8f, 0.8f}, pScoreMat);
         m_pScoreText->setString("00000");
         m_pLayout->addText(m_pScoreText);
 
@@ -110,19 +110,27 @@ namespace SpaceEngine {
         
         Mouse::showCursor();
 
+        if(m_pLayout) m_pLayout->notifyChangeRes();
+
         if (m_pOwner) {
             if (auto am = m_pOwner->getAudioManager()) m_currentVolume = am->GetVolume();
 
-            uint32_t currentScore = m_pOwner->GetCurrentScore();
+            int16_t currentScore = m_pOwner->GetCurrentScore();
             if(m_pScoreText) {
                 m_pScoreText->setString(std::to_string(currentScore));
+                /*float scaleFactor = (float)WindowManager::height / 1080.f;
+                float newY = -185.f * scaleFactor;
+
+                if(m_pScoreText->pTransf) {
+                    m_pScoreText->pTransf->setPos({0.f, newY});
+                }*/
             }
-
             m_pOwner->addSceneComponent(m_pLayout);
+            
+            UpdateVolumeSlider();
         }
-        UpdateVolumeSlider();
     }
-
+ 
     void PauseScene::Hide() {
         if (!m_visible) return;
         m_visible = false;

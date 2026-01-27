@@ -5,6 +5,7 @@
 #include "playerShip.h"
 #include "titleScreen.h"
 #include "settingsScene.h"
+#include "gameOverScene.h"
 #include "font.h"
 
 #include <vector>
@@ -113,11 +114,16 @@ namespace SpaceEngine
 
         SettingsScene* pSettingsScene = new SettingsScene(&physicsManager);
         pSettingsScene->setAudioManager(&audioManager);
+
         pSettingsScene->setActive(false); 
         SceneManager::LoadScene(pSettingsScene);
 
         pScene->setActive(false);
         SceneManager::LoadScene(pScene);
+
+        GameOverScene* pGameOver = new GameOverScene(&physicsManager, dynamic_cast<SpaceScene*>(pScene));
+        pGameOver->setActive(false);
+        SceneManager::LoadScene(pGameOver);
 
     }
 

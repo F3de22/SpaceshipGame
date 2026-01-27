@@ -221,6 +221,7 @@ namespace SpaceEngine
             void UpdateScene(float dt) override;
             float randomRange(float min, float max); 
             void handleSpawning(float dt);
+            void ResetHealthIcons();
 
             //GESTIONE SPAWN
             static EnemyShip* m_pEnemy;
@@ -240,6 +241,7 @@ namespace SpaceEngine
             bool m_asteroidDebug = false;
             PlayerShip* m_pPlayer = nullptr;
             std::stack<UIBase*> healthIcons;
+            UILayout* m_pHUDLayout = nullptr;
            
             PauseScene* m_pPauseScene = nullptr;
             bool m_escProcessed = false;

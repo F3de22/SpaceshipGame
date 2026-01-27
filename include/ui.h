@@ -94,11 +94,15 @@ namespace SpaceEngine
         public:
             UIBase();
             UIBase(UIMaterial* pUIMaterial);
+            void setActive(bool active) { m_active = active; }
+            bool isActive() const { return m_active; }
             //posAncor is in the range[0,1], pos is in px
             UIBase(Vector2 posAncor, Vector2 pos, UIMaterial* pUIMaterial);
             ~UIBase();
             UIMeshRenderer* pUIMeshRend = nullptr;
             UITransform* pUITransf = nullptr;    
+        protected:
+            bool m_active = true;
     };
 
     class Background : public UIBase
@@ -294,12 +298,15 @@ namespace SpaceEngine
                 }
             }
             void notifyChangeRes();
+            void setActive(bool active) { m_active = active; }
+            bool isActive() const { return m_active; }
             int removeUIElement(const UIBase* pUIBase);
             std::vector<UIRenderObject> gatherUIRenderables();
             std::vector<TextRenderObject> gatherTextRenderables();
 
         private:
             std::vector<UIBase*> m_vecUIElements;
+            bool m_active = true;
             std::vector<Text*> m_vecText;
             UINavigator* m_pNavigator = nullptr;
     }; 

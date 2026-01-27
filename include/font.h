@@ -36,6 +36,7 @@ namespace SpaceEngine
         bool dirty = true;
         
         public:
+        void setPos(const Vector2& newPos){pos = newPos;}
         Transform2D(Vector2 anchor, Vector2 scale, Vector2 pos):
         anchor(anchor), scale(scale), pos(pos){}
 
@@ -60,15 +61,21 @@ namespace SpaceEngine
             ~Text();
         
             inline std::string getString(){return m_string;}
+            void setColor(const Vector3& color);
             
             inline void setString(const std::string& str){m_string = str;}
             inline void appendString(const std::string& str){m_string.append(str);}
+
+            void setActive(bool active) { m_active = active; }
+            bool isActive() const { return m_active; }
         public:
             TextMeshRenderer* pTextMeshRend = nullptr;
             Transform2D* pTransf = nullptr;
 
-            private:
-                std::string m_string = "";
+        private:
+            std::string m_string = "";
+            TextMaterial* m_pMaterial = nullptr;
+            bool m_active = true;
     };
 
 }

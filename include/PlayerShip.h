@@ -47,6 +47,11 @@ namespace SpaceEngine {
         float m_limitY;
         float m_shootCooldown;
 
+        float m_currentAngle = 0.0f; 
+        float m_maxAngle = 25.0f;//massima inclinazione
+        float m_bankSpeed = 5.0f;//vel di inclinazione
+        int m_moveDirection = 0;//-1 sx, 0 fermo, 1 dx
+
         MoveUpCommand* m_playerMoveUp;
         MoveDownCommand* m_playerMoveDown;
         MoveLeftCommand* m_playerMoveLeft;

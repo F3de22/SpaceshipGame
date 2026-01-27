@@ -414,10 +414,12 @@ namespace SpaceEngine
 
     std::vector<UIRenderObject> UILayout::gatherUIRenderables()
     {
+        if (!m_active) return {};
         std::vector<UIRenderObject> vecUIRenderObj;
         
         for(UIBase* uiElement : m_vecUIElements)
         {
+            if (!uiElement->isActive()) continue;
             UIRenderObject uiRObj;
             uiRObj.pMaterial = uiElement->pUIMeshRend->getMaterial();
             uiRObj.pRect = uiElement->pUITransf->getRect();
@@ -442,10 +444,12 @@ namespace SpaceEngine
 
     std::vector<TextRenderObject> UILayout::gatherTextRenderables()
     {
+        if (!m_active) return {};
         std::vector<TextRenderObject> vecTextRenderObj;
         
         for(Text* pText : m_vecText)
         {
+            if (!pText->isActive()) continue;
             TextRenderObject textRObj;
             textRObj.pText = pText;
             vecTextRenderObj.push_back(textRObj);

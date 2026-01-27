@@ -208,20 +208,9 @@ namespace SpaceEngine
             m_pAsteroid->Init(Vector3(0.f, 0.f, -30.f)); 
             addSceneComponent(m_pAsteroid);
         }
-        UIMaterial* iconMat = MaterialManager::createMaterial<UIMaterial>("HealthIcon");
-        Texture* pTex = TextureManager::load(TEXTURES_PATH"HUD/Health.png");
-        iconMat->addTexture("ui_tex", pTex);
-        UIBase* healthIcon1 = new UIBase({0.f, 0.f}, 
-            {150.f, 76.f},
-            iconMat);
-        //added 0.035*2
-        UIBase* healthIcon2 = new UIBase({0.f, 0.f}, 
-            {199.f, 76.f},
-            iconMat);
-        //added 0.035*3
-        UIBase* healthIcon3 = new UIBase({0.f, 0.f},
-            {248.f, 76.f}, 
-            iconMat);
+
+        m_pHUDLayout = new UILayout();
+        addSceneComponent(m_pHUDLayout);
 
         //Text
         TextMaterial* pScoreMat = MaterialManager::createMaterial<TextMaterial>("ScoreMat", "Orbitron-Regular");
@@ -231,13 +220,38 @@ namespace SpaceEngine
         pTextScore->setString("SCORE: ");
         pTextPoints->setString("0");
 
-        UILayout* pUILayout = new UILayout();
-        addSceneComponent(pUILayout);
-        pUILayout->addText(pTextScore);
-        pUILayout->addText(pTextPoints);
-        pUILayout->addUIElement(healthIcon1);
-        pUILayout->addUIElement(healthIcon2);
-        pUILayout->addUIElement(healthIcon3);
+        m_pHUDLayout->addText(pTextScore);
+        m_pHUDLayout->addText(pTextPoints);
+        
+        ResetHealthIcons();
+    }
+
+    void SpaceScene::ResetHealthIcons()
+    {
+        while(!healthIcons.empty())
+        {
+            UIBase* icon = healthIcons.top();
+            healthIcons.pop();
+            if(m_pHUDLayout) m_pHUDLayout->removeUIElement(icon);
+        }
+
+        UIMaterial* iconMat = MaterialManager::createMaterial<UIMaterial>("HealthIcon");
+        if (iconMat->getTexture("ui_tex") == nullptr)
+        {
+            Texture* pTex = TextureManager::load(TEXTURES_PATH"HUD/Health.png");
+            iconMat->addTexture("ui_tex", pTex);
+        }
+
+        UIBase* healthIcon1 = new UIBase({0.f, 0.f}, {150.f, 76.f}, iconMat);
+        UIBase* healthIcon2 = new UIBase({0.f, 0.f}, {199.f, 76.f}, iconMat);
+        UIBase* healthIcon3 = new UIBase({0.f, 0.f}, {248.f, 76.f}, iconMat);
+
+        if(m_pHUDLayout) {
+            m_pHUDLayout->addUIElement(healthIcon1);
+            m_pHUDLayout->addUIElement(healthIcon2);
+            m_pHUDLayout->addUIElement(healthIcon3);
+        }
+
         healthIcons.push(healthIcon1);
         healthIcons.push(healthIcon2);
         healthIcons.push(healthIcon3);
@@ -263,9 +277,11 @@ namespace SpaceEngine
         if (App::state == EAppState::RUN) {
             App::state = EAppState::PAUSE;
             if(m_pPauseScene) m_pPauseScene->Show();
+            if(m_pHUDLayout) m_pHUDLayout->setActive(false);
         } else if(App::state == EAppState::PAUSE) {
             App::state = EAppState::RUN;
             m_pPauseScene->Hide();
+            if(m_pHUDLayout) m_pHUDLayout->setActive(true);
         }
     }
 
@@ -299,12 +315,13 @@ namespace SpaceEngine
                 requestDestroy(obj); 
             }
         }
-
+        
         m_asteroidTimer = 0.0f;
         m_enemyTimer = 0.0f;
 
         if (m_pPlayer )m_pPlayer->Reset();
         if(pScoreSys) pScoreSys->Reset(); 
+        ResetHealthIcons();
         
         SPACE_ENGINE_INFO("Game Reset Complete");
     }

@@ -1,5 +1,6 @@
 #include "playerShip.h"
 #include "inputManager.h"
+#include "sceneManager.h"
 #include "scene.h"
 #include "app.h"
 #include <glad/gl.h>
@@ -107,13 +108,17 @@ namespace SpaceEngine {
     void PlayerShip::Reset()
     {
         m_health = 3;
+
+        m_currentAngle = 0.0f;
+        m_moveDirection = 0;
+
         if (m_pMesh == nullptr) {
             m_pMesh = MeshManager::loadMesh("PlayerShip.obj"); 
         }
         if (m_pTransform) {
             m_pTransform->setLocalPosition(Vector3(0.0f, 0.0f, -8.0f)); 
             m_pTransform->setLocalScale(Vector3(1.0f));
-            m_pTransform->setLocalRotation(glm::quat(1.f, 0.f, 0.f, 0.f));
+            m_pTransform->setLocalRotation(glm::angleAxis(glm::radians(180.f), glm::vec3(0.f, 1.f, 0.f)));
             m_pTransform->rotateLocal(180, {0.f,1.f, 0.f});
         }
 
@@ -129,6 +134,23 @@ namespace SpaceEngine {
         if(m_shootCooldown > 0.0f) {
             m_shootCooldown -= dt;
         }
+
+        float targetAngle = 0.0f;
+        if (m_moveDirection != 0) {
+            targetAngle = (float)-m_moveDirection * m_maxAngle;
+        }
+
+        m_currentAngle += (targetAngle - m_currentAngle) * dt * m_bankSpeed;
+
+        if (m_pTransform) {
+            glm::quat baseRotation = glm::angleAxis(glm::radians(180.f), glm::vec3(0.f, 1.f, 0.f));
+            
+            glm::quat bankRotation = glm::angleAxis(glm::radians(m_currentAngle), glm::vec3(0.f, 0.f, 1.f));
+            
+            m_pTransform->setLocalRotation(baseRotation * bankRotation);
+        }
+
+        m_moveDirection = 0;
     }
 
     void PlayerShip::onCollisionEnter(Collider* col) 
@@ -156,13 +178,13 @@ namespace SpaceEngine {
                 if(m_health <= 0)
                 {
                     SPACE_ENGINE_INFO("GAME OVER - PlayerShip distrutta!");
-                    //to avoid 
-                    //if(pScene) pScene->requestDestroy(this);
                     m_pMesh = nullptr;
+                    
                     if (auto* audioMgr = pScene->getAudioManager()) {
                         audioMgr->PlaySound("player_explosion");
                         audioMgr->PlaySound("game_over");
                     }
+                    SceneManager::SwitchScene("GameOverScene");
                 }
             }
         }
@@ -213,6 +235,7 @@ namespace SpaceEngine {
         if (m_position.x < -m_limitX)  m_position.x = -m_limitX;
         
         m_pTransform->setWorldPosition(m_position);
+        m_moveDirection = 1;
     }
 
     void PlayerShip::MoveRight()
@@ -224,5 +247,6 @@ namespace SpaceEngine {
         if (m_position.x > m_limitX)  m_position.x = m_limitX;
         
         m_pTransform->setWorldPosition(m_position);
+        m_moveDirection = -1;
     }
 }

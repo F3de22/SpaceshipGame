@@ -115,6 +115,11 @@ namespace SpaceEngine {
     
     void SettingsScene::UpdateScene(float dt)
     {
+        bool currentState = WindowManager::fullScreenState;
+        if (m_lastFullscreenState != currentState) {
+            UpdateFullscreenIcons();
+            m_lastFullscreenState = currentState;
+        }
         if (Mouse::button(SPACE_ENGINE_MOUSE_BUTTON_LEFT))
         {
             float mx = static_cast<float>(Mouse::getPosX());

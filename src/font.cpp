@@ -31,6 +31,7 @@ namespace SpaceEngine
 
     Text::Text(TextMaterial* pTextMaterial)
     {
+        m_pMaterial = pTextMaterial;
         pTextMeshRend = new TextMeshRenderer();
         pTextMeshRend->bindMaterial(pTextMaterial);
 
@@ -56,6 +57,14 @@ namespace SpaceEngine
     {
         delete pTextMeshRend;
         delete pTransf;
+    }
+
+    void Text::setColor(const Vector3& color)
+    {
+        if (m_pMaterial)
+        {
+            m_pMaterial->addProperty("color_val", color);
+        }
     }
 
 }

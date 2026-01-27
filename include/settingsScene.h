@@ -18,6 +18,7 @@ namespace SpaceEngine {
         void UpdateFullscreenIcons();
 
         float m_currentVolume = 1.0f;
+        bool m_lastFullscreenState = false;
         //per ridimensionare la barra del volume
         Background* m_pVolumeBg = nullptr; 
         Background* m_pVolumeFill = nullptr; //parte colorata
