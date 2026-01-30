@@ -187,52 +187,73 @@ namespace SpaceEngine
         public:
             void handlerSpawn()
             {
-                switch(m_state)
+                switch(m_stage.eStage)
                 {
                     case SPAWN_ASTEROID_EASY:
-                        if(m_budget == 0)
+                        if(m_stage.budget == 0)
                         {
-                            m_state = SPAWN_ASTEROID_MED; 
+                            m_stage.eStage = SPAWN_ASTEROID_MED;
+                            m_stage.minSpawn = 1; 
+                            m_stage.maxSpawn = 2;
+                            m_stage.budget = BudgetAsteroridM;
+                            m_stage.weights[0] = 0.3f;
+                            m_stage.weights[1] = 0.7f;
+                            m_stage.weights[2] = 0.f;
+                            m_stage.spawnInterval = TimeAsterorid * TimeAsteroridXM; 
                         }
-
                         break;
                     case SPAWN_ASTEROID_MED:
-                        if(m_budget == 0)
+                        if(m_stage.budget == 0)
                         {
-                            m_state = SPAWN_ASTEROID_HARD; 
+                            m_stage.eStage = SPAWN_ASTEROID_HARD;
+                            m_stage.minSpawn = 1; 
+                            m_stage.maxSpawn = 3;
+                            m_stage.budget = BudgetAsteroridH;
+                            m_stage.weights[0] = 0.1f;
+                            m_stage.weights[1] = 0.3f;
+                            m_stage.weights[2] = 0.6f;
+                            m_stage.spawnInterval = TimeAsterorid * TimeAsteroridXH; 
                         }
                         break;
                     case SPAWN_ASTEROID_HARD:
-                        if(m_budget == 0)
+                        if(m_stage.budget == 0)
                         {
-                            if(m_lastStage)
-                                m_state = SPAWN_ENEMY_HARD; 
-                            else m_state = SPAWN_ENEMY_EASY; 
+                            m_stage.eStage = SPAWN_ENEMY_EASY;
+                            clearSpace(); 
                         }
-
 
                         break;
                     case SPAWN_ENEMY_EASY:
-                        if(m_budget == 0)
+                        if(m_stage.budget == 0)
                         {
                             m_state = SPAWN_ENEMY_MED; 
                         }
                         break;
                     case SPAWN_ENEMY_MED:
-                        if(m_budget == 0)
+                        if(m_stage.budget == 0)
                         {
                             m_state = SPAWN_ENEMY_HARD; 
                         }
                         break;
                     case SPAWN_ENEMY_HARD:
-                        if(m_budget == 0)
+                        if(m_stage.budget == 0)
                         {
                             m_lastStage = true;
                             m_state = SPAWN_ASTEROID_HARD; 
                         }
                         break;
                 }
+
+                spawnLogic();
             } 
+
+            void clearSpace()
+            {
+                for(int i = 0; i < SlotDim; i++)
+                    m_space[i] = ESlot::FREE;
+            }
+
+
         private:
             enum ESpawnState
             {
@@ -242,26 +263,124 @@ namespace SpaceEngine
                 SPAWN_ENEMY_EASY,
                 SPAWN_ENEMY_MED,
                 SPAWN_ENEMY_HARD,
+                SPAWN_MIX
             };
 
+            enum ESlot
+            {
+                FREE,
+                ASTEROID,
+                ENEMY
+            };
+
+            struct Stage
+            {
+                int weights[3];
+                ESpawnState eStage;
+                uint32_t budget;
+                uint32_t minSpawn;
+                uint32_t maxSpawn;
+                float spawnInterval;
+            };
+
+
             ESpawnState m_state = ESpawnState::SPAWN_ASTEROID_EASY;
-            static constexpr int32_t m_budgetAsteroridE = 20;
-            static constexpr int32_t m_budgetAsteroridM = 30;
-            static constexpr int32_t m_budgetAsteroridH = 10;
-            static constexpr int32_t m_budgetEnemyE = 20;
-            static constexpr int32_t m_budgetEnemyM = 30;
-            static constexpr int32_t m_budgetEnemyH = 10;
-            static constexpr float m_velAsterorid = 8.f;            
-            static constexpr float m_timeAsterorid = 0.5f;
-            static constexpr float m_timeAsteroridXM = 1.25f;
-            static constexpr float m_timeAsteroridXH = 1.5f;
-            static constexpr float m_velEnemy = 8.f;
-            static constexpr float m_timeEnemyXM = 1.25f;
-            static constexpr float m_timeEnemyXH = 1.5f;
-            int32_t m_budget = m_budgetAsteroridE;
+            static constexpr int32_t BudgetAsteroridE = 20;
+            static constexpr int32_t BudgetAsteroridM = 30;
+            static constexpr int32_t BudgetAsteroridH = 10;
+            static constexpr int32_t BudgetEnemyE = 20;
+            static constexpr int32_t BudgetEnemyM = 30;
+            static constexpr int32_t BudgetEnemyH = 10;
+            static constexpr int32_t SlotDim = 3;
+            static constexpr float StartOffsetSpace = -4.67f; //-7.0 + (14/6) = -4.67; 14/6 = 2.33            
+            static constexpr float OffsetSpace = 2.33f;            
+            static constexpr float VelAsterorid = 8.f;            
+            static constexpr float TimeAsterorid = 1.5f;
+            static constexpr float TimeAsteroridXM = 0.75f;
+            static constexpr float TimeAsteroridXH = 0.6f;
+            static constexpr float VelEnemy = 8.f;
+            static constexpr float TimeEnemy = 1.5f;
+            static constexpr float TimeEnemyXM = 0.75f;
+            static constexpr float TimeEnemyXH = 0.6f;
             bool m_lastStage = false;
-            int8_t m_frontSpace[3] = {0, 0, 0};
-            int8_t m_backSpace[3] = {0, 0, 0};
+            int8_t m_space[SlotDim] = {ESlot::FREE, ESlot::FREE, ESlot::FREE};
+            float m_timer;
+            Stage m_stage;
+            Scene* m_pScene;
+
+            inline float getPosX(int index)
+            {
+                return StartOffsetSpace + index * OffsetSpace;
+            }
+
+            int weightedRandom(int* weight, int dim)
+            {
+                float rand =static_cast<float>(PRNG::getNumber()) / 0xFFFF'FFFF; 
+                float comulative = 0.f;
+
+                for(int i = 0; i < dim; i++)
+                {
+                    comulative += weight[i];
+                    if(comulative >= rand)
+                        return i; 
+                }
+
+                return dim-1;
+            }
+
+            void getAvailableSlot(int* available, int& dim)
+            {
+                dim = 0;    
+                for(int i = 0; i < SlotDim; i++)
+                    if(m_space[i] = ESlot::FREE)
+                        available[dim++] = i;
+            }
+
+            int pickSlot(int prev, int index, int spawnCount)
+            {
+                if(spawnCount == SlotDim)
+                    return  index;
+                
+                return (prev + 1 + PRNG::getNumber() % (SlotDim - 1)) % SlotDim; 
+            }
+
+            void spawnEntities(Stage& stage, uint32_t spawnCount)
+            {
+                
+                if(stage.eStage >= ESpawnState::SPAWN_ASTEROID_EASY && stage.eStage <= ESpawnState::SPAWN_ASTEROID_HARD)
+                {
+                    int prev = -1;
+                    
+                    for(int i = 0; i < spawnCount; i++)
+                    {
+                        int index = pickSlot(prev, index, spawnCount);
+                        m_pScene->requestInstantiate(SpaceScene::m_pAsteroid, Vector3{getPosX(index), 0.f, -100.f});
+                        m_space[index] = ESlot::ASTEROID;
+                        prev = index;
+                    }
+                    return;
+                }
+
+                int availableSlots[3] = {-1,-1,-1};
+                int dim = 0;
+                
+                getAvailableSlot(availableSlots, dim);
+            }
+
+            void spawnLogic()
+            {
+                //remeber to update timer
+                if(m_timer < m_stage.spawnInterval)
+                    return;
+                m_timer = 0.f;
+
+                uint32_t spawnCount = weightedRandom(m_stage.weights, 3);
+                spawnCount = std::min(spawnCount, m_stage.budget);
+
+                spawnEntities(m_stage, spawnCount);
+
+                m_stage.budget -= spawnCount;
+            }
     };
 
     class ScoreSys : public Observer<GameObject, int>
@@ -299,15 +418,15 @@ namespace SpaceEngine
             void removePauseLayout(UILayout* layout);
             
             uint32_t GetCurrentScore();
+            //GESTIONE SPAWN
+            static EnemyShip* m_pEnemy;
+            static Asteroid* m_pAsteroid;
         private:
             void UpdateScene(float dt) override;
             float randomRange(float min, float max); 
             void handleSpawning(float dt);
             void ResetHealthIcons();
 
-            //GESTIONE SPAWN
-            static EnemyShip* m_pEnemy;
-            static Asteroid* m_pAsteroid;
             float m_asteroidTimer = 0.0f;
             float m_enemyTimer = 0.0f;
             // Intervalli di spawn
