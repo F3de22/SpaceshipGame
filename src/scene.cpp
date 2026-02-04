@@ -487,13 +487,21 @@ namespace SpaceEngine
             .minSpawn{1},
             .maxSpawn{3},
             .spawnInterval{TimeEnemy * TimeEnemyXH}
+        },
+        {
+            .weights{0.2f,0.6f,0.2f},
+            .eStage{SPAWN_MIX},
+            .budget{30},
+            .minSpawn{1},
+            .maxSpawn{3},
+            .spawnInterval{TimeEnemy * TimeEnemyXH}
         }
     };
 
 
     SpawnerSys::SpawnerSys()
     {
-        m_stage = m_lookupStages[ESpawnState::SPAWN_ASTEROID_EASY];
+        m_stage = m_lookupStages[ESpawnState::SPAWN_ENEMY_HARD];
         m_pSpawnerObs = new SpawnerObs();
     }
 
@@ -526,9 +534,14 @@ namespace SpaceEngine
                     m_stage = m_lookupStages[SPAWN_ENEMY_HARD]; 
                 break;
             case SPAWN_ENEMY_HARD:
-                if(m_stage.budget == 0)
-                    m_stage.eStage = SPAWN_MIX;
+                if(m_stage.budget == 0){
+                    m_stage = m_lookupStages[SPAWN_MIX];
+                }
+                break;
+            case SPAWN_MIX:
+                if(m_stage.budget == 0){
                     m_stage.budget = 30;
+                }
                 break;
         }
 
@@ -570,7 +583,7 @@ namespace SpaceEngine
         if(spawnCount == SpawnerObs::SlotDim)
             return  index;
         
-        return (prev + 1 + PRNG::getNumber() % (SpawnerObs::SlotDim - 1)) % SpawnerObs::SlotDim; 
+        return (prev + 1 + (PRNG::getNumber() % SpawnerObs::SlotDim)) % SpawnerObs::SlotDim; 
     }
 
     void SpawnerSys::spawnAsteroid(uint32_t spawnCount)
@@ -595,10 +608,12 @@ namespace SpaceEngine
         for(int i = 0, prev = -1; i < dim && nSpawned < spawnCount; i++, nSpawned++)
         {
             int index = pickSlot(prev, i, spawnCount);
+            if(m_pSpawnerObs->space[index] != ESlot::FREE)
+                continue;
             EnemyType enemyType = static_cast<EnemyType>(weightedRandom(m_stage.weights, 3));
             EnemyShip* pEnemy = m_pScene->requestInstantiate(SpaceScene::m_pEnemy);
 
-            pEnemy->Init(Vector3{getPosX(index), 0.f, -100.f}, enemyType, SpaceScene::m_pPlayer, index);
+            pEnemy->Init(Vector3{getPosX(index), 0.f, -100.f}, enemyType, SpaceScene::m_pPlayer,  VelEnemy/m_stage.spawnInterval, index);
             m_pSpawnerObs->space[index] = ESlot::ENEMY;
         }
     }
@@ -627,6 +642,7 @@ namespace SpaceEngine
 
             spawnAsteroid(spawnCount);
             spawnEnemy(spawnCount, nSpawned);
+            return spawnCount;
 
         }
 

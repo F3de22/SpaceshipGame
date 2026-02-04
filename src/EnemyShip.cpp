@@ -25,7 +25,7 @@ namespace SpaceEngine {
         delete m_pSpawnerSub;
     }
 
-    void EnemyShip::Init(Vector3 spawnPos, EnemyType type, GameObject* pTarget, int ticket) {
+    void EnemyShip::Init(Vector3 spawnPos, EnemyType type, GameObject* pTarget, float vel, int ticket) {
         m_type = type;
         m_pTarget = pTarget;
         m_pSub = new PointSubject();
@@ -42,17 +42,17 @@ namespace SpaceEngine {
         // Setup statistiche in base al tipo
         switch (m_type) {
             case EnemyType::NORMAL:
-                m_speed = 3.0f;
+                m_speed = vel - 3.0f;
                 m_shootCooldown = 2.0f;
                 m_health = 1;
                 break;
             case EnemyType::AIMER:
-                m_speed = 2.0f; // Più lento ma mira
+                m_speed = vel - 2.0f; // Più lento ma mira
                 m_shootCooldown = 1.5f;
                 m_health = 1;
                 break;
             case EnemyType::SPREAD:
-                m_speed = 4.0f; // Veloce
+                m_speed = vel - 4.0f; // Veloce
                 m_shootCooldown = 3.0f;
                 m_health = 1;       //TODO: aumentare vita navicelle AIMER e SPREAD a 3
                 break;

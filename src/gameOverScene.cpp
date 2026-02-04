@@ -228,7 +228,7 @@ namespace SpaceEngine {
     void GameOverScene::SubmitScore() {
         m_isInputActive = false;
         
-        std::string filename = "assets/leaderboard.json";
+        std::string filename = SCORES_PATH"leaderboard.json";
         std::vector<LeaderboardEntry> entries = LoadLeaderboard(filename);
 
         entries.push_back({m_inputBuffer, m_finalScore});

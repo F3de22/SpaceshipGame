@@ -236,24 +236,24 @@ namespace SpaceEngine
 
         
         static constexpr int32_t BudgetAsteroidE = 10;
-        static constexpr int32_t BudgetAsteroidM = 30;
-        static constexpr int32_t BudgetAsteroidH = 10;
-        static constexpr int32_t BudgetEnemyE = 20;
-        static constexpr int32_t BudgetEnemyM = 30;
+        static constexpr int32_t BudgetAsteroidM = 20;
+        static constexpr int32_t BudgetAsteroidH = 15;
+        static constexpr int32_t BudgetEnemyE = 10;
+        static constexpr int32_t BudgetEnemyM = 10;
         static constexpr int32_t BudgetEnemyH = 10;
         
         static constexpr float FarDistance = -80.f;
-        static constexpr float DeltaSpace = 2.f;          
+        static constexpr float DeltaSpace = 2.5f;          
         static constexpr float StartOffsetSpace = -4.67f - DeltaSpace; //-7.0 + (14/6) = -4.67; 14/6 = 2.33  
         static constexpr float OffsetSpace = 2.33f + DeltaSpace;
 
         static constexpr float VelAsterorid = 40.f;            
-        static constexpr float TimeAsterorid = 4.f;
+        static constexpr float TimeAsterorid = 3.5f;
         static constexpr float TimeAsteroridXM = 0.75f;
         static constexpr float TimeAsteroridXH = 0.6f;
         
-        static constexpr float VelEnemy = 8.f;
-        static constexpr float TimeEnemy = 1.5f;
+        static constexpr float VelEnemy = 50.f;
+        static constexpr float TimeEnemy = 3.5f;
         static constexpr float TimeEnemyXM = 0.75f;
         static constexpr float TimeEnemyXH = 0.6f;
 
