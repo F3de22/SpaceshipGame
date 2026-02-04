@@ -97,6 +97,7 @@ namespace SpaceEngine
         SETTING,
         RUN,
         CLOSE,
+        LEADBOARD,
         GAMEOVER,
         COUNT
     };

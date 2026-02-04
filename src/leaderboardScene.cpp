@@ -25,7 +25,7 @@ namespace SpaceEngine {
         m_lastHeight = WindowManager::height;
         m_pLayout = new UILayout();
         addSceneComponent(m_pLayout);
-        m_pLayout->addComponent<UINavigator>();
+        m_pLayout->addComponent<UINavigator>(EAppState::LEADBOARD);
 
         UIMaterial* pBgMat = MaterialManager::createMaterial<UIMaterial>("LeaderboardBgMat");
         Texture* pTexBg = TextureManager::load(TEXTURES_PATH"backgrounds/LeaderboardBG.png");
@@ -79,6 +79,7 @@ namespace SpaceEngine {
     }
 
     void LeaderboardScene::OnSwitch() {
+        App::state = EAppState::LEADBOARD;
         m_lastWidth = WindowManager::width;
         m_lastHeight = WindowManager::height;
         notifyChangeRes();
