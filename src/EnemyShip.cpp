@@ -79,7 +79,7 @@ namespace SpaceEngine {
 
     void EnemyShip::Shoot() {
         Vector3 spawnPos = m_pTransform->getWorldPosition();
-        spawnPos.z += 1.5f; // Un po' dietro (verso la camera)
+        spawnPos.z += 1.9f; // Un po' dietro (verso la camera)
         Quat qRot = m_pTransform->getLocalRotation();
     
         Vector3 baseRotation = glm::eulerAngles(qRot);// converte quaternione in vettore di angoli
@@ -96,7 +96,7 @@ namespace SpaceEngine {
                 float rotY = atan2(shootDir.x, shootDir.z);
                 Vector3 visualRot(1.5708f, rotY, 0.0f);
 
-                pScene->requestInstantiate(SpaceScene::pBulletEnemy)->Fire(spawnPos, shootDir, visualRot, 15.0f);
+                pScene->requestInstantiate(SpaceScene::pBulletEnemy)->Fire(spawnPos, shootDir, visualRot, m_speed + 3.f);
             }
         }
         else if(m_type == EnemyType::AIMER && m_pTarget) {
@@ -108,13 +108,13 @@ namespace SpaceEngine {
             
             Vector3 aimRot = Vector3(1.5708f, angleY, 0); 
 
-            pScene->requestInstantiate(SpaceScene::pBulletEnemy)->Fire(spawnPos, direction, aimRot, 15.0f);
+            pScene->requestInstantiate(SpaceScene::pBulletEnemy)->Fire(spawnPos, direction, aimRot, m_speed + 3.f);
         }
         else{
             Vector3 shootDir(0.0f, 0.0f, 1.0f); // Dritto verso +Z
             Vector3 visualRot(1.5708f, 0.0f, 0.0f);
 
-            pScene->requestInstantiate(SpaceScene::pBulletEnemy)->Fire(spawnPos, shootDir, visualRot, 15.0f);
+            pScene->requestInstantiate(SpaceScene::pBulletEnemy)->Fire(spawnPos, shootDir, visualRot, m_speed + 3.f);
         }
 
         if (auto* audioMgr = pScene->getAudioManager()) {
@@ -127,13 +127,13 @@ namespace SpaceEngine {
         Vector3 currentPos = m_pTransform->getWorldPosition();
         currentPos.z += m_speed * dt;
 
-        if (m_type == EnemyType::AIMER && m_pTarget) {
-            // Aimer: si sposta lentamente su X verso il giocatore
-            Vector3 targetPos = m_pTarget->getTransform()->getWorldPosition();
-            if (currentPos.x < targetPos.x) currentPos.x += m_speed * 0.5f * dt;
-            if (currentPos.x > targetPos.x) currentPos.x -= m_speed * 0.5f * dt;
-        }
-        else if (m_type == EnemyType::SPREAD) {
+        //if (m_type == EnemyType::AIMER && m_pTarget && 0) {
+        //    // Aimer: si sposta lentamente su X verso il giocatore
+        //    Vector3 targetPos = m_pTarget->getTransform()->getWorldPosition();
+        //    if (currentPos.x < targetPos.x) currentPos.x += m_speed * 0.5f * dt;
+        //    if (currentPos.x > targetPos.x) currentPos.x -= m_speed * 0.5f * dt;
+        //}
+        if (m_type == EnemyType::SPREAD) {
             // Spread: movimento a zig-zag (seno)
             currentPos.x += sin(currentPos.z * 0.5f) * 5.0f * dt; 
         }
@@ -143,7 +143,7 @@ namespace SpaceEngine {
 
     void EnemyShip::onCollisionEnter(Collider* col) {
         SPACE_ENGINE_INFO("Enemy hit something!");
-        if(col->gameObj->getLayer() == ELayers::PLAYER_LAYER)
+        if(col->gameObj->getLayer() == ELayers::BULLET_PLAYER_LAYER)
         {
             DecreaseHealth();
             if (auto* audioMgr = pScene->getAudioManager()) {

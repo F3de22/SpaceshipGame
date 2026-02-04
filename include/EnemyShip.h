@@ -23,7 +23,6 @@ namespace SpaceEngine {
         void Init(Vector3 spawnPos, EnemyType type, GameObject* pTarget = nullptr, float vel = 0.f, int ticket = 0);
         virtual void update(float dt) override;
         virtual void onCollisionEnter(Collider* col) override;
-        RenderObject getRenderObject();
         void DecreaseHealth();
 
         void Shoot();
@@ -49,7 +48,5 @@ namespace SpaceEngine {
         EnemyType m_type;
 
         void performAI(float dt);
-
-        //std::vector<Bullet> Shoot(glm::vec3 playerPos); // Logica di sparo
     };
 }

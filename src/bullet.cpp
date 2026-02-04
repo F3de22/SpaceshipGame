@@ -52,8 +52,7 @@ namespace SpaceEngine
         Vector3 pos = m_pTransform->getWorldPosition() + moveDir * m_vel * dt;
         m_pTransform->setWorldPosition(pos);
         //culling
-        //change for the enemy 
-        if(Math::fabs(m_pTransform->getLocalPosition().z) > m_distCulling)
+        if(m_pTransform->getWorldPosition().z > 5.f || m_pTransform->getWorldPosition().z < -80.f)
         {
             pScene->requestDestroy(this);
         }
@@ -61,7 +60,8 @@ namespace SpaceEngine
 
     void Bullet::onCollisionEnter(Collider* col)
     {
-        if(col->gameObj->getLayer() == m_owner) 
+        if((m_layer == ELayers::BULLET_PLAYER_LAYER && col->gameObj->getLayer() == ELayers::PLAYER_LAYER) ||
+            (m_layer == ELayers::BULLET_ENEMY_LAYER && col->gameObj->getLayer() == ELayers::ENEMY_LAYER)) 
         {
             return; //ignora la collisione se fatta con il proprietario
         }
