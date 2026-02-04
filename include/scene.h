@@ -316,6 +316,8 @@ namespace SpaceEngine
             void ResetGame();
             void TogglePause();
             void removePauseLayout(UILayout* layout);
+            void TriggerBomb();
+            void AddHealthIcon();
             
             uint32_t GetCurrentScore();
             
@@ -341,10 +343,12 @@ namespace SpaceEngine
             PauseScene* m_pPauseScene = nullptr;
             
             float m_asteroidTimer = 0.0f;
+            float m_powerupTimer = 0.0f;
             float m_enemyTimer = 0.0f;
             // Intervalli di spawn
             float m_asteroidInterval = 3.0f; 
             float m_enemyInterval = 7.0f;
+            float m_powerupInterval = 5.0f;
             // Limiti dell'area di gioco dove possono spawnare
             float m_spawnZ = -100.0f; // Lontano dalla camera
             float m_gameAreaX = 10.0f; // Larghezza totale area spawn
