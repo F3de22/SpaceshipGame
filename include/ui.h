@@ -149,7 +149,7 @@ namespace SpaceEngine
         friend UINavMoveLeftCommand;
 
         public:
-            UINavigator();
+            UINavigator(EAppState appState);
             ~UINavigator();
             std::vector<UIRenderObject> gatherUIRenderables();
             void notifyChangeRes();
@@ -236,13 +236,13 @@ namespace SpaceEngine
         public:
             UILayout() = default;
             template<typename T>
-            void addComponent()
+            void addComponent(EAppState state)
             {
                 if constexpr (std::is_base_of_v<UINavigator, T>)
                 {
                     if(!m_pNavigator)
                     {
-                        m_pNavigator = new UINavigator();
+                        m_pNavigator = new UINavigator(state);
                     }
 
                     else{SPACE_ENGINE_ERROR("You can add only a one UINavigator per UILayout");}
@@ -270,7 +270,7 @@ namespace SpaceEngine
                 {
                     if(!m_pNavigator)
                     {
-                        m_pNavigator = new UINavigator();
+                        SPACE_ENGINE_FATAL("You must add an UINavigator before");
                     }
 
                     m_pNavigator->addButton(pUIElement);

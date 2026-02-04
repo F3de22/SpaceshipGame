@@ -3,6 +3,7 @@
 #include "windowManager.h"
 #include "log.h"
 #include "sceneManager.h"
+#include "app.h"
 
 #include <functional>
 
@@ -17,6 +18,16 @@ namespace SpaceEngine{
 
     TitleScreen::~TitleScreen(){
         SPACE_ENGINE_DEBUG("Going from Title Screen to another scene...");
+    }
+
+    void TitleScreen::OnSwitch()
+    {
+        App::state = EAppState::TITLESCREEN;
+    }
+
+    void TitleScreen::OnLoad()
+    {
+        App::state = EAppState::TITLESCREEN;
     }
 
     void TitleScreen::Init(){
@@ -38,7 +49,7 @@ namespace SpaceEngine{
         Background* pBackground = new Background(pBackgroundMat);
         pUILayout->addUIElement(pBackground);
         //Add UINav
-        pUILayout->addComponent<UINavigator>();
+        pUILayout->addComponent<UINavigator>(EAppState::TITLESCREEN);
         //Buttons
         UIButtonMaterial* pStartMat = MaterialManager::createMaterial<UIButtonMaterial>("StartButton");
         UIButtonMaterial* pExitMat = MaterialManager::createMaterial<UIButtonMaterial>("ExitButton");

@@ -18,6 +18,8 @@ namespace SpaceEngine{
     public:
         TitleScreen(PhysicsManager* pPhyManager, AudioManager* am);
         ~TitleScreen();
+        virtual void OnSwitch() override; 
+        virtual void OnLoad() override; 
     private:
         void Init();
         virtual void UpdateScene(float dt) override; // Per controllare la risoluzione ogni frame

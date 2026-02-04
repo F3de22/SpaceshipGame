@@ -3,6 +3,7 @@
 #include "ui.h"
 #include "windowManager.h"
 #include "audioManager.h"
+#include "app.h"
 
 namespace SpaceEngine {
 
@@ -15,12 +16,17 @@ namespace SpaceEngine {
         SPACE_ENGINE_DEBUG("Going from Settings to main menu...");
     }
 
+    void SettingsScene::OnSwitch() 
+    {
+        App::state = EAppState::SETTING;
+    }
+
     void SettingsScene::Init() {
         name = "SettingsScene"; 
 
         UILayout* pUILayout = new UILayout();
         addSceneComponent(pUILayout);
-        pUILayout->addComponent<UINavigator>();
+        pUILayout->addComponent<UINavigator>(EAppState::SETTING);
 
         UIMaterial* pBackgroundMat = MaterialManager::createMaterial<UIMaterial>("BGSettings");
         Texture* pTexBGTitleMenu = TextureManager::load(TEXTURES_PATH"backgrounds/Options.png"); 

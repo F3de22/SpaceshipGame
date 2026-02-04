@@ -23,7 +23,7 @@ namespace SpaceEngine {
         name = "GameOverScene";
         m_pLayout = new UILayout();
         addSceneComponent(m_pLayout);
-        m_pLayout->addComponent<UINavigator>();
+        m_pLayout->addComponent<UINavigator>(EAppState::GAMEOVER);
 
         UIMaterial* pBgMat = MaterialManager::createMaterial<UIMaterial>("GameOverBgMat");
         Texture* pTexBg = TextureManager::load(TEXTURES_PATH"backgrounds/GameOver.png"); 
@@ -108,6 +108,7 @@ namespace SpaceEngine {
     }
 
     void GameOverScene::OnSwitch() {
+        App::state = EAppState::GAMEOVER;
         Mouse::showCursor();
 
         m_finalScore = 0;

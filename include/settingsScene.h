@@ -6,6 +6,7 @@ namespace SpaceEngine {
     public:
         SettingsScene(PhysicsManager* pPhyManager);
         ~SettingsScene();
+        virtual void OnSwitch() override; 
     private:
         void Init();
         virtual void UpdateScene(float dt) override;

@@ -92,9 +92,12 @@ namespace SpaceEngine
     enum class EAppState
     {
         START,
+        TITLESCREEN,
         PAUSE,
+        SETTING,
         RUN,
         CLOSE,
+        GAMEOVER,
         COUNT
     };
 

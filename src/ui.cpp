@@ -189,7 +189,7 @@ namespace SpaceEngine
     
     int UINavigator::count = 0;
 
-    UINavigator::UINavigator()
+    UINavigator::UINavigator(EAppState appState)
     {
         assert(count >= 0);
 
@@ -205,77 +205,99 @@ namespace SpaceEngine
 
         InputHandler& inputHandler = App::GetInputHandler();
         //Down command for joystick and keyboard
-        /*inputHandler.bindCommand(EAppState::RUN, 
+        inputHandler.bindCommand(appState, 
             this, 
             {SPACE_ENGINE_JK_BUTTON_DOWN, 
                 EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
                 m_pMoveDownCmd});
-        inputHandler.bindCommand(EAppState::START, 
+        inputHandler.bindCommand(appState, 
             this, 
             {SPACE_ENGINE_KEY_BUTTON_S, 
                 EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
                 m_pMoveDownCmd});
-        
+        //Right command for joystick and keyboard
+        inputHandler.bindCommand(appState, 
+            this, 
+            {SPACE_ENGINE_JK_BUTTON_RIGHT, 
+                EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
+                m_pMoveRightCmd});
+        inputHandler.bindCommand(appState, 
+            this, 
+            {SPACE_ENGINE_KEY_BUTTON_D, 
+                EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
+                m_pMoveRightCmd});
+        //Left command for joystick and keyboard
+        inputHandler.bindCommand(appState, 
+            this, 
+            {SPACE_ENGINE_JK_BUTTON_LEFT, 
+                EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
+                m_pMoveLeftCmd});
+        inputHandler.bindCommand(appState, 
+            this, 
+            {SPACE_ENGINE_KEY_BUTTON_A, 
+                EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
+                m_pMoveLeftCmd});
         //UP command for joystick and keyboard
-        inputHandler.bindCommand(EAppState::START, 
+        inputHandler.bindCommand(appState, 
             this, 
             {SPACE_ENGINE_JK_BUTTON_UP, 
                 EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
                 m_pMoveUpCmd});
-        inputHandler.bindCommand(EAppState::START, 
+
+        inputHandler.bindCommand(appState, 
             this, 
             {SPACE_ENGINE_KEY_BUTTON_W, 
                 EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
                 m_pMoveUpCmd});
 
         //Click command for joystick and keyboard
-        inputHandler.bindCommand(EAppState::START, 
+        inputHandler.bindCommand(appState, 
             this, 
             {SPACE_ENGINE_JK_BUTTON_A, 
                 EInputType::SPACE_ENGINE_INPUT_JOYSTICK, 
                 m_pOnPressCmd});
-        inputHandler.bindCommand(EAppState::START, 
+        inputHandler.bindCommand(appState, 
             this, 
             {SPACE_ENGINE_KEY_BUTTON_ENTER, 
                 EInputType::SPACE_ENGINE_INPUT_KEYBOARD, 
                 m_pOnPressCmd});
         //Click command for mouse
-        inputHandler.bindCommand(EAppState::START, 
+        inputHandler.bindCommand(appState, 
             this, 
             {SPACE_ENGINE_MOUSE_BUTTON_LEFT, 
                 EInputType::SPACE_ENGINE_INPUT_MOUSE, 
-                m_pOnClickCmd});*/
+                m_pOnClickCmd});
         count++;
     }
 
-    void UINavigator::bindCommands()
-    {
-        InputHandler& inputHandler = App::GetInputHandler();
-        std::vector<EAppState> activeStates = { 
-                EAppState::START, 
-                EAppState::RUN, 
-                EAppState::PAUSE 
-        };
-        for (EAppState state : activeStates){
-            //Down
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_DOWN, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveDownCmd});
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_S, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveDownCmd});
-            //Up
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_UP, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveUpCmd});
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_W, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveUpCmd});
-            //Click/Press
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_A, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pOnPressCmd});
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_ENTER, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pOnPressCmd});
-            //Mouse Click
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_MOUSE_BUTTON_LEFT, EInputType::SPACE_ENGINE_INPUT_MOUSE, m_pOnClickCmd});
-            //Destra 
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_RIGHT, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveRightCmd});
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_D, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveRightCmd});
-            //Sinistra
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_LEFT, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveLeftCmd});
-            inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_A, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveLeftCmd});
-        }    
-    }
+    //void UINavigator::bindCommands()
+    //{
+    //    InputHandler& inputHandler = App::GetInputHandler();
+    //    std::vector<EAppState> activeStates = { 
+    //            EAppState::START, 
+    //            EAppState::RUN, 
+    //            EAppState::PAUSE 
+    //    };
+    //    for (EAppState state : activeStates){
+    //        //Down
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_DOWN, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveDownCmd});
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_S, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveDownCmd});
+    //        //Up
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_UP, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveUpCmd});
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_W, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveUpCmd});
+    //        //Click/Press
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_A, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pOnPressCmd});
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_ENTER, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pOnPressCmd});
+    //        //Mouse Click
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_MOUSE_BUTTON_LEFT, EInputType::SPACE_ENGINE_INPUT_MOUSE, m_pOnClickCmd});
+    //        //Destra 
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_RIGHT, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveRightCmd});
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_D, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveRightCmd});
+    //        //Sinistra
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_JK_BUTTON_LEFT, EInputType::SPACE_ENGINE_INPUT_JOYSTICK, m_pMoveLeftCmd});
+    //        inputHandler.bindCommand(state, this, {SPACE_ENGINE_KEY_BUTTON_A, EInputType::SPACE_ENGINE_INPUT_KEYBOARD, m_pMoveLeftCmd});
+    //    }    
+    //}
 
     void UINavigator::unbindCommands()
     {
@@ -350,15 +372,6 @@ namespace SpaceEngine
     
     void UINavigator::update()
     {
-        if (s_currentActiveNavigator != this)
-        {
-            if (s_currentActiveNavigator != nullptr)
-            {
-                s_currentActiveNavigator->unbindCommands();
-            }
-            bindCommands();
-            s_currentActiveNavigator = this;
-        }
         if(!Joystick::isConnected())
         {
             for(int i = 0; i < m_vecButtons.size(); i++)

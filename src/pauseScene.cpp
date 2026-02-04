@@ -16,6 +16,7 @@ namespace SpaceEngine {
 
     void PauseScene::Init() {
         m_pLayout = new UILayout();
+        m_pLayout->addComponent<UINavigator>(EAppState::PAUSE);
 
         //sfondo
         UIMaterial* pBgMat = MaterialManager::createMaterial<UIMaterial>("PauseBgMat");
