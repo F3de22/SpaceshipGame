@@ -182,6 +182,8 @@ namespace SpaceEngine
             std::vector<UILayout*> m_vecUILayouts;
     };
 
+    class SpawnerObs;
+
     class SpawnerSys
     {
         public:
@@ -195,9 +197,9 @@ namespace SpaceEngine
             SpawnerSys();
             ~SpawnerSys() = default;
 
-            void handlerSpawn(); 
+            void handlerSpawn(float dt); 
             void clearSpace();
-            inline SpawnerObs* getObserver() { return m_pSpawnerObs;};
+            inline SpawnerObs* getObserver() { return m_pSpawnerObs;}
 
 
         private:
@@ -231,9 +233,9 @@ namespace SpaceEngine
         void spawnAsteroid(uint32_t spawnCount);
         void spawnEnemy(uint32_t spawnCount, uint32_t& nSpawned);
 
-        static constexpr int32_t BudgetAsteroridE = 20;
-        static constexpr int32_t BudgetAsteroridM = 30;
-        static constexpr int32_t BudgetAsteroridH = 10;
+        static constexpr int32_t BudgetAsteroidE = 20;
+        static constexpr int32_t BudgetAsteroidM = 30;
+        static constexpr int32_t BudgetAsteroidH = 10;
         static constexpr int32_t BudgetEnemyE = 20;
         static constexpr int32_t BudgetEnemyM = 30;
         static constexpr int32_t BudgetEnemyH = 10;
@@ -322,6 +324,7 @@ namespace SpaceEngine
             static EnemyShip* m_pEnemy;
             static Asteroid* m_pAsteroid;
             static PlayerShip* m_pPlayer; 
+
         private:
             void UpdateScene(float dt) override;
             float randomRange(float min, float max); 
@@ -330,7 +333,7 @@ namespace SpaceEngine
             
             UILayout* m_pHUDLayout = nullptr;
             PauseScene* m_pPauseScene = nullptr;
-
+            
             float m_asteroidTimer = 0.0f;
             float m_enemyTimer = 0.0f;
             // Intervalli di spawn
