@@ -2,6 +2,8 @@
 #include "inputManager.h"
 #include "sceneManager.h"
 #include "scene.h"
+#include "material.h"
+#include "mesh.h"
 #include "app.h"
 #include <glad/gl.h>
 #include <glm/glm.hpp>
@@ -103,6 +105,27 @@ namespace SpaceEngine {
             m_pTransform->rotateLocal(180, {0.f,1.f, 0.f});
             m_pTransform->getWorldMatrix();
         }     
+        SetAlpha(1.0f);
+    }
+
+    void PlayerShip::SetAlpha(float alpha)
+    {
+        m_currentAlpha = alpha;
+
+        Mesh* meshToBlink = m_pMesh;
+        if (!meshToBlink) return;
+
+        if (BaseMaterial* pMat = meshToBlink->getMaterialBySubMeshIndex(0))
+        {
+            if (pMat->props.find("albedo_color_val") != pMat->props.end())
+            {
+                std::get<Vector4>(pMat->props["albedo_color_val"]).w = alpha;
+            }
+            else
+            {
+                std::get<Vector4>(pMat->props["albedo_color_val"]).w = alpha;
+            }
+        }
     }
 
     void PlayerShip::Reset()
@@ -111,6 +134,10 @@ namespace SpaceEngine {
 
         m_currentAngle = 0.0f;
         m_moveDirection = 0;
+
+        m_isInvulnerable = false;
+        m_invulnTimer = 0.0f;
+        m_blinkTimer = 0.0f;
 
         if (m_pMesh == nullptr) {
             m_pMesh = MeshManager::loadMesh("PlayerShip.obj"); 
@@ -124,6 +151,8 @@ namespace SpaceEngine {
 
         m_shootCooldown = 0.f;
         
+        SetAlpha(1.0f);
+
         SPACE_ENGINE_INFO("PlayerShip Reset Complete");
     }
 
@@ -140,6 +169,27 @@ namespace SpaceEngine {
             if (m_rapidFireTimer <= 0.0f) {
                 m_isRapidFireActive = false;
                 SPACE_ENGINE_INFO("Rapid Fire Ended");
+            }
+        }
+
+        if (m_isInvulnerable)
+        {
+            m_invulnTimer -= dt;
+            m_blinkTimer += dt;
+
+            if (m_blinkTimer >= 0.3) //3 secondi di invulnerabilità
+            {
+                m_blinkTimer = 0.0f;
+                float newAlpha = (m_currentAlpha > 0.9f) ? 0.3f : 1.0f; //alterna tra visibile e trasparente
+                SetAlpha(newAlpha);
+                SPACE_ENGINE_INFO("Invulnerability Blink - Alpha: {}", newAlpha);
+            }
+
+            if (m_invulnTimer <= 0.0f)
+            {
+                m_isInvulnerable = false;
+                SetAlpha(1.0f); 
+                SPACE_ENGINE_INFO("Invulnerability OFF");
             }
         }
 
@@ -166,11 +216,22 @@ namespace SpaceEngine {
         SPACE_ENGINE_INFO("PlayerShip Collision onEnter Called with Collider: {}", reinterpret_cast<std::uintptr_t>(col));
         if(col->gameObj->getLayer() == ELayers::ENEMY_LAYER || col->gameObj->getLayer() == ELayers::ASTEROID_LAYER || col->gameObj->getLayer() == ELayers::BULLET_ENEMY_LAYER)
         {
+            if (m_isInvulnerable) 
+            {
+                SPACE_ENGINE_INFO("Collisione ignorata: Player invulnerabile.");
+                return;
+            }
             SPACE_ENGINE_INFO("Layer nemico confermato! Salute attuale: {}", m_health);
         
             if(m_health > 0)
             {
                 m_health--;
+
+                m_isInvulnerable = true;
+                m_invulnTimer = 3.0f;
+                m_blinkTimer = 0.0f;
+                SetAlpha(0.3f);
+
                 if (auto* audioMgr = pScene->getAudioManager()) {
                     audioMgr->PlaySound("lose_hp");
                 }

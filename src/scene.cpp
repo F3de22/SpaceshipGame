@@ -180,7 +180,7 @@ namespace SpaceEngine
     SpawnerSys* SpaceScene::pSpawnerSys = new SpawnerSys();
     Bullet* SpaceScene::pBulletEnemy = nullptr;
     EnemyShip* SpaceScene::m_pEnemy = nullptr;
-    Asteroid* SpaceScene::m_pAsteroid = nullptr;
+    std::vector<Asteroid*> SpaceScene::m_asteroids; 
     PlayerShip* SpaceScene::m_pPlayer = nullptr;
 
     SpaceScene::SpaceScene(PhysicsManager* pPhyManager):
@@ -206,15 +206,16 @@ namespace SpaceEngine
             m_pEnemy = new EnemyShip(this, "Enemy.obj");
         }
 
-        if(!m_pAsteroid)
+        if(m_asteroids.empty())
         {
-            m_pAsteroid = new Asteroid(this, "Asteroid_LowPoly.obj");
+            m_asteroids.push_back(new Asteroid(this, "Asteroid_LowPoly.obj")); 
+            m_asteroids.push_back(new Asteroid(this, "Asteroid_fat.obj"));
+            m_asteroids.push_back(new Asteroid(this, "Asteroid_small.obj"));
         }
-        
-        if(m_asteroidDebug)
+        if(m_asteroidDebug && !m_asteroids.empty())
         {
-            m_pAsteroid->Init(Vector3(0.f, 0.f, -30.f), 0.f); 
-            addSceneComponent(m_pAsteroid);
+            m_asteroids[0]->Init(Vector3(0.f, 0.f, -30.f), 0.f); 
+            addSceneComponent(m_asteroids[0]);
         }
 
         m_pHUDLayout = new UILayout();
@@ -235,6 +236,9 @@ namespace SpaceEngine
 
         m_powerupInterval = 5.0f; 
         m_powerupTimer = 0.0f;
+
+        glEnable(GL_BLEND); 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     void SpaceScene::ResetHealthIcons()
@@ -387,7 +391,7 @@ namespace SpaceEngine
             float y = randomRange(-safeY, safeY);
             float z = m_spawnZ;
 
-            Asteroid* m_pTmpAst = requestInstantiate(m_pAsteroid); 
+            Asteroid* m_pTmpAst = requestInstantiate(m_asteroids[rand() % m_asteroids.size()]); 
             
             m_pTmpAst->Init(Vector3(x, y, z), 0.f); 
             m_pTmpAst->getTransform()->setWorldPosition(Vector3(x, y, z));
@@ -807,7 +811,9 @@ namespace SpaceEngine
         for(uint32_t i = 0, prev = -1; i < spawnCount; i++)
         {
             int index = pickSlot(prev, i, spawnCount);
-            Asteroid* pAsteroid = m_pScene->requestInstantiate(SpaceScene::m_pAsteroid);
+            int variantIndex = rand() % SpaceScene::m_asteroids.size();
+            Asteroid* pPrefab = SpaceScene::m_asteroids[variantIndex];
+            Asteroid* pAsteroid = m_pScene->requestInstantiate(pPrefab);
             pAsteroid->Init(Vector3{getPosX(index), 0.f, FarDistance}, VelAsterorid/m_stage.spawnInterval, index);                       
             m_pSpawnerObs->space[index] = ESlot::ASTEROID;
             prev = index;

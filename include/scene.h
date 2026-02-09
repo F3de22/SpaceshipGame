@@ -337,7 +337,7 @@ namespace SpaceEngine
             static SpawnerSys* pSpawnerSys;
             //GESTIONE SPAWN
             static EnemyShip* m_pEnemy;
-            static Asteroid* m_pAsteroid;
+            static std::vector<Asteroid*> m_asteroids;
             static PlayerShip* m_pPlayer; 
 
         private:

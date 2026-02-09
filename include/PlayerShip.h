@@ -49,6 +49,13 @@ namespace SpaceEngine {
         float m_limitY;
         float m_shootCooldown;
 
+        //per invulnerabilità e lampeggio
+        bool m_isInvulnerable = false;
+        float m_invulnTimer = 0.0f;
+        float m_blinkTimer = 0.0f;
+        float m_currentAlpha = 1.0f;
+        void SetAlpha(float alpha);
+
         float m_currentAngle = 0.0f; 
         float m_maxAngle = 25.0f;//massima inclinazione
         float m_bankSpeed = 5.0f;//vel di inclinazione
