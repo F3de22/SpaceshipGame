@@ -209,9 +209,10 @@ namespace SpaceEngine
         if(m_asteroids.empty())
         {
             m_asteroids.push_back(new Asteroid(this, "Asteroid_LowPoly.obj")); 
-            m_asteroids.push_back(new Asteroid(this, "Asteroid_fat.obj"));
-            m_asteroids.push_back(new Asteroid(this, "Asteroid_small.obj"));
+            m_asteroids.push_back(new Asteroid(this, "Asteroid02.obj"));
+            m_asteroids.push_back(new Asteroid(this, "Asteroid03.obj"));
         }
+
         if(m_asteroidDebug && !m_asteroids.empty())
         {
             m_asteroids[0]->Init(Vector3(0.f, 0.f, -30.f), 0.f); 

@@ -101,13 +101,13 @@ namespace SpaceEngine
         pScene->addSceneComponent<PerspectiveCamera*>(pCamera);
 
         //Initialize lights
-        Light* pLight = new Light(Vector3{-10.f, 10.f, 0.f}, Vector3{1.f, 1.f, 1.f}); //left-top
+        Light* pLight = new Light(Vector3{-10.f, 10.f, 0.f}, Vector3{2.f, 2.f, 2.f}); //left-top
         pScene->addSceneComponent<Light*>(pLight);
-        pLight = new Light(Vector3{10.f, 10.f, 0.f}, Vector3{1.f, 1.f, 1.f}); //right-top
+        pLight = new Light(Vector3{10.f, 10.f, 0.f}, Vector3{2.f, 2.f, 2.f}); //right-top
         pScene->addSceneComponent<Light*>(pLight);
-        pLight = new Light(Vector3{10.f, -10.f, 0.f}, Vector3{1.f, 1.f, 1.f}); //right-bottom
+        pLight = new Light(Vector3{10.f, -10.f, 0.f}, Vector3{2.f, 2.f, 2.f}); //right-bottom
         pScene->addSceneComponent<Light*>(pLight);
-        pLight = new Light(Vector3{-10.f, -10.f, 0.f}, Vector3{1.f, 1.f, 1.f}); //left-bottom
+        pLight = new Light(Vector3{-10.f, -10.f, 0.f}, Vector3{2.f, 2.f, 2.f}); //left-bottom
         GL_CHECK_ERRORS();
 
         

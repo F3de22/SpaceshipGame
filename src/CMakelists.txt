@@ -1,6 +1,24 @@
 find_dirs_Cmakefile()
 
-add_executable(Main main.cpp)
+if (WIN32)
+  add_executable(Main WIN32 main.cpp)
+else ()
+  add_executable(Main main.cpp)
+endif ()
+
+set(Main_Defs "")
+if (WIN32)
+  list(APPEND Main_Defs _UNICODE UNICODE WIN32_LEAN_AND_MIN NOMINMAX _HAD_STD_BYTE=0)
+endif ()
+
+# Assume generatore multiconfig
+list(APPEND Main_Defs $<$<CONFIG:DEBUG>:SE_DEBUG>)
+# per i mono config
+# if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+target_compile_definitions(Main PRIVATE
+  ${Main_Defs}
+)
 
 #App library
 add_library(App STATIC app.cpp 

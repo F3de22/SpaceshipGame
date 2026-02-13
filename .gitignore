@@ -6,6 +6,7 @@ res/
 .vscode/
 .idea/
 CMakeSettings.json
+/assets/leaderboard.json
 
 /extern/*
 !/extern/CMakeLists.txt
