@@ -224,7 +224,7 @@ namespace SpaceEngine
 
     FrameBuffer::FrameBuffer()
     {
-        init();
+        
     }
 
     FrameBuffer::~FrameBuffer()

@@ -15,12 +15,12 @@ float luma(vec3 color)
 
 void main()
 {
-    vec4 sample = texture(albedo_text, TexCoords);
-    float brightness = luma(sample.rgb);
+    vec4 col = texture(albedo_tex, TexCoords);
+    float brightness = luma(col.rgb);
 
     if(brightness > 1)
-        BrightColor = sample;
+        BrightColor = col;
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);    
-    FragColor = texture(albedo_tex, TexCoords);
+    FragColor = col;
 }

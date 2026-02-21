@@ -28,7 +28,7 @@ subroutine uniform RenderPassType RenderPass;
 subroutine( RenderPassType )
 vec4 pass1()
 {
-    float dy = 1.0 / textureSize(BlurTex).y;
+    float dy = 1.0 / textureSize(BlurTex, 0).y;
     vec4 sum = texture(BlurTex, TexCoord) * Weight[0];
     
     for(int i = 1; i < 10; i++)
@@ -44,7 +44,7 @@ vec4 pass1()
 subroutine( RenderPassType )
 vec4 pass2()
 {
-    float dx = 1.0 / textureSize(BlurTex).x;
+    float dx = 1.0 / textureSize(BlurTex, 0).x;
     vec4 sum = texture(BlurTex, TexCoord) * Weight[0];
     
     for(int i = 1; i < 10; i++)

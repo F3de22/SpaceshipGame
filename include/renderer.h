@@ -91,7 +91,7 @@ namespace SpaceEngine
             return -1;
         }
     private:
-        GLenum m_frameBufferObj = 0;
+        GLuint m_frameBufferObj = 0;
         std::vector<Texture*> m_vecColorBuffers;
         RenderBuffer* m_pRenderBuffer;
     };
