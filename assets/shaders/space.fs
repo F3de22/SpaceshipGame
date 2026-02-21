@@ -67,7 +67,7 @@ float fbm(vec3 p)
 void main()
 {
   float timeS = time * 0.1; 
-  vec2 xy = FragCoord.xy / res.xy;
+  vec2 xy = -1.0 + 2.0 * FragCoord.xy / res.xy;
 
   //fade stuff
   float fade = min(1., timeS);

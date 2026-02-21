@@ -1,17 +1,10 @@
 #version 400
 
 out vec4 FragColor;
-in vec3 Position;
-in vec3 Normal;
 in vec2 TexCoord;
 
 //textures
-uniform sampler2D RenderTex;
 uniform sampler2D BlurTex;
-
-//res
-uniform int Width;
-uniform int Height;
 uniform float LumThresh; // Luminance threshold
 
 // Weights and offsets for the Gaussian blur
@@ -22,7 +15,6 @@ uniform float Weight[10];
 //subroutines
 subroutine vec4 RenderPassType();
 subroutine uniform RenderPassType RenderPass;
-
 
 // Pass to extract the bright parts
 //subroutine( RenderPassType )
@@ -36,13 +28,13 @@ subroutine uniform RenderPassType RenderPass;
 subroutine( RenderPassType )
 vec4 pass1()
 {
-    float dy = 1.0 / float(Height);
+    float dy = 1.0 / textureSize(BlurTex).y;
     vec4 sum = texture(BlurTex, TexCoord) * Weight[0];
     
     for(int i = 1; i < 10; i++)
     {
-        sum += texture( BlurTex, TexCoord + vec2(0.0, PixOffset[i]) * dy ) * Weight[i];
-        sum += texture( BlurTex, TexCoord - vec2(0.0, PixOffset[i]) * dy ) * Weight[i];
+        sum += texture(BlurTex, TexCoord + vec2(0.0, PixOffset[i]) * dy) * Weight[i];
+        sum += texture(BlurTex, TexCoord - vec2(0.0, PixOffset[i]) * dy) * Weight[i];
     }
 
     return sum;
@@ -52,18 +44,17 @@ vec4 pass1()
 subroutine( RenderPassType )
 vec4 pass2()
 {
-    float dx = 1.0 / float(Width);
+    float dx = 1.0 / textureSize(BlurTex).x;
     vec4 sum = texture(BlurTex, TexCoord) * Weight[0];
     
     for(int i = 1; i < 10; i++)
     {
-        sum += texture(BlurTex, TexCoord + vec2(PixOffset[i], 0.0) * dx ) * Weight[i];
-        sum += texture( BlurTex, TexCoord - vec2(PixOffset[i], 0.0) * dx ) * Weight[i];
+        sum += texture(BlurTex, TexCoord + vec2(PixOffset[i], 0.0) * dx) * Weight[i];
+        sum += texture(BlurTex, TexCoord - vec2(PixOffset[i], 0.0) * dx) * Weight[i];
     }
     
     return sum;
 }
-
 
 void main()
 {

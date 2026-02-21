@@ -322,6 +322,7 @@ namespace SpaceEngine
             {
                 pBloomShader->use();
                 pBloomShader->setUniform("LumThresh", 2.f);
+                pBloomShader->setUniform("BlurTex", 0);
                 
                 //sample the gauss filter
                 float weights[10], sum, sigma2 = 25.f;
