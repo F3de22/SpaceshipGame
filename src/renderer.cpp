@@ -285,51 +285,58 @@ namespace SpaceEngine
     bool RendererV2::m_debug = false;
     FrameBuffer RendererV2::m_HDRFrameBuffer;
     FrameBuffer RendererV2::m_BloomFrameBuffers[2];
+    ShaderProgram* RendererV2::m_pHDRShader = nullptr;
+    ShaderProgram* RendererV2::m_pBloomShader = nullptr;
 
     void RendererV2::Initialize()
     {
-        //enable HDR range for rendering
-        m_HDRFrameBuffer.init();
-        GL_CHECK_ERRORS();
-        m_HDRFrameBuffer.addColorBuffer();
-        m_HDRFrameBuffer.addColorBuffer();
-        GL_CHECK_ERRORS();
-        //attach depth info
-        m_HDRFrameBuffer.addRenderBuffer();
-        //use the color attachments for rendering
-        m_HDRFrameBuffer.drawBuffers();
-        GL_CHECK_FRAMEBUFFER_STATUS();
-        m_HDRFrameBuffer.unbindFrameBuffer();
-
-        //postprocessing buffers: bloom vfx
-        if(m_bloomVFX)
+        if(!m_pHDRShader)
         {
-            //double buffer
-            for(int i = 0; i < 2; i++)
-            {
-                //enable HDR range for rendering
-                m_BloomFrameBuffers[i].init();
-                GL_CHECK_ERRORS();
-                m_BloomFrameBuffers[i].addColorBuffer();
-                GL_CHECK_ERRORS();
-                GL_CHECK_FRAMEBUFFER_STATUS();
-                
-            }
+            m_pHDRShader = ShaderManager::findShaderProgram("hdr"); 
+            m_pHDRShader->use();
+            m_pHDRShader->setUniform("scene", 0);
+            m_pHDRShader->setUniform("highlight", 1);
 
-            
-            ShaderProgram* pBloomShader = ShaderManager::findShaderProgram("bloomVFX");
-            if(pBloomShader)
+            //enable HDR range for rendering
+            m_HDRFrameBuffer.init();
+            GL_CHECK_ERRORS();
+            m_HDRFrameBuffer.addColorBuffer();
+            m_HDRFrameBuffer.addColorBuffer();
+            GL_CHECK_ERRORS();
+            //attach depth info
+            m_HDRFrameBuffer.addRenderBuffer();
+            //use the color attachments for rendering
+            m_HDRFrameBuffer.drawBuffers();
+            GL_CHECK_FRAMEBUFFER_STATUS();
+            m_HDRFrameBuffer.unbindFrameBuffer();
+
+            //postprocessing buffers: bloom vfx
+            if(!m_pBloomShader)
             {
-                pBloomShader->use();
-                pBloomShader->setUniform("LumThresh", 2.f);
-                pBloomShader->setUniform("BlurTex", 0);
-                
+                m_pBloomShader = ShaderManager::findShaderProgram("bloomVFX");
+
+                //double buffer
+                for(int i = 0; i < 2; i++)
+                {
+                    //enable HDR range for rendering
+                    m_BloomFrameBuffers[i].init();
+                    GL_CHECK_ERRORS();
+                    m_BloomFrameBuffers[i].addColorBuffer();
+                    GL_CHECK_ERRORS();
+                    GL_CHECK_FRAMEBUFFER_STATUS();
+
+                }
+
+                m_pBloomShader->use();
+                m_pBloomShader->setUniform("LumThresh", 2.f);
+                m_pBloomShader->setUniform("BlurTex", 0);
+
                 //sample the gauss filter
                 float weights[10], sum, sigma2 = 25.f;
-    
+
                 weights[0] = Math::gauss(0, sigma2);
                 sum = weights[0];
-                
+
                 for(int i = 1; i < 10; i++)
                 {
                     weights[i] = Math::gauss(float(i), sigma2);
@@ -341,7 +348,7 @@ namespace SpaceEngine
                 {
                     std::string strWeight = "Weight[" + std::to_string(i) + "]"; 
                     float val = weights[i] / sum;
-                    pBloomShader->setUniform(strWeight.c_str(), val);
+                    m_pBloomShader->setUniform(strWeight.c_str(), val);
                 }
                 glUseProgram(0);
             }
@@ -593,8 +600,7 @@ namespace SpaceEngine
         glUseProgram(0);
         //blending 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        ShaderProgram* pHDRShader = ShaderManager::findShaderProgram("hdr"); 
-        pHDRShader->use();
+        m_pHDRShader->use();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(0));
         glActiveTexture(GL_TEXTURE1);
@@ -602,10 +608,11 @@ namespace SpaceEngine
             glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[horizontal ^ 1].getColorBuffer(0));
         else glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
         GL_CHECK_ERRORS();
-        pHDRShader->setUniform("exposure", 1.f);
+        m_pHDRShader->setUniform("exposure", 1.f);
         
         pPlaneMesh->bindVAO();
         pPlaneMesh->draw();
+        glUseProgram(0);
     }
 
 };

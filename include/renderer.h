@@ -101,6 +101,7 @@ namespace SpaceEngine
     class RendererV2
     {
         public:
+            RendererV2() = default;
             void Initialize();
             void Shutdown();
             static void clear();
@@ -116,6 +117,8 @@ namespace SpaceEngine
             static bool m_debug;
             static FrameBuffer m_HDRFrameBuffer;
             static FrameBuffer m_BloomFrameBuffers[2];
+            static ShaderProgram* m_pHDRShader;
+            static ShaderProgram* m_pBloomShader;
     }; 
 
     class Renderer
