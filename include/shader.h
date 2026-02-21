@@ -54,6 +54,8 @@ namespace SpaceEngine
             void setUniform(const char *name, bool val);
             void setUniform(const char *name, GLuint val);
             void setSubroutinesUniform(const char *name, const std::string& type);
+            void setSubroutinesUniform(GLenum shadertype, GLsizei count, const GLuint* indices);
+            
             int isPresentUniform(const char *name);
             
 

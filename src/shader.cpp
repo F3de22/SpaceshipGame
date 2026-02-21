@@ -526,6 +526,8 @@ namespace SpaceEngine
             }
             return;
 	    }
+
+        
         
         //search on fs
         pos = fsSubroutinesInfo.find(name);
@@ -543,6 +545,13 @@ namespace SpaceEngine
             return;
 	    }
     }
+
+    void ShaderProgram::setSubroutinesUniform(GLenum shadertype, GLsizei count, const GLuint* indices)
+    {
+        glUniformSubroutinesuiv(shadertype, count, indices);
+        GL_CHECK_ERRORS();
+
+    }   
 
     void ShaderProgram::bindSubroutines()
     {
@@ -769,6 +778,10 @@ namespace SpaceEngine
         createShaderProgram("powerup");
         GL_CHECK_ERRORS();
         createShaderProgram("space");
+        GL_CHECK_ERRORS();
+        createShaderProgram("hdr");
+        GL_CHECK_ERRORS();
+        createShaderProgram("bloomVFX");
         GL_CHECK_ERRORS(); 
     }
 

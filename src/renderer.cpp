@@ -280,8 +280,8 @@ namespace SpaceEngine
     //---------------------RendererV2-----------------------//    
     //------------------------------------------------------//
 
-    bool RendererV2::m_postprocessing = false;
     bool RendererV2::m_preprocessing = false;
+    bool RendererV2::m_bloomVFX = false;
     bool RendererV2::m_debug = false;
     FrameBuffer RendererV2::m_HDRFrameBuffer;
     FrameBuffer RendererV2::m_BloomFrameBuffers[2];
@@ -302,7 +302,7 @@ namespace SpaceEngine
         m_HDRFrameBuffer.unbindFrameBuffer();
 
         //postprocessing buffers: bloom vfx
-        if(m_postprocessing)
+        if(m_bloomVFX)
         {
             //double buffer
             for(int i = 0; i < 2; i++)
@@ -314,6 +314,35 @@ namespace SpaceEngine
                 GL_CHECK_ERRORS();
                 GL_CHECK_FRAMEBUFFER_STATUS();
                 
+            }
+
+            
+            ShaderProgram* pBloomShader = ShaderManager::findShaderProgram("bloomVFX");
+            if(pBloomShader)
+            {
+                pBloomShader->use();
+                pBloomShader->setUniform("LumThresh", 2.f);
+                
+                //sample the gauss filter
+                float weights[10], sum, sigma2 = 25.f;
+    
+                weights[0] = Math::gauss(0, sigma2);
+                sum = weights[0];
+                
+                for(int i = 1; i < 10; i++)
+                {
+                    weights[i] = Math::gauss(float(i), sigma2);
+                    sum += 2 * weights[i]; 
+                }
+
+                //normalize weights and set the uniform
+                for(int i = 0; i < 10; i++)
+                {
+                    std::string strWeight = "Weight[" + std::to_string(i) + "]"; 
+                    float val = weights[i] / sum;
+                    pBloomShader->setUniform(strWeight.c_str(), val);
+                }
+                glUseProgram(0);
             }
         }
 
@@ -528,9 +557,54 @@ namespace SpaceEngine
         glUseProgram(0);
     }
 
-    void RendererV2::postprocessing()
+    void RendererV2::postprocessing(bool bloomVFX)
     {
+        m_HDRFrameBuffer.unbindFrameBuffer();
+        PlaneMesh* pPlaneMesh = MeshManager::getPlaneMesh();
+        ShaderProgram* pBloomShader = ShaderManager::findShaderProgram("bloomVFX");
+        uint32_t horizontal = 1;
+        
+        if(m_bloomVFX && pBloomShader)
+        {
+            uint32_t amount = 10; //apply 5 times the 2D gaussian filter
+            
+            //apply the gaussian filter on the scene render buffer
+            pBloomShader->use();
+            m_BloomFrameBuffers[1].bindFrameBuffer();
+            pBloomShader->setSubroutinesUniform(GL_FRAGMENT_SHADER, 1, &horizontal);
+            glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
+            pPlaneMesh->bindVAO();
+            pPlaneMesh->draw();
+            horizontal ^= 1;
 
+            for(uint32_t i = 1; i < amount; i++)
+            {
+                m_BloomFrameBuffers[horizontal].bindFrameBuffer();
+                pBloomShader->setSubroutinesUniform(GL_FRAGMENT_SHADER, 1, &horizontal);
+                glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[horizontal ^ 1].getColorBuffer(0));
+                pPlaneMesh->bindVAO();
+                pPlaneMesh->draw();
+                horizontal ^= 1;
+            }
+
+            m_BloomFrameBuffers[horizontal].unbindFrameBuffer();
+        }
+        glUseProgram(0);
+        //blending 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        ShaderProgram* pHDRShader = ShaderManager::findShaderProgram("hdr"); 
+        pHDRShader->use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(0));
+        glActiveTexture(GL_TEXTURE1);
+        if(bloomVFX)
+            glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[horizontal ^ 1].getColorBuffer(0));
+        else glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
+        GL_CHECK_ERRORS();
+        pHDRShader->setUniform("exposure", 1.f);
+        
+        pPlaneMesh->bindVAO();
+        pPlaneMesh->draw();
     }
 
 };

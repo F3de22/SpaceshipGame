@@ -81,7 +81,15 @@ namespace SpaceEngine
         }
 
         inline void unbindFrameBuffer(){glBindFramebuffer(GL_FRAMEBUFFER, 0);}
+        inline int getColorBuffer(uint32_t index)
+        {
+            if(index < m_vecColorBuffers.size())
+            {
+                return m_vecColorBuffers[index]->getTexture();
+            }
 
+            return -1;
+        }
     private:
         GLenum m_frameBufferObj = 0;
         std::vector<Texture*> m_vecColorBuffers;
@@ -96,15 +104,15 @@ namespace SpaceEngine
             void Initialize();
             void Shutdown();
             static void clear();
-            static void render(const std::vector<ScreenRenderObject>& screenRenderables); // screen shaders renderer
+            static void render(const std::vector<ScreenRenderObject>& screenRenderables); //screen shaders renderer
             static void render(const RendererParams& rParams); //mesh renderer
             static void render(const std::vector<UIRenderObject>& uiRenderables); //UI renderer
             static void render(const std::vector<TextRenderObject>& textRenderables); //Text renderer
-            static void postprocessing();
+            static void postprocessing(bool bloomVFX);
 
         private:
-            static bool m_postprocessing;
             static bool m_preprocessing;
+            static bool m_bloomVFX;
             static bool m_debug;
             static FrameBuffer m_HDRFrameBuffer;
             static FrameBuffer m_BloomFrameBuffers[2];
