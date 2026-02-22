@@ -240,7 +240,6 @@ namespace SpaceEngine
 
     void FrameBuffer::addColorBuffer()
     {
-        bindFrameBuffer();
         TexSetParams params = {
             0, 
             GL_RGBA16F, 
@@ -300,11 +299,14 @@ namespace SpaceEngine
             m_pHDRShader->use();
             m_pHDRShader->setUniform("scene", 0);
             m_pHDRShader->setUniform("highlight", 1);
+            m_pHDRShader->setUniform("exposure", 1.5f);
+
             GL_CHECK_ERRORS();
 
             //enable HDR range for rendering
             m_HDRFrameBuffer.init();
             GL_CHECK_ERRORS();
+            m_HDRFrameBuffer.bindFrameBuffer();
             m_HDRFrameBuffer.addColorBuffer();
             m_HDRFrameBuffer.addColorBuffer();
             GL_CHECK_ERRORS();
@@ -312,6 +314,7 @@ namespace SpaceEngine
             m_HDRFrameBuffer.addRenderBuffer();
             //use the color attachments for rendering
             m_HDRFrameBuffer.drawBuffers();
+            GL_CHECK_ERRORS();
             GL_CHECK_FRAMEBUFFER_STATUS();
             m_HDRFrameBuffer.unbindFrameBuffer();
 
@@ -325,6 +328,7 @@ namespace SpaceEngine
                 {
                     //enable HDR range for rendering
                     m_BloomFrameBuffers[i].init();
+                    m_BloomFrameBuffers[i].bindFrameBuffer();
                     GL_CHECK_ERRORS();
                     m_BloomFrameBuffers[i].addColorBuffer();
                     GL_CHECK_ERRORS();
@@ -371,7 +375,7 @@ namespace SpaceEngine
     void RendererV2::clear()
     {
         //clear screen
-        glClearColor(0.f, 0.f, 1.f, 1.f);
+        glClearColor(0.f, 0.f, 0.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         //render the scene into floating point framebuffer
@@ -380,7 +384,7 @@ namespace SpaceEngine
         GL_CHECK_ERRORS();
     }
 
-    //screen shaders renderer
+    //screen shaders render
     void RendererV2::render(const std::vector<ScreenRenderObject>& screenRenderables)
     {
         for (const auto& screenR : screenRenderables)
@@ -404,7 +408,7 @@ namespace SpaceEngine
         }
     }
     
-    //mesh renderer
+    //mesh render
     void RendererV2::render(const RendererParams& rParams)
     {
         glEnable(GL_BLEND);
@@ -488,12 +492,14 @@ namespace SpaceEngine
         }
     }
     
-    //UI renderer
+    //UI render
     void RendererV2::render(const std::vector<UIRenderObject>& uiRenderables)
     {
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_CULL_FACE);
+
 
         for (const auto& ui : uiRenderables)
         {
@@ -518,13 +524,14 @@ namespace SpaceEngine
 
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+
     }
     
-    //Text renderer
+    //Text render
     void RendererV2::render(const std::vector<TextRenderObject>& textRenderables)
     {
         glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         for(TextRenderObject textRendObj : textRenderables)
         {
@@ -569,7 +576,6 @@ namespace SpaceEngine
         
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
         glUseProgram(0);
     }
 
@@ -579,7 +585,7 @@ namespace SpaceEngine
         PlaneMesh* pPlaneMesh = MeshManager::getPlaneMesh();
         uint32_t horizontal = 1;
         
-        if(m_bloomVFX && m_pBloomShader)
+        if(bloomVFX && m_pBloomShader)
         {
             uint32_t amount = 10; //apply 5 times the 2D gaussian filter
             
@@ -615,7 +621,6 @@ namespace SpaceEngine
             glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[horizontal ^ 1].getColorBuffer(0));
         else glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
         GL_CHECK_ERRORS();
-        m_pHDRShader->setUniform("exposure", 1.f);
         
         pPlaneMesh->bindVAO();
         pPlaneMesh->draw();

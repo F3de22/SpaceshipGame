@@ -123,13 +123,13 @@ namespace SpaceEngine
         
             std::array<std::array<float, 4>, 6> vertices
             {{
-                { xpos,     ypos + h,   0.0f, 1.0f },
-                { xpos,     ypos,       0.0f, 0.0f },
-                { xpos + w, ypos,       1.0f, 0.0f },
+                { xpos + w, ypos,       1.0f, 0.0f }, //bottom-right
+                { xpos,     ypos,       0.0f, 0.0f }, //bottom-left
+                { xpos,     ypos + h,   0.0f, 1.0f }, //top-left
                 
-                { xpos,     ypos + h,   0.0f, 1.0f },
-                { xpos + w, ypos,       1.0f, 0.0f },
-                { xpos + w, ypos + h,   1.0f, 1.0f }
+                { xpos,     ypos + h,   0.0f, 1.0f }, //top-left
+                { xpos + w, ypos + h,   1.0f, 1.0f },  //top-right
+                { xpos + w, ypos,       1.0f, 0.0f } //bottom-right
             }};
 
             offsetX += (ch.advance >> 6) * transf.scale.x * resScale;

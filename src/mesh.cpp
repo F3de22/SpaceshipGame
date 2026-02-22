@@ -27,24 +27,24 @@ namespace SpaceEngine
     float UIQuad[] =
         {
             // vertex  texture
-            0.f, 1.f, 0.f, 1.f, // top-left
-            1.f, 1.f, 1.f, 1.f, // top-right
             0.f, 0.f, 0.f, 0.f, // bottom-left
+            1.f, 1.f, 1.f, 1.f, // top-right
+            0.f, 1.f, 0.f, 1.f, // top-left
             1.f, 0.f, 1.f, 0.f  // bottom-right
     };
 
     float plane[] =
         {
             // vertex  texture
-            -1.f,  1.f, 0.f, 1.f, // top-left
-             1.f,  1.f, 1.f, 1.f, // top-right
             -1.f, -1.f, 0.f, 0.f, // bottom-left
+             1.f,  1.f, 1.f, 1.f, // top-right
+            -1.f,  1.f, 0.f, 1.f, // top-left
              1.f, -1.f, 1.f, 0.f  // bottom-right
     };
     uint32_t UIindices[N_INDICES_QUAD] =
         {
             0, 1, 2,
-            2, 1, 3};
+            0, 3, 1};
 
 
     //---------------------------------------------//
