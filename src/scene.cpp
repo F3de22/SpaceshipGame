@@ -265,6 +265,8 @@ namespace SpaceEngine
         m_powerupInterval = 5.0f; 
         m_powerupTimer = 0.0f;
 
+        setPostprocessing(true);
+
         glEnable(GL_BLEND); 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }

@@ -84,7 +84,7 @@ namespace SpaceEngine
         glfwSetWindowSizeLimits(window, SPACE_ENGINE_MIN_RES_W, SPACE_ENGINE_MIN_RES_H, GLFW_DONT_CARE, GLFW_DONT_CARE);
         glfwSetWindowAspectRatio(window, 16, 9);
         //callbacks
-        glfwSetWindowMaximizeCallback(window, window_maximize_callback);
+        //glfwSetWindowMaximizeCallback(window, window_maximize_callback);
         glfwSetFramebufferSizeCallback(window, window_resize_callback);
         int w, h;
         glfwGetFramebufferSize(window, &w, &h);
@@ -184,30 +184,6 @@ namespace SpaceEngine
 
             RendererV2::resizeBuffers(width, height);
         }
-    }
-
-    //callbacks
-    void window_maximize_callback(GLFWwindow* window, int maximized)
-    {
-        if (maximized)
-        {
-            //glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
-                // The window was maximized
-                WindowManager::fullScreenState = true;
-                WindowManager::monitor = get_window_monitor(window);
-                const GLFWvidmode* mode = glfwGetVideoMode(WindowManager::monitor);
-                glfwSetWindowMonitor(window, WindowManager::monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-                glViewport(0, 0, mode->width, mode->height);
-                WindowManager::height = mode->height;
-                WindowManager::width = mode->width;
-                WindowManager::sceenProjMatrix = glm::ortho(0.0f,
-                    static_cast<float>(mode->width),
-                    static_cast<float>(mode->height),
-                    0.0f);
-                Scene* pScene = SceneManager::GetActiveScene();
-                if(pScene)pScene->notifyChangeRes();
-        }
-
     }
 
 }

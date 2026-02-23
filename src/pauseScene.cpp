@@ -127,7 +127,7 @@ namespace SpaceEngine {
                 }*/
             }
             m_pOwner->addSceneComponent(m_pLayout);
-            
+            m_pOwner->setPostprocessing(false);
             UpdateVolumeSlider();
         }
     }
@@ -135,10 +135,12 @@ namespace SpaceEngine {
     void PauseScene::Hide() {
         if (!m_visible) return;
         m_visible = false;
+
         
         Mouse::hideCursor();
         if (m_pOwner) {
             m_pOwner->removePauseLayout(m_pLayout);
+            m_pOwner->setPostprocessing(true);
         }
     }
 

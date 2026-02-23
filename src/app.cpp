@@ -264,7 +264,7 @@ namespace SpaceEngine
             GL_CHECK_ERRORS();
             rendererV2.render(textRenderables);
             GL_CHECK_ERRORS();
-            rendererV2.postprocessing(true);
+            rendererV2.postprocessing(sceneManager.GetActiveScene()->getPostprocessing());
             GL_CHECK_ERRORS();
             #endif
 

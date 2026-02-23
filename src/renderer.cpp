@@ -358,6 +358,7 @@ namespace SpaceEngine
             m_HDRFrameBuffer.bindFrameBuffer();
             m_HDRFrameBuffer.addColorBuffer();
             m_HDRFrameBuffer.addColorBuffer();
+            m_HDRFrameBuffer.addColorBuffer();
             GL_CHECK_ERRORS();
             //attach depth info
             m_HDRFrameBuffer.addRenderBuffer();
@@ -428,7 +429,7 @@ namespace SpaceEngine
         
         //render the scene into floating point framebuffer
         m_HDRFrameBuffer.bindFrameBuffer();
-        m_HDRFrameBuffer.drawBuffers(2);
+        m_HDRFrameBuffer.drawBuffers(3);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_HDRFrameBuffer.drawBuffers(1);
         GL_CHECK_ERRORS();
@@ -676,8 +677,7 @@ namespace SpaceEngine
         glActiveTexture(GL_TEXTURE1);
         if(bloomVFX)
             glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[horizontal ^ 1].getColorBuffer(0));
-        else glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
-        //glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
+        else glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(2));
         GL_CHECK_ERRORS();
         
         pPlaneMesh->bindVAO();
@@ -687,7 +687,7 @@ namespace SpaceEngine
 
     void RendererV2::resizeBuffers(int width, int height)
     {
-        m_HDRFrameBuffer.resize(width, height, 2, true);
+        m_HDRFrameBuffer.resize(width, height, 3, true);
         m_HDRFrameBuffer.bindFrameBuffer();
         m_HDRFrameBuffer.drawBuffers(1);
         m_HDRFrameBuffer.unbindFrameBuffer();

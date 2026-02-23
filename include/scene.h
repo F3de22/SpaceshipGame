@@ -55,6 +55,8 @@ namespace SpaceEngine
 
             inline void setActive(bool flag){active = flag;}
             inline bool isActive() const{return active;}
+            inline void setPostprocessing(bool flag){postprocessing = flag;}
+            inline bool getPostprocessing() const{return postprocessing;}
             inline void setNameScene(const std::string& name){this->name = name;}
             inline std::string getNameScene() const{return name;}
             inline Skybox* getSkybox() const{return pSkybox;}
@@ -180,6 +182,7 @@ namespace SpaceEngine
             AudioManager* pAudioManager = nullptr;
             //scene property
             bool active = true;
+            bool postprocessing = false;
         protected:
             vector<GameObject*> gameObjects;
             std::vector<ScreenRenderObject> m_vecScreenRendObj;
