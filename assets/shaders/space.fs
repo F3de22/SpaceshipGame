@@ -1,5 +1,6 @@
 #version 400
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+
 in vec2 FragCoord;
 
 uniform float time;

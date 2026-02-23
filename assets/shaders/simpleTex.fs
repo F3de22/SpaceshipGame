@@ -40,5 +40,6 @@ void main()
         BrightColor = col;
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);    
+    
     FragColor = col;
 }

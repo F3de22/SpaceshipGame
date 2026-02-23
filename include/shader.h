@@ -42,6 +42,8 @@ namespace SpaceEngine
             void bindAttribLocation(GLuint location, const char *name);
             void bindFragDataLocation(GLuint location, const char *name);
             void bindSubroutines();
+            inline uint8_t getMRTBuffers() {return m_MRTBuffers;}
+            inline void setMRTBuffers(uint8_t num) { m_MRTBuffers = !num ? 1 : num;}
 
             void setUniform(const char *name, float x, float y, float z);
             void setUniform(const char *name, const glm::vec2 &v);
@@ -66,31 +68,33 @@ namespace SpaceEngine
 
             const char *getTypeString(GLenum type);
 
-            private:
-                struct UniformInfo
-                {
-                    GLint location;
-                    GLenum type;
-                    GLint size; 
-                };
+        private:
+            struct UniformInfo
+            {
+                GLint location;
+                GLenum type;
+                GLint size; 
+            };
 
-                GLuint handle;
-                bool linked;
-                bool isVSComp = false;
-                bool isFSComp = false;
-                std::unordered_map<std::string, UniformInfo> uniformsInfo;
-                std::unordered_map<Type, std::unordered_map<std::string, GLint>> subroutineUniformsInfo;
-                std::unordered_map<std::string, GLuint> vsSubroutinesInfo;
-                std::unordered_map<std::string, GLuint> fsSubroutinesInfo;
-                std::vector<GLuint> vsIdxSubRoutUniform;
-                std::vector<GLuint> fsIdxSubRoutUniform;
+            GLuint handle;
+            uint8_t m_MRTBuffers = 1;
+            bool linked;
+            bool isVSComp = false;
+            bool isFSComp = false;
+            std::unordered_map<std::string, UniformInfo> uniformsInfo;
+            std::unordered_map<Type, std::unordered_map<std::string, GLint>> subroutineUniformsInfo;
+            std::unordered_map<std::string, GLuint> vsSubroutinesInfo;
+            std::unordered_map<std::string, GLuint> fsSubroutinesInfo;
+            std::vector<GLuint> vsIdxSubRoutUniform;
+            std::vector<GLuint> fsIdxSubRoutUniform;
 
-                void reflectUniforms();
-                void reflectionSubrroutines(Type shType);
-                inline GLint getUniformLocation(const char *name);
-	            void detachAndDeleteShaderObjects();
-                bool fileExists(const std::string &fileName);
-                std::string getExtension(const char *fileName);
+            void reflectUniforms();
+            void reflectionSubrroutines(Type shType);
+            inline GLint getUniformLocation(const char *name);
+
+            void detachAndDeleteShaderObjects();
+            bool fileExists(const std::string &fileName);
+            std::string getExtension(const char *fileName);
         
     };
 

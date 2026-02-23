@@ -274,16 +274,16 @@ namespace SpaceEngine
         m_pRenderBuffer = new RenderBuffer(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT);
     }
 
-    void FrameBuffer::drawBuffers()
+    void FrameBuffer::drawBuffers(uint8_t numBuffers)
     {
         std::vector<uint32_t> attachments;
         
-        for(int i = 0; i < m_vecColorBuffers.size(); i++)
+        for(int i = 0; i < static_cast<int>(numBuffers) && i < m_vecColorBuffers.size(); i++)
         {
            attachments.push_back(GL_COLOR_ATTACHMENT0 + i); 
         }
 
-        glDrawBuffers(static_cast<GLsizei>(m_vecColorBuffers.size()), attachments.data());
+        glDrawBuffers(static_cast<GLsizei>(numBuffers), attachments.data());
     }
 
     int FrameBuffer::destroyColorAndDepth()
@@ -356,7 +356,7 @@ namespace SpaceEngine
             //attach depth info
             m_HDRFrameBuffer.addRenderBuffer();
             //use the color attachments for rendering
-            m_HDRFrameBuffer.drawBuffers();
+            m_HDRFrameBuffer.drawBuffers(1);
             GL_CHECK_ERRORS();
             GL_CHECK_FRAMEBUFFER_STATUS();
             m_HDRFrameBuffer.unbindFrameBuffer();
@@ -380,30 +380,29 @@ namespace SpaceEngine
                 }
 
                 m_pBloomShader->use();
-                m_pBloomShader->setUniform("LumThresh", 2.f);
                 m_pBloomShader->setUniform("BlurTex", 0);
                 GL_CHECK_ERRORS();
 
-                //sample the gauss filter
-                float weights[10], sum, sigma2 = 25.f;
-
-                weights[0] = Math::gauss(0, sigma2);
-                sum = weights[0];
-
-                for(int i = 1; i < 10; i++)
-                {
-                    weights[i] = Math::gauss(float(i), sigma2);
-                    sum += 2 * weights[i]; 
-                }
-
-                //normalize weights and set the uniform
-                for(int i = 0; i < 10; i++)
-                {
-                    std::string strWeight = "Weight[" + std::to_string(i) + "]"; 
-                    float val = weights[i] / sum;
-                    m_pBloomShader->setUniform(strWeight.c_str(), val);
-                }
-                GL_CHECK_ERRORS();
+                ////sample the gauss filter
+                //float weights[10], sum, sigma2 = 9.f;
+//
+                //weights[0] = Math::gauss(0, sigma2);
+                //sum = weights[0];
+//
+                //for(int i = 1; i < 10; i++)
+                //{
+                //    weights[i] = Math::gauss(float(i), sigma2);
+                //    sum += 2 * weights[i]; 
+                //}
+//
+                ////normalize weights and set the uniform
+                //for(int i = 0; i < 10; i++)
+                //{
+                //    std::string strWeight = "Weight[" + std::to_string(i) + "]"; 
+                //    float val = weights[i] / sum;
+                //    m_pBloomShader->setUniform(strWeight.c_str(), val);
+                //}
+                //GL_CHECK_ERRORS();
                 glUseProgram(0);
             }
         }
@@ -423,7 +422,9 @@ namespace SpaceEngine
         
         //render the scene into floating point framebuffer
         m_HDRFrameBuffer.bindFrameBuffer();
+        m_HDRFrameBuffer.drawBuffers(2);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_HDRFrameBuffer.drawBuffers(1);
         GL_CHECK_ERRORS();
     }
 
@@ -468,10 +469,11 @@ namespace SpaceEngine
                     GL_CHECK_ERRORS();
                     //get shader
                     ShaderProgram* shader = renderObj.mesh->getMaterialBySubMeshIndex(idSubMesh)->getShader();
-                    shader->use();
-                    GL_CHECK_ERRORS();
                     if(shader)
                     {
+                        m_HDRFrameBuffer.drawBuffers(shader->getMRTBuffers());
+                        shader->use();
+                        GL_CHECK_ERRORS();
                         //bind material
                         renderObj.mesh->getMaterialBySubMeshIndex(idSubMesh)->bindingPropsToShader();
                         //set matrices
@@ -510,6 +512,7 @@ namespace SpaceEngine
                     glUseProgram(0);
                 }    
             }
+            m_HDRFrameBuffer.drawBuffers(1);
         }
         if(rParams.pSkybox)
         {
@@ -626,34 +629,39 @@ namespace SpaceEngine
     {
         m_HDRFrameBuffer.unbindFrameBuffer();
         PlaneMesh* pPlaneMesh = MeshManager::getPlaneMesh();
-        uint32_t horizontal = 1;
+        bool horizontal = true;
         
+        #if 1
         if(bloomVFX && m_pBloomShader)
         {
             uint32_t amount = 10; //apply 5 times the 2D gaussian filter
             
             //apply the gaussian filter on the scene render buffer
-            m_pBloomShader->use();
             m_BloomFrameBuffers[1].bindFrameBuffer();
-            m_pBloomShader->setSubroutinesUniform(GL_FRAGMENT_SHADER, 1, &horizontal);
+            m_pBloomShader->use();
+            m_pBloomShader->setUniform("horizontal", horizontal);
+            glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
             pPlaneMesh->bindVAO();
             pPlaneMesh->draw();
-            horizontal ^= 1;
+            horizontal = !horizontal;
 
             for(uint32_t i = 1; i < amount; i++)
             {
+                m_pBloomShader->use();
                 m_BloomFrameBuffers[horizontal].bindFrameBuffer();
-                m_pBloomShader->setSubroutinesUniform(GL_FRAGMENT_SHADER, 1, &horizontal);
-                glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[horizontal ^ 1].getColorBuffer(0));
+                m_pBloomShader->setUniform("horizontal", horizontal);
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[!horizontal].getColorBuffer(0));
                 pPlaneMesh->bindVAO();
                 pPlaneMesh->draw();
-                horizontal ^= 1;
+                horizontal = !horizontal;
             }
 
             m_BloomFrameBuffers[horizontal].unbindFrameBuffer();
         }
         glUseProgram(0);
+        #endif
         //blending 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_pHDRShader->use();
@@ -663,6 +671,7 @@ namespace SpaceEngine
         if(bloomVFX)
             glBindTexture(GL_TEXTURE_2D, m_BloomFrameBuffers[horizontal ^ 1].getColorBuffer(0));
         else glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
+        //glBindTexture(GL_TEXTURE_2D, m_HDRFrameBuffer.getColorBuffer(1));
         GL_CHECK_ERRORS();
         
         pPlaneMesh->bindVAO();
@@ -674,7 +683,7 @@ namespace SpaceEngine
     {
         m_HDRFrameBuffer.resize(width, height, 2, true);
         m_HDRFrameBuffer.bindFrameBuffer();
-        m_HDRFrameBuffer.drawBuffers();
+        m_HDRFrameBuffer.drawBuffers(1);
         m_HDRFrameBuffer.unbindFrameBuffer();
 
         for(int i = 0; i < 2; i++)

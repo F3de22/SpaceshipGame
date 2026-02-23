@@ -92,10 +92,10 @@ namespace SpaceEngine
 
         inline float gauss(float x, float sigma2)
         {
-            double coeff = 1.0 / (glm::two_pi<double>() * sigma2);
+            double coeff = 1.0 / sqrt(glm::two_pi<double>() * sigma2);
             double expon = -(x * x) / (2.0 * sigma2);
-
-            return static_cast<float>(coeff*exp(expon));
+        
+            return static_cast<float>(coeff * exp(expon));
         }
     }
 

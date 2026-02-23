@@ -69,7 +69,7 @@ namespace SpaceEngine
         void addColorBuffer();
         void addColorBuffer(int width, int height);
         void addRenderBuffer();
-        void drawBuffers();
+        void drawBuffers(uint8_t);
         int destroyColorAndDepth();
         void resize(int width, int height, int nColorBuff, bool depth);
 

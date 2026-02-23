@@ -765,7 +765,8 @@ namespace SpaceEngine
         GL_CHECK_ERRORS();
         createShaderProgram("uiButton");
         GL_CHECK_ERRORS();
-        createShaderProgram("simpleTex");
+        ShaderProgram* pSimpleTex = createShaderProgram("simpleTex");
+        pSimpleTex->setMRTBuffers(2);
         GL_CHECK_ERRORS();
         createShaderProgram("pbr");
         GL_CHECK_ERRORS();
