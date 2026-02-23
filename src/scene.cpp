@@ -229,7 +229,26 @@ namespace SpaceEngine
 
         m_pHUDLayout = new UILayout();
         addSceneComponent(m_pHUDLayout);
-
+        
+        //init materials for the powerups 
+        
+        ShaderProgram* pShader = ShaderManager::findShaderProgram("powerup");
+        //RapidFire
+        BaseMaterial* pMat = MaterialManager::createMaterial<BaseMaterial>("Mat_PowerUp_Rapid");
+        Texture* pTex = TextureManager::load(TEXTURES_PATH"PowerUp/rapidFire_powerUp.png", true);
+        pMat->pShader = pShader;
+        pMat->addTexture("albedo_tex", pTex);
+        //Bob
+        pMat = MaterialManager::createMaterial<BaseMaterial>("Mat_PowerUp_Nuke");
+        pTex = TextureManager::load(TEXTURES_PATH"PowerUp/bomb_powerUp.png", true);
+        pMat->pShader = pShader;
+        pMat->addTexture("albedo_tex", pTex);
+        //Health
+        pMat = MaterialManager::createMaterial<BaseMaterial>("Mat_PowerUp_Health");
+        pTex = TextureManager::load(TEXTURES_PATH"PowerUp/Health_powerUp.png", true);
+        pMat->pShader = pShader;
+        pMat->addTexture("albedo_tex", pTex);
+        
         //Text
         TextMaterial* pScoreMat = MaterialManager::createMaterial<TextMaterial>("ScoreMat", "Orbitron-Regular");
         Text* pTextScore = new Text({0.5f, 0.0f}, {-200.f, 90.f}, {1.f, 1.f}, pScoreMat);
@@ -469,64 +488,28 @@ namespace SpaceEngine
             switch(PowerUprandomType) {
                 case 0: 
                     type = PowerUpType::RAPID_FIRE;
-                    modelName = "PowerUp/rapidFire_powerUp.png";
                     meshName = "QuadRapid.obj";
                     matName = "Mat_PowerUp_Rapid";
                     break;
                 case 1: 
                     type = PowerUpType::BOMB;
-                    modelName = "PowerUp/bomb_powerUp.png";
                     meshName = "QuadBomb.obj";
                     matName = "Mat_PowerUp_Nuke";
                     break;
                 case 2: 
                     type = PowerUpType::HEALTH;
-                    modelName = "PowerUp/Health_powerUp.png";
                     meshName = "QuadHealth.obj";
                     matName = "Mat_PowerUp_Health";
                     break;
             }
 
-            PowerUp* pPower = new PowerUp(this, type, meshName);
+            PowerUp* pPower = new PowerUp(this, type, meshName, matName);
 
             if (!pPower) {
                 SPACE_ENGINE_ERROR("CRITICAL: Impossible to allocate memory for PowerUp!");
                 return;
             }
 
-            Mesh* pMesh = pPower->getComponent<Mesh>();
-            if (!pMesh) {
-                SPACE_ENGINE_ERROR("ERROR: Mesh '{}' NOT FOUND! PowerUp destroyed.", meshName);
-                delete pPower;
-                return;
-            }
-
-            PBRMaterial* pMat = MaterialManager::createMaterial<PBRMaterial>(matName);
-            pMat->pShader = ShaderManager::findShaderProgram("powerup");
-
-            if (!pMat->pShader) {
-                SPACE_ENGINE_WARN("Shader 'powerup' not found! Loading/Compiling now...");
-                pMat->pShader = ShaderManager::findShaderProgram("powerup");
-            }
-        
-            if (pMat->getTexture("albedo_tex") == nullptr) {
-                Texture* pTex = TextureManager::load(TEXTURES_PATH + modelName);
-                if(pTex) {
-                    pMat->addTexture("albedo_tex", pTex);
-                    std::get<float>(pMat->props["ambient_occlusion_val"]) = 1.0f; 
-                    std::get<Vector4>(pMat->props["albedo_color_val"]) = {1.f, 1.f, 1.f, 1.f};
-                } else {
-                     SPACE_ENGINE_ERROR("Texture NOT FOUND: {}", modelName);
-                     std::get<Vector4>(pMat->props["albedo_color_val"]) = {1.f, 0.f, 0.f, 1.f};
-                }
-            }
-
-            if (Mesh* pMesh = pPower->getComponent<Mesh>()) {
-                pMesh->bindMaterialToSubMeshIndex(0, pMat);
-            } else {
-                SPACE_ENGINE_ERROR("Mesh component missing on PowerUp!");
-            }
-        
             pPower->Init(Vector3(x, y, z));
             addSceneComponent(pPower);
             
@@ -604,7 +587,8 @@ namespace SpaceEngine
             .budget{BudgetAsteroidE},
             .minSpawn{1},
             .maxSpawn{1},
-            .spawnInterval{TimeAsterorid}
+            .spawnInterval{TimeAsterorid},
+            .bulletSpeed{1.f}
         },
         {
             .weights{0.3f, 0.7f, 0.f},
@@ -612,7 +596,8 @@ namespace SpaceEngine
             .budget{BudgetAsteroidM},
             .minSpawn{1},
             .maxSpawn{2},
-            .spawnInterval{TimeAsterorid * TimeAsteroridXM}
+            .spawnInterval{TimeAsterorid * TimeAsteroridXM},
+            .bulletSpeed{1.f}
         },
         {
             .weights{0.1f, 0.3f, 0.6f},
@@ -620,7 +605,8 @@ namespace SpaceEngine
             .budget{BudgetAsteroidH},
             .minSpawn{1},
             .maxSpawn{3},
-            .spawnInterval{TimeAsterorid * TimeAsteroridXH}
+            .spawnInterval{TimeAsterorid * TimeAsteroridXH},
+            .bulletSpeed{1.f}
         },
         {
             .weights{1.f, 0.f, 0.f},
@@ -628,7 +614,8 @@ namespace SpaceEngine
             .budget{BudgetEnemyE},
             .minSpawn{1},
             .maxSpawn{1},
-            .spawnInterval{TimeEnemy}
+            .spawnInterval{TimeEnemy},
+            .bulletSpeed{1.f}
         },
         {
             .weights{0.3f, 0.7f, 0.f},
@@ -636,7 +623,8 @@ namespace SpaceEngine
             .budget{BudgetEnemyM},
             .minSpawn{1},
             .maxSpawn{2},
-            .spawnInterval{TimeEnemy * TimeEnemyXM}
+            .spawnInterval{TimeEnemy * TimeEnemyXM},
+            .bulletSpeed{1.4f}
         },
         {
             .weights{0.2f,0.6f,0.2f},
@@ -644,7 +632,8 @@ namespace SpaceEngine
             .budget{BudgetEnemyH},
             .minSpawn{1},
             .maxSpawn{3},
-            .spawnInterval{TimeEnemy * TimeEnemyXH}
+            .spawnInterval{TimeEnemy * TimeEnemyXH},
+            .bulletSpeed{1.7f}
         },
         {
             .weights{0.2f,0.6f,0.2f},
@@ -652,7 +641,8 @@ namespace SpaceEngine
             .budget{30},
             .minSpawn{1},
             .maxSpawn{3},
-            .spawnInterval{TimeEnemy * TimeEnemyXH}
+            .spawnInterval{TimeEnemy * TimeEnemyXH},
+            .bulletSpeed{2.f}
         }
     };
 
@@ -684,19 +674,16 @@ namespace SpaceEngine
         switch(PowerUprandomType) {
             case 0: 
                 type = PowerUpType::RAPID_FIRE;
-                modelName = "PowerUp/rapidFire_powerUp.png";
                 meshName = "QuadRapid.obj";
                 matName = "Mat_PowerUp_Rapid";
                 break;
             case 1: 
                 type = PowerUpType::BOMB;
-                modelName = "PowerUp/bomb_powerUp.png";
                 meshName = "QuadBomb.obj";
                 matName = "Mat_PowerUp_Nuke";
                 break;
             case 2: 
                 type = PowerUpType::HEALTH;
-                modelName = "PowerUp/Health_powerUp.png";
                 meshName = "QuadHealth.obj";
                 matName = "Mat_PowerUp_Health";
                 break;
@@ -704,24 +691,8 @@ namespace SpaceEngine
 
         if (!m_pScene) return;
 
-        PowerUp* pPower = new PowerUp(m_pScene, type, meshName);
-
-        PBRMaterial* pMat = MaterialManager::createMaterial<PBRMaterial>(matName);
-        
-        pMat->pShader = ShaderManager::findShaderProgram("powerup");
-        
-        if (pMat->getTexture("albedo_tex") == nullptr) {
-            Texture* pTex = TextureManager::load(TEXTURES_PATH + modelName);
-            if(pTex) {
-                pMat->addTexture("albedo_tex", pTex);
-            }
-        }
-        if (Mesh* pMesh = pPower->getComponent<Mesh>()) {
-            pMesh->bindMaterialToSubMeshIndex(0, pMat);
-        }
-
+        PowerUp* pPower = new PowerUp(m_pScene, type, meshName, matName);
         pPower->Init(Vector3(x, y, z));
-        
         m_pScene->addSceneComponent(pPower); 
         
         SPACE_ENGINE_INFO("SpawnerSys: Spawned PowerUp Type {}", PowerUprandomType);
@@ -844,7 +815,7 @@ namespace SpaceEngine
             EnemyType enemyType = static_cast<EnemyType>(weightedRandom(m_stage.weights, 3));
             EnemyShip* pEnemy = m_pScene->requestInstantiate(SpaceScene::m_pEnemy);
 
-            pEnemy->Init(Vector3{getPosX(index), 0.f, -100.f}, enemyType, SpaceScene::m_pPlayer,  VelEnemy/m_stage.spawnInterval, index);
+            pEnemy->Init(Vector3{getPosX(index), 0.f, -100.f}, enemyType, SpaceScene::m_pPlayer,  VelEnemy/m_stage.spawnInterval, index, m_stage.bulletSpeed);
             m_pSpawnerObs->space[index] = ESlot::ENEMY;
         }
     }
